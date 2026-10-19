@@ -597,9 +597,11 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '2.11.0';
+const APP_VERSION = '2.11.2';
 const SECTIONS = [['finanzen','Finanzen'],['sparen','Sparen'],['stundenplan','Stundenplan'],['hausaufgaben','Hausaufgaben'],['aufgaben','Aufgaben']];
 const CHANGELOG = [
+  ['2.11.2', '19.10.2026, 09:43 Uhr', ['Kindermodus: „Portemonnaie“ heißt jetzt überall „Bargeld“']],
+  ['2.11.1', '19.10.2026, 09:40 Uhr', ['Fehler behoben: Startbetrag landete bei „nur Portemonnaie“ bzw. „nur Bankkonto“ intern im falschen Topf – nach dem Umstellen auf „Beides“ stand dann z. B. Portemonnaie +15 € und Konto −15 €', 'Startbetrag-Fenster zeigt bei „Beides“ einen Hinweis, wenn ein Topf ins Minus geht']],
   ['2.11.0', '19.10.2026, 08:27 Uhr', ['Belege aufbewahren: Foto vom gescannten Kassenbon am Eintrag speichern, oder ein Foto bzw. eine PDF-Rechnung anhängen', 'Garantie-Datum je Beleg (mit „+ 2 Jahre“)', 'Großansicht mit Zoom und „Teilen / in Dateien sichern“', 'Neue Liste „Belege & Garantie“ in den Einstellungen', 'Sicherung wahlweise mit Belegen']],
   ['2.10.0', '19.10.2026, 07:58 Uhr', ['Kassenbon: einzelne Positionen werden erkannt und lassen sich vor dem Speichern prüfen, ändern, löschen oder ergänzen', 'Kontrolle, ob die Positionen zur Summe vom Bon passen', 'Speichern als ein Eintrag mit Positionen oder aufgeteilt nach Kategorien (mit Vorschlägen)', 'Positionen sind später beim Eintrag aufklappbar']],
   ['2.9.1', '17.10.2026, 15:24 Uhr', ['Startbetrag wird nur noch beim ersten Start abgefragt (mit Auswahl Erwachsene oder Kind)', 'Danach liegt er in den Einstellungen: Kindermodus unter Für Eltern → Geld & Sparen, Erwachsenenmodus unter Finanzen', 'Knopf „Startbetrag“ bzw. „Anfangsbestände“ auf der Finanzseite entfernt']],
@@ -779,7 +781,7 @@ function logSettingsDiff(){
   if (o.combined !== cur.combined) addLog('Konten zusammenlegen: ' + (cur.combined ? 'an' : 'aus'));
   if (o.confirm !== cur.confirm) addLog('Bestätigung von Einnahmen: ' + (cur.confirm ? 'an' : 'aus'));
   if (o.name !== cur.name) addLog('Name der App geändert');
-  if (o.kacc !== cur.kacc) addLog('Geld des Kindes: ' + ({cash:'Portemonnaie', bank:'Bankkonto', both:'Portemonnaie und Bankkonto'})[cur.kacc]);
+  if (o.kacc !== cur.kacc) addLog('Geld des Kindes: ' + ({cash:'Bargeld', bank:'Bankkonto', both:'Bargeld und Bankkonto'})[cur.kacc]);
   if (o.ksave !== cur.ksave) addLog('Gespartes heißt jetzt: ' + (cur.ksave==='konto' ? 'Sparkonto' : 'Sparschwein'));
 }
 function logDialog(){
@@ -1302,7 +1304,7 @@ function settingsDialog(page){
       body += `<div class="set-grp"><div class="set-gl set-gl-row">🔒 Für Eltern <span class="set-pinb ${pinSet() ? 'on' : 'off'}">${pinSet() ? 'PIN aktiv' : 'PIN aus'}</span></div><div class="set-card">
         ${setRow({act:'parent', ic:'eye', c:'var(--pos)', t:'Eltern-Ansicht', s:'Finanzen ausführlich ansehen'})}
         ${setRow({page:'fixed', ic:'repeat', c:'var(--s3)', t:'Taschengeld & feste Beträge', s: fixedSub})}
-        ${setRow({page:'money', ic:'wallet', c:'var(--bank)', t:'Geld & Sparen', s: ({cash:'Portemonnaie', bank:'Bankkonto', both:'Portemonnaie & Konto'})[kidAcc()] + ' · ' + SV().name})}
+        ${setRow({page:'money', ic:'wallet', c:'var(--bank)', t:'Geld & Sparen', s: ({cash:'Bargeld', bank:'Bankkonto', both:'Bargeld & Konto'})[kidAcc()] + ' · ' + SV().name})}
         ${setRow({page:'pin', ic:'lock', c:'var(--neg)', t:'Eltern-PIN', s: pinSet() ? 'PIN ändern, Notfall-Code' : 'Noch keine PIN festgelegt'})}
         ${setRow({act:'log', ic:'list', c:'var(--muted)', t:'Protokoll', s:'Wer hat was geändert', v: newTag})}
       </div><p class="set-note">${pinSet() ? 'Die Einstellungen sind mit der Eltern-PIN geschützt.' : 'Tipp: Mit einer Eltern-PIN kann das Kind hier nichts ändern.'}</p></div>`;
@@ -1340,10 +1342,10 @@ function settingsDialog(page){
   if (page === 'money'){
     body += `<div class="set-grp"><div class="set-gl">Konten</div><div class="set-card set-pad">
       <span class="set-sub">Wo hat das Kind sein Geld?</span>
-      <div class="seg"><label><input type="radio" name="kidAccounts" value="cash" ${kidAcc()==='cash'?'checked':''}><span>Portemonnaie</span></label><label><input type="radio" name="kidAccounts" value="bank" ${kidAcc()==='bank'?'checked':''}><span>Bankkonto</span></label><label><input type="radio" name="kidAccounts" value="both" ${kidAcc()==='both'?'checked':''}><span>Beides</span></label></div>
+      <div class="seg"><label><input type="radio" name="kidAccounts" value="cash" ${kidAcc()==='cash'?'checked':''}><span>Bargeld</span></label><label><input type="radio" name="kidAccounts" value="bank" ${kidAcc()==='bank'?'checked':''}><span>Bankkonto</span></label><label><input type="radio" name="kidAccounts" value="both" ${kidAcc()==='both'?'checked':''}><span>Beides</span></label></div>
       <span class="set-sub">Gespartes heißt</span>
       <div class="seg"><label><input type="radio" name="kidSave" value="schwein" ${S.settings.kidSave!=='konto'?'checked':''}><span>Sparschwein</span></label><label><input type="radio" name="kidSave" value="konto" ${S.settings.kidSave==='konto'?'checked':''}><span>Sparkonto</span></label></div>
-    </div><p class="set-note">Bei „Beides“ gibt es Portemonnaie, Konto und den Geldautomaten.</p></div>
+    </div><p class="set-note">Bei „Beides“ gibt es Bargeld, Konto und den Geldautomaten.</p></div>
     <div class="set-grp"><div class="set-gl">Regeln</div><div class="set-card">
       ${setToggle({id:'set-confirm', t:'Von Eltern bestätigen lassen', s:'„Geld bekommen“ zählt erst nach Freigabe (nur mit Eltern-PIN)', on: S.settings.confirmIncome !== false})}
     </div></div>
@@ -1737,7 +1739,7 @@ function firstSetupDialog(){
     <div class="field"><span>Für wen ist die App auf diesem Gerät?</span>
       <div class="seg"><label><input type="radio" name="mode" value="adult" ${isKid() ? '' : 'checked'}><span>Erwachsene</span></label><label><input type="radio" name="mode" value="kid" ${isKid() ? 'checked' : ''}><span>Kind (ab 10)</span></label></div></div>
     <div class="field" id="fs-acc" ${isKid() ? '' : 'hidden'}><span>Wo hat das Kind sein Geld?</span>
-      <div class="seg"><label><input type="radio" name="kacc" value="cash" ${kidAcc()==='cash'?'checked':''}><span>Portemonnaie</span></label><label><input type="radio" name="kacc" value="bank" ${kidAcc()==='bank'?'checked':''}><span>Bankkonto</span></label><label><input type="radio" name="kacc" value="both" ${kidAcc()==='both'?'checked':''}><span>Beides</span></label></div></div>
+      <div class="seg"><label><input type="radio" name="kacc" value="cash" ${kidAcc()==='cash'?'checked':''}><span>Bargeld</span></label><label><input type="radio" name="kacc" value="bank" ${kidAcc()==='bank'?'checked':''}><span>Bankkonto</span></label><label><input type="radio" name="kacc" value="both" ${kidAcc()==='both'?'checked':''}><span>Beides</span></label></div></div>
     <p class="hint" style="margin:0">Das lässt sich später in den Einstellungen ändern.</p>
     <div class="dlg-actions"><span class="spacer"></span><button class="btn primary" type="submit">Weiter</button></div>`, f => {
       const kid = f.querySelector('input[name=mode]:checked').value === 'kid';
@@ -1754,7 +1756,7 @@ function startDialog(first){
   if (isCombined()){
     openDlg(`
     <h3>${isKid() ? 'Startbetrag' : 'Anfangsbestand'}</h3>
-    <p class="hint">${isKid() ? (kidAcc()==='bank' ? 'Wie viel Geld war auf deinem Konto, bevor du angefangen hast, hier etwas einzutragen? Schau zum Beispiel auf den Kontoauszug.' : 'Wie viel Geld hattest du, bevor du angefangen hast, hier etwas einzutragen? Zähl einfach dein Geld im Portemonnaie.') : 'Der Betrag, mit dem du startest – also bevor deine erste Buchung hier eingetragen ist.'}</p>
+    <p class="hint">${isKid() ? (kidAcc()==='bank' ? 'Wie viel Geld war auf deinem Konto, bevor du angefangen hast, hier etwas einzutragen? Schau zum Beispiel auf den Kontoauszug.' : 'Wie viel Geld hattest du, bevor du angefangen hast, hier etwas einzutragen? Zähl einfach dein Bargeld.') : 'Der Betrag, mit dem du startest – also bevor deine erste Buchung hier eingetragen ist.'}</p>
     <label class="field"><span>Kontostand am Start (€)</span><input class="amount-in" name="total" inputmode="decimal" value="${amtInput(S.finance.start.bank + S.finance.start.cash)}" placeholder="0,00" autofocus id="st-total"></label>
     ${firstHint}
     <div class="err" id="f-err"></div>
@@ -1763,7 +1765,9 @@ function startDialog(first){
       if (isNaN(v)){ f.querySelector('#f-err').textContent = 'Bitte einen Betrag wie 1250,00 eingeben (minus für Dispo).'; return false; }
       const sv = f.save ? (f.save.value.trim() ? parseAmt(f.save.value) : 0) : (S.finance.start.save||0);
       if (isNaN(sv)){ f.querySelector('#f-err').textContent = 'Bitte beim Sparen einen Betrag wie 500,00 eingeben.'; return false; }
-      S.finance.start.bank = v - S.finance.start.cash; S.finance.start.save = sv; save('finance'); toast('Anfangsbestand gespeichert');
+      if (isKid()){ const toCash = kidAcc() === 'cash'; S.finance.start.cash = toCash ? v : 0; S.finance.start.bank = toCash ? 0 : v; }
+      else S.finance.start.bank = v - S.finance.start.cash;
+      S.finance.start.save = sv; save('finance'); toast(isKid() ? 'Startbetrag gespeichert' : 'Anfangsbestand gespeichert');
     });
     return;
   }
@@ -1772,13 +1776,14 @@ function startDialog(first){
     <p class="hint">Der Stand, mit dem du startest – also bevor deine erste Buchung hier eingetragen ist.</p>
     <div class="row2">
       <label class="field"><span>${isKid() ? 'Konto (€)' : 'Bankkonto (€)'}</span><input class="amount-in" name="bank" inputmode="decimal" value="${amtInput(S.finance.start.bank)}" placeholder="0,00" id="st-bank"></label>
-      <label class="field"><span>${isKid() ? 'Portemonnaie (€)' : 'Bargeld (€)'}</span><input class="amount-in" name="cash" inputmode="decimal" value="${amtInput(S.finance.start.cash)}" placeholder="0,00" id="st-cash"></label>
+      <label class="field"><span>${isKid() ? 'Bargeld (€)' : 'Bargeld (€)'}</span><input class="amount-in" name="cash" inputmode="decimal" value="${amtInput(S.finance.start.cash)}" placeholder="0,00" id="st-cash"></label>
     </div>
     ${firstHint}
     <div class="err" id="f-err"></div>
     <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>${cancelLbl}</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
       const b = f.bank.value.trim() ? parseAmt(f.bank.value) : 0, c = f.cash.value.trim() ? parseAmt(f.cash.value) : 0;
       if (isNaN(b)||isNaN(c)){ f.querySelector('#f-err').textContent = 'Bitte Beträge wie 1250,00 eingeben (minus für Dispo).'; return false; }
+      if (isKid() && (b < 0 || c < 0)){ f.querySelector('#f-err').textContent = 'Im Kindermodus kann der Startbetrag nicht im Minus sein.'; return false; }
       const sv = f.save ? (f.save.value.trim() ? parseAmt(f.save.value) : 0) : (S.finance.start.save||0);
       if (isNaN(sv)){ f.querySelector('#f-err').textContent = 'Bitte beim Sparen einen Betrag wie 500,00 eingeben.'; return false; }
       S.finance.start = {bank:b, cash:c, save:sv}; save('finance'); toast('Anfangsbestände gespeichert');
@@ -1997,14 +2002,14 @@ const KID_CATS = {
 };
 // Wo hat das Kind sein Geld? 'cash' = Portemonnaie, 'bank' = Bankkonto, 'both' = beides
 const kidAcc = () => ['cash','bank','both'].includes(S.settings.kidAccounts) ? S.settings.kidAccounts : 'cash';
-const ACC_KID = {cash:'Portemonnaie', bank:'Konto'};
+const ACC_KID = {cash:'Bargeld', bank:'Konto'};
 function kidBalance(excludeId, acct){
   const start = acct ? S.finance.start[acct] : S.finance.start.bank + S.finance.start.cash;
   return S.finance.tx.reduce((sum,t) => { if (t.id===excludeId) return sum; const e = effect(t); return sum + (acct ? e[acct] : e.bank + e.cash); }, start);
 }
 // Wo liegt das Geld einer Kinder-Buchung? null = alles zusammen (nur ein Ort)
 const kidPlace = acc => kidAcc()==='both' ? (acc==='bank' ? 'bank' : 'cash') : null;
-const kidPlaceName = acc => { const m = kidAcc(); const b = m==='both' ? acc==='bank' : m==='bank'; return b ? {in:'auf deinem Konto', name:'Das Konto'} : {in:'in deinem Portemonnaie', name:'Das Portemonnaie'}; };
+const kidPlaceName = acc => { const m = kidAcc(); const b = m==='both' ? acc==='bank' : m==='bank'; return b ? {in:'auf deinem Konto', name:'Das Konto'} : {in:'beim Bargeld', name:'Das Bargeld'}; };
 // Bei null neu beginnen – nur mit Eltern-PIN
 function kidResetStart(){
   if (!pinSet()){
@@ -2021,8 +2026,8 @@ function kidResetDialog(){
   const mode = kidAcc(), sv = savingsOn(), SVN = SV();
   const n = S.finance.tx.length, nRec = (S.finance.recurring || []).length;
   const rows = [];
-  if (mode === 'both'){ rows.push(['Portemonnaie', kidBalance(null,'cash')], ['Konto', kidBalance(null,'bank')]); }
-  else rows.push([mode === 'bank' ? 'Konto' : 'Portemonnaie', kidBalance()]);
+  if (mode === 'both'){ rows.push(['Bargeld', kidBalance(null,'cash')], ['Konto', kidBalance(null,'bank')]); }
+  else rows.push([mode === 'bank' ? 'Konto' : 'Bargeld', kidBalance()]);
   if (sv || savingsBalance()) rows.push([SVN.name, savingsBalance()]);
   const form = openDlg(`
     <h3>Bei null neu beginnen?</h3>
@@ -2076,7 +2081,7 @@ function renderKidFinance(){
       const inn = t.type==='einnahme', sav = isSave(t), mv = isTransfer(t), ln = isLoan(t);
       const title = ln ? loanTitle(t) : t.text || (t.type==='sparen' ? SVN.putLong : t.type==='entsparen' ? SVN.takeLong : t.type==='auszahlung' ? 'Geldautomat: ausgezahlt' : t.type==='einzahlung' ? 'Geldautomat: eingezahlt' : inn ? 'Geld bekommen' : 'Geld ausgegeben');
       const plus = inn || t.type==='entsparen' || (ln && loanPlus(t));
-      const where = mode==='both' ? (mv ? (t.type==='auszahlung' ? 'Konto → Portemonnaie' : 'Portemonnaie → Konto') : ACC_KID[t.account==='bank'?'bank':'cash']) : '';
+      const where = mode==='both' ? (mv ? (t.type==='auszahlung' ? 'Konto → Bargeld' : 'Bargeld → Konto') : ACC_KID[t.account==='bank'?'bank':'cash']) : '';
       rows += `<button class="tx kid-tx${t.pending?' is-pending':''}" data-act="edittx" data-id="${esc(t.id)}">
         <span class="ico ${mv||ln?'transfer':sav?'sparen':inn?'einnahme':'ausgabe'}" aria-hidden="true">${ln?(loanPlus(t)?'↙':'↗'):mv?'⇄':sav?(t.type==='sparen'?'↓':'↑'):inn?'+':'−'}</span>
         <span class="t">${esc(title)}</span>
@@ -2087,7 +2092,7 @@ function renderKidFinance(){
   }
   const label = mode==='bank' ? 'Mein Konto' : 'Mein Geld';
   const split = mode==='both' ? `<div class="kid-split">
-      <div><span class="label">Portemonnaie</span><b class="num ${kidBalance(null,'cash')<0?'neg-t':''}">${euro(kidBalance(null,'cash'))}</b></div>
+      <div><span class="label">Bargeld</span><b class="num ${kidBalance(null,'cash')<0?'neg-t':''}">${euro(kidBalance(null,'cash'))}</b></div>
       <div><span class="label">Konto</span><b class="num ${kidBalance(null,'bank')<0?'neg-t':''}">${euro(kidBalance(null,'bank'))}</b></div>
     </div>` : '';
   return `
@@ -2126,7 +2131,7 @@ function renderKidFinance(){
 // Bei Portemonnaie + Konto: zuerst fragen, ob Bargeld oder Bankkonto
 function kidAskAccount(type, preset){
   if (kidAcc() !== 'both'){
-    if (type==='ausgabe' && kidBalance() <= 0){ toast(kidAcc()==='bank' ? 'Auf deinem Konto ist gerade kein Geld.' : 'In deinem Portemonnaie ist gerade kein Geld.'); return; }
+    if (type==='ausgabe' && kidBalance() <= 0){ toast(kidAcc()==='bank' ? 'Auf deinem Konto ist gerade kein Geld.' : 'Du hast gerade kein Bargeld.'); return; }
     return kidTxDialog(null, type, preset);
   }
   const inn = type === 'einnahme', cash = kidBalance(null,'cash'), bank = kidBalance(null,'bank');
@@ -2136,7 +2141,7 @@ function kidAskAccount(type, preset){
     <p style="margin:0;font-weight:600">${inn ? 'Wohin kommt das Geld?' : 'Wie hast du bezahlt?'}</p>
     ${noCash && noBank ? '<p class="hint warn" style="margin:0">Du hast gerade kein Geld, das du ausgeben kannst.</p>' : ''}
     <div class="acc-ask">
-      <button type="button" class="acc-pick" data-acc="cash" ${noCash ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💶</span><b>Bargeld</b><small>${noCash ? 'Kein Geld im Portemonnaie' : 'Im Portemonnaie: ' + euro(cash)}</small></button>
+      <button type="button" class="acc-pick" data-acc="cash" ${noCash ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💶</span><b>Bargeld</b><small>${noCash ? 'Kein Bargeld da' : 'Bargeld: ' + euro(cash)}</small></button>
       <button type="button" class="acc-pick" data-acc="bank" ${noBank ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💳</span><b>Bankkonto</b><small>${noBank ? 'Kein Geld auf dem Konto' : 'Auf dem Konto: ' + euro(bank)}</small></button>
     </div>
     <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button></div>`, () => false);
@@ -2160,7 +2165,7 @@ function kidTxDialog(t, type, preset){
     ${isNew && t.scan ? scanHint(t.scan) : ''}
     <label class="field"><span>Wie viel? (€)</span><input class="amount-in kid-amount" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(t.amount)}" autofocus id="kid-amount"></label>
     ${mode==='both' ? `<div class="field" ${asked ? 'hidden' : ''}><span>${inn ? 'Wohin kommt das Geld?' : 'Womit hast du bezahlt?'}</span>
-      <div class="seg"><label><input type="radio" name="account" value="cash" ${t.account!=='bank'?'checked':''}><span>${inn ? 'Ins Portemonnaie' : 'Bargeld'}</span></label><label><input type="radio" name="account" value="bank" ${t.account==='bank'?'checked':''}><span>${inn ? 'Aufs Konto' : 'Mit Karte / Konto'}</span></label></div></div>` : ''}
+      <div class="seg"><label><input type="radio" name="account" value="cash" ${t.account!=='bank'?'checked':''}><span>${inn ? 'Als Bargeld' : 'Bargeld'}</span></label><label><input type="radio" name="account" value="bank" ${t.account==='bank'?'checked':''}><span>${inn ? 'Aufs Konto' : 'Mit Karte / Konto'}</span></label></div></div>` : ''}
     ${inn ? '' : `<p class="hint" id="kid-left" style="margin:0"></p>`}
     <label class="field"><span>${inn ? 'Von wem oder wofür?' : 'Was hast du gekauft?'}</span><input name="text" value="${esc(t.text)}" placeholder="${inn ? 'z. B. Taschengeld, Geburtstag von Oma' : 'z. B. Eis, Comic, Kino'}" id="kid-text"></label>
     ${itemsDetails(t.items)}
@@ -2199,7 +2204,7 @@ function kidTxDialog(t, type, preset){
     const upd = () => {
       const acc = mode==='both' ? form.querySelector('input[name=account]:checked').value : null;
       const avail = kidBalance(t.id, acc);
-      const where = acc ? (acc==='bank' ? ' auf dem Konto' : ' im Portemonnaie') : '';
+      const where = acc ? (acc==='bank' ? ' auf dem Konto' : ' an Bargeld') : '';
       const a = parseAmt(form.amount.value);
       if (!(a > 0)){ left.textContent = `Du hast gerade ${euro(avail)}${where}.`; left.className = 'hint'; return; }
       const rest = avail - a;
@@ -2224,8 +2229,8 @@ function kidAtmAsk(){
     <h3>🏧 Geldautomat</h3>
     <p style="margin:0;font-weight:600">Was möchtest du machen?</p>
     <div class="acc-ask">
-      <button type="button" class="acc-pick" data-mv="auszahlung" ${bank <= 0 ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💶</span><b>Auszahlen</b><small>${bank <= 0 ? 'Kein Geld auf dem Konto' : 'Konto → Portemonnaie<br>Auf dem Konto: ' + euro(bank)}</small></button>
-      <button type="button" class="acc-pick" data-mv="einzahlung" ${cash <= 0 ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">🏦</span><b>Einzahlen</b><small>${cash <= 0 ? 'Kein Geld im Portemonnaie' : 'Portemonnaie → Konto<br>Im Portemonnaie: ' + euro(cash)}</small></button>
+      <button type="button" class="acc-pick" data-mv="auszahlung" ${bank <= 0 ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💶</span><b>Auszahlen</b><small>${bank <= 0 ? 'Kein Geld auf dem Konto' : 'Konto → Bargeld<br>Auf dem Konto: ' + euro(bank)}</small></button>
+      <button type="button" class="acc-pick" data-mv="einzahlung" ${cash <= 0 ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">🏦</span><b>Einzahlen</b><small>${cash <= 0 ? 'Kein Bargeld da' : 'Bargeld → Konto<br>Bargeld: ' + euro(cash)}</small></button>
     </div>
     <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button></div>`, () => false);
   form.querySelectorAll('.acc-pick').forEach(b => b.addEventListener('click', () => { if (!b.disabled) kidMoveDialog(null, b.dataset.mv); }));
@@ -2234,7 +2239,7 @@ function kidMoveDialog(t, preType){
   const isNew = !t;
   t = t ? clone(t) : {type: preType || 'auszahlung', amount:0, date: (today().startsWith(ui.month)? today() : ui.month+'-01'), text:''};
   const form = openDlg(`
-    <h3>${preType ? (preType==='auszahlung' ? 'Auszahlen <span class="acc-tag">Konto → Portemonnaie</span>' : 'Einzahlen <span class="acc-tag">Portemonnaie → Konto</span>') : '🏧 Geldautomat'}</h3>
+    <h3>${preType ? (preType==='auszahlung' ? 'Auszahlen <span class="acc-tag">Konto → Bargeld</span>' : 'Einzahlen <span class="acc-tag">Bargeld → Konto</span>') : '🏧 Geldautomat'}</h3>
     <div class="seg" role="radiogroup" aria-label="Richtung" ${preType ? 'hidden' : ''}>
       <label><input type="radio" name="type" value="auszahlung" ${t.type==='auszahlung'?'checked':''}><span>Auszahlen</span></label>
       <label><input type="radio" name="type" value="einzahlung" ${t.type==='einzahlung'?'checked':''}><span>Einzahlen</span></label>
@@ -2249,7 +2254,7 @@ function kidMoveDialog(t, preType){
       if (!(amount > 0)){ err.textContent = 'Bitte trag ein, wie viel Geld es war.'; f.amount.focus(); return false; }
       const from = f.type.value==='auszahlung' ? 'bank' : 'cash';
       const avail = kidBalance(t.id, from);
-      if (amount > avail){ err.textContent = `So viel ist ${from==='bank' ? 'auf dem Konto' : 'im Portemonnaie'} nicht. Du hast dort ${euro(avail)}.`; return false; }
+      if (amount > avail){ err.textContent = `So viel ist ${from==='bank' ? 'auf dem Konto' : 'an Bargeld'} nicht da. Du hast dort ${euro(avail)}.`; return false; }
       const rec = {id: t.id || newId(), created: t.created || Date.now(), type: f.type.value, amount, date: f.date.value || today(), text: ''};
       const i = S.finance.tx.findIndex(x => x.id===rec.id);
       if (i>=0) S.finance.tx[i] = rec; else S.finance.tx.push(rec);
@@ -2258,7 +2263,7 @@ function kidMoveDialog(t, preType){
     });
   const upd = () => {
     const from = form.type.value==='auszahlung' ? 'bank' : 'cash';
-    form.querySelector('#mv-left').textContent = `${from==='bank' ? 'Auf dem Konto' : 'Im Portemonnaie'} hast du gerade ${euro(kidBalance(t.id, from))}.`;
+    form.querySelector('#mv-left').textContent = `${from==='bank' ? 'Auf dem Konto' : 'An Bargeld'} hast du gerade ${euro(kidBalance(t.id, from))}.`;
   };
   form.querySelectorAll('input[name=type]').forEach(r => r.addEventListener('change', upd)); upd();
   const del = form.querySelector('#mv-del');
@@ -2312,7 +2317,7 @@ function lendPanel(){
 function loanAsk(dir){
   const out = dir === 'out';
   if (kidAcc() !== 'both'){
-    if (out && kidBalance() <= 0){ toast(kidAcc()==='bank' ? 'Auf deinem Konto ist gerade kein Geld zum Verleihen.' : 'In deinem Portemonnaie ist gerade kein Geld zum Verleihen.'); return; }
+    if (out && kidBalance() <= 0){ toast(kidAcc()==='bank' ? 'Auf deinem Konto ist gerade kein Geld zum Verleihen.' : 'Du hast gerade kein Bargeld zum Verleihen.'); return; }
     return loanDialog(dir, kidAcc());
   }
   const cash = kidBalance(null,'cash'), bank = kidBalance(null,'bank');
@@ -2322,7 +2327,7 @@ function loanAsk(dir){
     <p style="margin:0;font-weight:600">${out ? 'Woher nimmst du das Geld?' : 'Wohin kommt das Geld?'}</p>
     ${noC && noB ? '<p class="hint warn" style="margin:0">Du hast gerade kein Geld, das du verleihen kannst.</p>' : ''}
     <div class="acc-ask">
-      <button type="button" class="acc-pick" data-acc="cash" ${noC ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💶</span><b>Bargeld</b><small>${noC ? 'Kein Geld im Portemonnaie' : 'Im Portemonnaie: ' + euro(cash)}</small></button>
+      <button type="button" class="acc-pick" data-acc="cash" ${noC ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💶</span><b>Bargeld</b><small>${noC ? 'Kein Bargeld da' : 'Bargeld: ' + euro(cash)}</small></button>
       <button type="button" class="acc-pick" data-acc="bank" ${noB ? 'disabled' : ''}><span class="acc-ico" aria-hidden="true">💳</span><b>Bankkonto</b><small>${noB ? 'Kein Geld auf dem Konto' : 'Auf dem Konto: ' + euro(bank)}</small></button>
     </div>
     <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button></div>`, () => false);
@@ -2360,7 +2365,7 @@ function loanDialog(dir, acc){
   const left = form.querySelector('#lend-left');
   const upd = () => {
     const have = kidBalance(null, kidPlace(acc)), pn = kidPlaceName(acc), a = parseAmt(form.amount.value);
-    const where = mode==='both' ? (acc==='bank' ? ' auf dem Konto' : ' im Portemonnaie') : (mode==='bank' ? ' auf dem Konto' : ' im Portemonnaie');
+    const where = mode==='both' ? (acc==='bank' ? ' auf dem Konto' : ' an Bargeld') : (mode==='bank' ? ' auf dem Konto' : ' an Bargeld');
     if (!(a > 0)){ left.textContent = `Du hast gerade ${euro(have)}${where}.`; left.className = 'hint'; return; }
     if (out){ const r = have - a; left.textContent = r >= 0 ? `Danach hast du noch ${euro(r)}${where}. Die ${euro(a)} bekommst du zurück.` : `Geht nicht: Du hast nur ${euro(have)}${where}. ${pn.name} darf nicht ins Minus.`; left.className = r >= 0 ? 'hint' : 'hint warn'; }
     else { left.textContent = `Danach hast du ${euro(have + a)}${where}. Die ${euro(a)} musst du zurückgeben.`; left.className = 'hint'; }
@@ -2379,7 +2384,7 @@ function loanBackDialog(id){
       <div class="seg"><label><input type="radio" name="part" value="all" checked><span>Alles (${euro(open)})</span></label><label><input type="radio" name="part" value="some"><span>Einen Teil</span></label></div></div>
     <label class="field" id="lb-amtf" hidden><span>Betrag (€)</span><input class="amount-in kid-amount" name="amount" inputmode="decimal" placeholder="0,00" id="lb-amount"></label>
     ${mode==='both' ? `<div class="field"><span>${out ? 'Wohin kommt das Geld?' : 'Womit hast du zurückgezahlt?'}</span>
-      <div class="seg"><label><input type="radio" name="account" value="cash" ${defAcc!=='bank'?'checked':''}><span>${out ? 'Ins Portemonnaie' : 'Bargeld'}</span></label><label><input type="radio" name="account" value="bank" ${defAcc==='bank'?'checked':''}><span>${out ? 'Aufs Konto' : 'Vom Konto'}</span></label></div></div>` : ''}
+      <div class="seg"><label><input type="radio" name="account" value="cash" ${defAcc!=='bank'?'checked':''}><span>${out ? 'Als Bargeld' : 'Bargeld'}</span></label><label><input type="radio" name="account" value="bank" ${defAcc==='bank'?'checked':''}><span>${out ? 'Aufs Konto' : 'Vom Konto'}</span></label></div></div>` : ''}
     <label class="field"><span>Wann?</span><input type="date" name="date" value="${today()}" id="lb-date"></label>
     <div class="err" id="f-err"></div>
     <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">${out ? 'Zurückbekommen' : 'Zurückgezahlt'}</button></div>`, f => {
@@ -2406,7 +2411,7 @@ function loanInfoDialog(id){
   const lid = tx0.loanId || tx0.id;
   const item = loanList(S.finance.tx).find(x => x.l.id === lid); if (!item) return;
   const {l, back, open} = item, out = l.type==='verliehen', mode = kidAcc();
-  const accN = t => mode==='both' ? (t.account==='bank' ? ' · Konto' : ' · Portemonnaie') : '';
+  const accN = t => mode==='both' ? (t.account==='bank' ? ' · Konto' : ' · Bargeld') : '';
   const form = openDlg(`
     <h3>${out ? 'An ' + esc(l.who) + ' verliehen' : 'Von ' + esc(l.who) + ' geliehen'}</h3>
     <div class="rs-list">
@@ -2558,7 +2563,7 @@ function renderKidOverview(k, live){
     const inn = t.type==='einnahme', sav = isSave(t), mv = isTransfer(t), ln = isLoan(t);
     const title = ln ? loanTitle(t) : t.text || (t.type==='sparen' ? 'Aufs ' + svName : t.type==='entsparen' ? 'Vom ' + svName : t.type==='auszahlung' ? 'Geldautomat: ausgezahlt' : t.type==='einzahlung' ? 'Geldautomat: eingezahlt' : inn ? 'Geld bekommen' : 'Geld ausgegeben');
     const plus = inn || t.type==='entsparen' || (ln && loanPlus(t));
-    const where = mode==='both' && !mv ? (t.account==='bank' ? 'Konto' : 'Portemonnaie') : mv ? (t.type==='auszahlung' ? 'Konto → Portemonnaie' : 'Portemonnaie → Konto') : '';
+    const where = mode==='both' && !mv ? (t.account==='bank' ? 'Konto' : 'Bargeld') : mv ? (t.type==='auszahlung' ? 'Konto → Bargeld' : 'Bargeld → Konto') : '';
     return `<${live?'button':'div'} class="tx${live?'':' ro'}${t.pending?' is-pending':''}"${live ? ' data-act="edittx" data-id="' + esc(t.id) + '"' : ''}>
       <span class="ico ${mv||ln?'transfer':sav?'sparen':inn?'einnahme':'ausgabe'}" aria-hidden="true">${ln?(loanPlus(t)?'↙':'↗'):mv?'⇄':sav?(t.type==='sparen'?'↓':'↑'):inn?'+':'−'}</span>
       <span class="t">${esc(title)}</span>
@@ -2577,7 +2582,7 @@ function renderKidOverview(k, live){
   </div>
   ${!live && stale ? `<div class="kv-warn">Dieser Stand ist ${Math.floor(age/864e5)} Tage alt. Für aktuelle Zahlen eine neue Sicherung vom Gerät des Kindes einlesen.</div>` : ''}
   <section class="accounts kv-cards" aria-label="Kontostände von ${esc(k.name)}">
-    <div class="acct total-sub"><span class="label">${mode==='bank' ? 'Konto' : 'Verfügbar'}</span><span class="bal ${money<0?'neg':''}">${euro(money)}</span><span class="sub">${mode==='both' ? `Portemonnaie ${euro(b.cash)} · Konto ${euro(b.bank)}` : mode==='bank' ? 'Bankkonto' : 'Portemonnaie'}</span></div>
+    <div class="acct total-sub"><span class="label">${mode==='bank' ? 'Konto' : 'Verfügbar'}</span><span class="bal ${money<0?'neg':''}">${euro(money)}</span><span class="sub">${mode==='both' ? `Bargeld ${euro(b.cash)} · Konto ${euro(b.bank)}` : mode==='bank' ? 'Bankkonto' : 'Bargeld'}</span></div>
     ${hasSave ? `<div class="acct save"><span class="label"><i></i>${svName}</span><span class="bal">${euro(b.save)}</span><span class="sub">${g ? 'Ziel: ' + esc(g.name || 'Sparziel') + ' ' + Math.round(Math.max(0, Math.min(100, b.save / g.amount * 100))) + ' %' : 'gespart'}</span></div>` : ''}
     <div class="acct total-sub"><span class="label">Gesamt</span><span class="bal">${euro(money + b.save)}</span><span class="sub">${hasSave ? 'inkl. ' + svName : 'alles zusammen'}</span></div>
   </section>
@@ -3105,7 +3110,7 @@ function catSplitDialog(r){
     const left = form.querySelector('#sp-left');
     if (kid){
       const acc = form.account ? form.querySelector('input[name=account]:checked').value : mode;
-      const have = kidBalance(null, kidPlace(acc)), rest = have - total, where = (kidPlace(acc) || mode) === 'bank' ? ' auf dem Konto' : ' im Portemonnaie';
+      const have = kidBalance(null, kidPlace(acc)), rest = have - total, where = (kidPlace(acc) || mode) === 'bank' ? ' auf dem Konto' : ' an Bargeld';
       left.textContent = rest >= 0 ? `Danach hast du noch ${euro(rest)}${where}.` : `Geht nicht: Du hast nur ${euro(have)}${where}.`;
       left.className = rest >= 0 ? 'hint' : 'hint warn';
     } else left.hidden = true;
