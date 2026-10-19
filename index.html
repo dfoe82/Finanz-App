@@ -338,6 +338,7 @@ body.single .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .mini-chips input:focus-visible + span{outline:2px solid var(--accent);outline-offset:1px}
 .it-groups{display:grid;gap:5px;padding:10px 12px;border-radius:12px;background:var(--sunk)}
 .it-groups div{display:flex;justify-content:space-between;gap:10px;font-size:.92rem}.it-groups .tot{border-top:1px solid var(--line);padding-top:5px;font-weight:700}
+.ocr-raw{margin:0;padding:10px 12px;border-top:1px solid var(--line);font:.78rem/1.4 var(--f-num);white-space:pre-wrap;max-height:30vh;overflow:auto}
 .pos-det{border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .pos-det summary{padding:10px 12px;font-weight:600;font-size:.9rem;cursor:pointer}
 .pos-list{display:grid;border-top:1px solid var(--line);max-height:30vh;overflow-y:auto}
@@ -597,9 +598,10 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '2.11.2';
+const APP_VERSION = '2.11.3';
 const SECTIONS = [['finanzen','Finanzen'],['sparen','Sparen'],['stundenplan','Stundenplan'],['hausaufgaben','Hausaufgaben'],['aufgaben','Aufgaben']];
 const CHANGELOG = [
+  ['2.11.3', '19.10.2026, 13:27 Uhr', ['Kassenbon: Positionen werden zuverlässiger erkannt (Texterkennung liest den Bon jetzt zeilenweise, mehr Schreibweisen von Preisen und Steuerkennzeichen, Preis in eigener Zeile oder Spalte)', 'Nach dem Scannen lässt sich der erkannte Text anzeigen und kopieren – hilft bei der Fehlersuche']],
   ['2.11.2', '19.10.2026, 09:43 Uhr', ['Kindermodus: „Portemonnaie“ heißt jetzt überall „Bargeld“']],
   ['2.11.1', '19.10.2026, 09:40 Uhr', ['Fehler behoben: Startbetrag landete bei „nur Portemonnaie“ bzw. „nur Bankkonto“ intern im falschen Topf – nach dem Umstellen auf „Beides“ stand dann z. B. Portemonnaie +15 € und Konto −15 €', 'Startbetrag-Fenster zeigt bei „Beides“ einen Hinweis, wenn ein Topf ins Minus geht']],
   ['2.11.0', '19.10.2026, 08:27 Uhr', ['Belege aufbewahren: Foto vom gescannten Kassenbon am Eintrag speichern, oder ein Foto bzw. eine PDF-Rechnung anhängen', 'Garantie-Datum je Beleg (mit „+ 2 Jahre“)', 'Großansicht mit Zoom und „Teilen / in Dateien sichern“', 'Neue Liste „Belege & Garantie“ in den Einstellungen', 'Sicherung wahlweise mit Belegen']],
@@ -2674,6 +2676,8 @@ async function getOcrWorker(onProgress){
   if (ocrWorker) return ocrWorker;
   await loadOcrLib();
   ocrWorker = await Tesseract.createWorker('deu', 1, { logger: m => { if (m && typeof m.progress === 'number') onProgress(m.status, m.progress); } });
+  // Kassenbons: eine Spalte mit unterschiedlich großen Zeilen, Leerzeichen beibehalten
+  try { await ocrWorker.setParameters({ tessedit_pageseg_mode: '4', preserve_interword_spaces: '1' }); } catch(e){}
   return ocrWorker;
 }
 // Foto verkleinern und in Graustufen umwandeln – das macht die Erkennung schneller und genauer
@@ -2776,7 +2780,7 @@ function scanReceipt(file, done){
       if (cancelled) return;
       const { data } = await w.recognize(img);
       if (cancelled) return;
-      const r = parseReceipt(data && data.text); if (photo) r.photo = photo;
+      const r = parseReceipt(data && data.text); if (photo) r.photo = photo; r.text = String((data && data.text) || '').trim();
       dlg.close();
       if (!r.amount && !r.shop){ toast('Auf dem Foto wurde kein Betrag erkannt. Bitte den Bon gerade und gut beleuchtet fotografieren.'); }
       done(r);
@@ -2958,22 +2962,40 @@ function niceName(n){
 function parseItems(lines){
   let end = lines.findIndex(l => /(zu\s*zahlen|summe|gesamtbetrag|gesamt|endbetrag|total)/i.test(l) && !/zwischen/i.test(l));
   if (end < 0) end = lines.length;
-  const out = [];
+  const LET = /[A-Za-zÄÖÜäöüß]/;
+  const letters = x => x.replace(/[^A-Za-zÄÖÜäöüß]/g, '').length;
+  // Preis am Zeilenende, danach evtl. „-“, „€“, Steuerkennzeichen (A, B, 1, 2 …) oder „*“
+  const ITEM = /^(.*?[A-Za-zÄÖÜäöüß].*?)\s+(-?)\s?(\d{1,4})\s?[,.]\s?(\d{2})(?!\d)\s*(-?)\s*(?:€|eur)?(?:\s*[A-Z0-9*#]{1,2})?\s*\*?\s*$/i;
+  const PRICE_ONLY = /^\s*(?:€|eur)?\s*(-?)\s?(\d{1,4})\s?[,.]\s?(\d{2})(?!\d)\s*(-?)\s*(?:€|eur)?(?:\s*[A-Z0-9*#]{1,2})?\s*\*?\s*$/i;
+  const cents = (sg1, a, b, sg2) => { let v = parseInt(a,10)*100 + parseInt(b,10); return (sg1 === '-' || sg2 === '-') ? -v : v; };
+  const okName = n => !ITEM_SKIP.test(n) && letters(n) >= 2 && !(/^\d+\s*(stk|st|x)\b/i.test(n) && letters(n) < 4);
+  const clean = n => n.replace(/\s+\d+\s?[,.]\s?\d{2}\s*(?:€|eur)?\s*$/i, '').replace(/\s+\d+\s*(?:stk\.?\s*)?[x×]\s*$/i, '').trim();
+  const out = [], nameOnly = [], priceOnly = [];
   for (let i = 0; i < end; i++){
     const l = lines[i];
-    const m = l.match(/^(.*?[A-Za-zÄÖÜäöüß].*?)\s+(-?)\s?(\d{1,4})\s?[,.]\s?(\d{2})(?!\d)\s*(-?)\s*(?:€|eur)?(?:\s*(?:[A-D12]|\*))*\s*$/i);
-    if (!m) continue;
-    let name = m[1];
-    if (ITEM_SKIP.test(name)) continue;
-    if (/^\d+\s*(stk|st|x)\b/i.test(name) && name.replace(/[^A-Za-zÄÖÜäöüß]/g,'').length < 4) continue;
-    name = name.replace(/\s+\d+\s?[,.]\s?\d{2}\s*$/, '');   // Einzelpreis bei „2 x 0,99 1,98“
-    if (name.replace(/[^A-Za-zÄÖÜäöüß]/g,'').length < 2) continue;
-    let a = parseInt(m[3],10)*100 + parseInt(m[4],10);
-    if (m[2] === '-' || m[5] === '-') a = -a;
-    if (!a) continue;
-    out.push({n: niceName(name), a});
+    let m = l.match(ITEM);
+    if (m){
+      const name = clean(m[1]);
+      if (okName(name)){ const a = cents(m[2], m[3], m[4], m[5]); if (a) out.push({n: niceName(name), a, at: i}); }
+      continue;
+    }
+    m = l.match(PRICE_ONLY);
+    if (m){ priceOnly.push({i, a: cents(m[1], m[2], m[3], m[4])}); continue; }
+    if (LET.test(l) && okName(l) && !/\d{1,2}[.:]\d{2}[.:]\d{2,4}/.test(l)) nameOnly.push({i, n: l});
   }
-  return out.slice(0, 60);
+  // Namen ohne Preis + Preise in eigenen Zeilen: direkt darunter oder als eigene Spalte
+  const seq = [...nameOnly.map(x => ({t:'N', i:x.i, n:x.n})), ...priceOnly.map(q => ({t:'P', i:q.i, a:q.a}))].sort((x, y) => x.i - y.i);
+  let k = 0;
+  while (k < seq.length){
+    if (seq[k].t !== 'N'){ k++; continue; }
+    let j = k; while (j < seq.length && seq[j].t === 'N') j++;
+    let m2 = j; while (m2 < seq.length && seq[m2].t === 'P') m2++;
+    const names = seq.slice(k, j), prices = seq.slice(j, m2);
+    if (prices.length === 1 && names[names.length-1].i + 1 === prices[0].i){ if (prices[0].a) out.push({n: niceName(names[names.length-1].n), a: prices[0].a, at: names[names.length-1].i}); }
+    else if (prices.length >= 2){ const c = Math.min(names.length, prices.length), ns = names.slice(names.length - c); for (let q = 0; q < c; q++) if (prices[q].a) out.push({n: niceName(ns[q].n), a: prices[q].a, at: ns[q].i}); }
+    k = Math.max(m2, j);
+  }
+  return out.sort((x, y) => x.at - y.at).map(({n, a}) => ({n, a})).slice(0, 60);
 }
 // Kategorie-Vorschlag für eine Position
 const KID_SHORT = {'Süßigkeiten & Snacks':'Süßes', 'Spielzeug & Spiele':'Spielzeug', 'Bücher & Hefte':'Bücher & Hefte', 'Ausflug & Freizeit':'Freizeit', 'Geschenke':'Geschenke', 'Sonstiges':'Sonstiges'};
@@ -3015,6 +3037,7 @@ function itemsDialog(r, keepMode){
     <div class="it-list" id="it-list"></div>
     <button type="button" class="btn sm" id="it-add" style="justify-self:start">+ Position</button>
     <div class="it-sum" id="it-sum"></div>
+    ${ocrRaw(r)}
     <div class="field"><span>Wie speichern?</span>
       <div class="seg"><label><input type="radio" name="how" value="one" ${keepMode !== 'split' ? 'checked' : ''}><span>Ein Eintrag</span></label><label><input type="radio" name="how" value="split" ${keepMode === 'split' ? 'checked' : ''}><span>Nach Kategorien</span></label></div></div>
     <div class="err" id="f-err"></div>
@@ -3131,13 +3154,17 @@ function scanPreset(r){
   if (r.cat) p.cat = r.cat;
   return p;
 }
+function ocrRaw(r){
+  if (!r || !r.text) return '';
+  return `<details class="pos-det ocr-det"><summary>Erkannten Text anzeigen</summary><pre class="ocr-raw">${esc(r.text)}</pre><button type="button" class="btn sm" style="margin:0 12px 10px" onclick="var t=this.previousElementSibling.textContent,b=this;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Kopiert ✓'},function(){b.textContent='Kopieren nicht möglich'})">Text kopieren</button></details>`;
+}
 function scanHint(r){
   if (!r) return '';
   const parts = [];
   if (r.amount) parts.push((r.sure ? 'Summe ' : 'Betrag ') + euro(r.amount));
   if (r.shop) parts.push(esc(r.shop));
   if (r.date) parts.push(new Date(r.date + 'T12:00:00').toLocaleDateString('de-DE'));
-  return `<p class="hint scan-hint" style="margin:0">${CAM_ICON}<span>${parts.length ? 'Vom Beleg erkannt: ' + parts.join(' · ') + '. Bitte kurz prüfen.' : 'Auf dem Beleg wurde nichts Eindeutiges erkannt. Bitte die Angaben selbst eintragen.'}</span></p>`;
+  return `<p class="hint scan-hint" style="margin:0">${CAM_ICON}<span>${parts.length ? 'Vom Beleg erkannt: ' + parts.join(' · ') + '. Bitte kurz prüfen.' : 'Auf dem Beleg wurde nichts Eindeutiges erkannt. Bitte die Angaben selbst eintragen.'}${r.items && r.items.length < 2 && r.text ? ' Einzelne Positionen wurden nicht erkannt.' : ''}</span></p>${ocrRaw(r)}`;
 }
 const scanButton = (id, label) => `<label class="btn scan-btn">${CAM_ICON}<span>${label}</span><input type="file" accept="image/*" capture="environment" class="file-hidden" id="${id}"></label>`;
 
