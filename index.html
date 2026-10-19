@@ -339,6 +339,8 @@ body.single .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .it-groups{display:grid;gap:5px;padding:10px 12px;border-radius:12px;background:var(--sunk)}
 .it-groups div{display:flex;justify-content:space-between;gap:10px;font-size:.92rem}.it-groups .tot{border-top:1px solid var(--line);padding-top:5px;font-weight:700}
 .ocr-raw{margin:0;padding:10px 12px;border-top:1px solid var(--line);font:.78rem/1.4 var(--f-num);white-space:pre-wrap;max-height:30vh;overflow:auto}
+.split-btn{justify-self:start}
+#f-split{display:grid}
 .pos-det{border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .pos-det summary{padding:10px 12px;font-weight:600;font-size:.9rem;cursor:pointer}
 .pos-list{display:grid;border-top:1px solid var(--line);max-height:30vh;overflow-y:auto}
@@ -598,9 +600,10 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '2.11.3';
+const APP_VERSION = '2.11.4';
 const SECTIONS = [['finanzen','Finanzen'],['sparen','Sparen'],['stundenplan','Stundenplan'],['hausaufgaben','Hausaufgaben'],['aufgaben','Aufgaben']];
 const CHANGELOG = [
+  ['2.11.4', '19.10.2026, 13:37 Uhr', ['Neuer Knopf „🧾 Positionen / nach Kategorien aufteilen“ bei jeder neuen Ausgabe – auch wenn der Scan keine Positionen erkannt hat, lassen sich Positionen selbst eintragen und aufteilen']],
   ['2.11.3', '19.10.2026, 13:27 Uhr', ['Kassenbon: Positionen werden zuverlässiger erkannt (Texterkennung liest den Bon jetzt zeilenweise, mehr Schreibweisen von Preisen und Steuerkennzeichen, Preis in eigener Zeile oder Spalte)', 'Nach dem Scannen lässt sich der erkannte Text anzeigen und kopieren – hilft bei der Fehlersuche']],
   ['2.11.2', '19.10.2026, 09:43 Uhr', ['Kindermodus: „Portemonnaie“ heißt jetzt überall „Bargeld“']],
   ['2.11.1', '19.10.2026, 09:40 Uhr', ['Fehler behoben: Startbetrag landete bei „nur Portemonnaie“ bzw. „nur Bankkonto“ intern im falschen Topf – nach dem Umstellen auf „Beides“ stand dann z. B. Portemonnaie +15 € und Konto −15 €', 'Startbetrag-Fenster zeigt bei „Beides“ einen Hinweis, wenn ein Topf ins Minus geht']],
@@ -1657,6 +1660,7 @@ function txDialog(t, preset){
     </div>
     <label class="field"><span>Beschreibung</span><input name="text" value="${esc(t.text)}" placeholder="z. B. Wocheneinkauf" id="tx-text"></label>
     ${itemsDetails(t.items)}
+    ${isNew && !(t.items && t.items.length) ? '<div id="f-split"><button type="button" class="btn sm split-btn" id="split-open">🧾 Positionen / nach Kategorien aufteilen</button></div>' : ''}
     <div id="f-bel">${belegBlock(t)}</div>
     <label class="field" id="f-cat"><span>Kategorie</span><input name="cat" list="catlist" value="${esc(t.cat)}" placeholder="z. B. Lebensmittel" id="tx-cat">
       <datalist id="catlist">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist></label>
@@ -1681,10 +1685,11 @@ function txDialog(t, preset){
       save('finance'); toast(isNew?'Buchung gespeichert':'Änderung gespeichert');
     });
   const belSt = belegWire(form, t);
+  const spl = form.querySelector('#split-open'); if (spl) spl.addEventListener('click', () => openSplitFrom(form, t));
   const txs = form.querySelector('#tx-scan'); if (txs) txs.addEventListener('change', e => { const f = e.target.files[0]; if (f) scanReceipt(f, afterScan); });
   const sync2 = () => {
     const type = form.type.value, tr = type==='einzahlung'||type==='auszahlung';
-    form.querySelector('#f-acct').hidden = tr || one; form.querySelector('#f-cat').hidden = tr; form.querySelector('#f-bel').hidden = tr;
+    form.querySelector('#f-acct').hidden = tr || one; form.querySelector('#f-cat').hidden = tr; form.querySelector('#f-bel').hidden = tr; const fs = form.querySelector('#f-split'); if (fs) fs.hidden = type !== 'ausgabe';
     const h = form.querySelector('#f-hint'); h.hidden = !tr;
     if (tr) h.textContent = type==='einzahlung' ? 'Bargeld wird aufs Bankkonto eingezahlt: Bargeld sinkt, Bankkonto steigt.' : 'Geld wird vom Bankkonto abgehoben: Bankkonto sinkt, Bargeld steigt.';
   };
@@ -2171,6 +2176,7 @@ function kidTxDialog(t, type, preset){
     ${inn ? '' : `<p class="hint" id="kid-left" style="margin:0"></p>`}
     <label class="field"><span>${inn ? 'Von wem oder wofür?' : 'Was hast du gekauft?'}</span><input name="text" value="${esc(t.text)}" placeholder="${inn ? 'z. B. Taschengeld, Geburtstag von Oma' : 'z. B. Eis, Comic, Kino'}" id="kid-text"></label>
     ${itemsDetails(t.items)}
+    ${!inn && isNew && !(t.items && t.items.length) ? '<button type="button" class="btn sm split-btn" id="split-open">🧾 Positionen / nach Kategorien aufteilen</button>' : ''}
     ${inn ? '' : belegBlock(t)}
     <div class="field"><span>Was passt am besten?</span>
       <div class="cat-chips">${cats.map(c => `<label><input type="radio" name="cat" value="${esc(c)}" ${t.cat===c?'checked':''}><span>${esc(c)}</span></label>`).join('')}</div>
@@ -2201,6 +2207,7 @@ function kidTxDialog(t, type, preset){
     });
   const ks = form.querySelector('#kid-scan'); if (ks) ks.addEventListener('change', e => { const f = e.target.files[0]; if (f) scanReceipt(f, afterScan); });
   const belSt = inn ? null : belegWire(form, t);
+  const spl = form.querySelector('#split-open'); if (spl) spl.addEventListener('click', () => openSplitFrom(form, t));
   const left = form.querySelector('#kid-left');
   if (left){
     const upd = () => {
@@ -3027,6 +3034,16 @@ function afterScan(r){
   if (r.items && r.items.length >= 2) return itemsDialog(r);
   const p = scanPreset(r);
   return isKid() ? kidAskAccount('ausgabe', p) : txDialog(null, p);
+}
+
+// Aus einem Buchungsdialog heraus: Positionen selbst eintragen bzw. erkannte bearbeiten
+function openSplitFrom(form, t){
+  const base = t.scan ? {...t.scan} : {};
+  const amt = parseAmt(form.amount.value);
+  const r = {...base, amount: amt > 0 ? amt : (base.amount || 0), date: (form.date && form.date.value) || base.date || today(),
+    shop: (form.text && form.text.value.trim()) || base.shop || '', cat: base.cat || '', photo: t.photo || base.photo || null};
+  r.items = (base.items && base.items.length) ? base.items : [{n:'', a:0}, {n:'', a:0}];
+  itemsDialog(r, 'split');
 }
 function itemsDialog(r, keepMode){
   const items = r.items.map(x => ({...x}));
