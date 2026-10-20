@@ -601,9 +601,10 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '2.12.0';
+const APP_VERSION = '2.12.1';
 const SECTIONS = [['finanzen','Finanzen'],['sparen','Sparen'],['stundenplan','Stundenplan'],['hausaufgaben','Hausaufgaben'],['aufgaben','Aufgaben']];
 const CHANGELOG = [
+  ['2.12.1', '20.10.2026, 07:33 Uhr', ['Kassenbon: gewölbte und schräg fotografierte Bons werden abschnittsweise gerade gezogen, damit Namen und Preise in einer Zeile landen', 'Ausschnitt nur noch um die Schrift herum (auch auf hellem Untergrund) – mehr Auflösung für die Preise', 'Artikelliste endet sicherer vor dem Zahlungsteil, auch wenn „Zu zahlen“ schlecht lesbar ist']],
   ['2.12.0', '20.10.2026, 06:40 Uhr', ['Kassenbon-Erkennung deutlich verbessert: der Bon wird automatisch aus dem Foto ausgeschnitten, vergrößert und in Schwarz/Weiß umgewandelt (gleicht Schatten aus)', 'Passen die Positionen nicht zur Summe, liest die App den Bon ein zweites Mal anders und nimmt das bessere Ergebnis', 'Falsch gelesene Kommas (z. B. „1769“ statt „1,69“) werden über die Summe korrigiert; fehlt genau ein Preis, wird er aus der Summe ergänzt', 'Fototipps im Scan-Fenster']],
   ['2.11.4', '19.10.2026, 13:37 Uhr', ['Neuer Knopf „🧾 Positionen / nach Kategorien aufteilen“ bei jeder neuen Ausgabe – auch wenn der Scan keine Positionen erkannt hat, lassen sich Positionen selbst eintragen und aufteilen']],
   ['2.11.3', '19.10.2026, 13:27 Uhr', ['Kassenbon: Positionen werden zuverlässiger erkannt (Texterkennung liest den Bon jetzt zeilenweise, mehr Schreibweisen von Preisen und Steuerkennzeichen, Preis in eigener Zeile oder Spalte)', 'Nach dem Scannen lässt sich der erkannte Text anzeigen und kopieren – hilft bei der Fehlersuche']],
@@ -2812,19 +2813,19 @@ function findPaper(img){
   const cy = run(rowF, h); if (!cy) return null;
   const bw = (cx[1] - cx[0]) / w, bh = (cy[1] - cy[0]) / h;
   if (bw * bh < 0.12 || bw > 0.98 && bh > 0.98) return null;
+  // Nur ausschneiden, wenn sich das Papier deutlich vom Untergrund abhebt (sonst wird evtl. Text abgeschnitten)
+  let si = 0, ni = 0, so = 0, no = 0;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){ const v = lum[y*w + x]; if (x >= cx[0] && x < cx[1] && y >= cy[0] && y < cy[1]){ si += v; ni++; } else { so += v; no++; } }
+  if (!no || !ni || si/ni - so/no < 35) return null;
   const m = 0.015;
   return {x: Math.max(0, (cx[0]/w - m)) * W, y: Math.max(0, (cy[0]/h - m)) * H, w: Math.min(1, bw + 2*m) * W, h: Math.min(1, bh + 2*m) * H};
 }
-async function prepareReceipt(file){
-  const img = await loadImg(file);
-  const W = img.naturalWidth, H = img.naturalHeight;
-  const box = findPaper(img) || {x:0, y:0, w:W, h:H};
-  // Breite des Bons auf ca. 1500 px bringen (Schrift groß genug), Höhe begrenzen
-  let sc = 1500 / box.w; sc = Math.min(sc, 4200 / box.h, 2.5);
-  const cw = Math.round(box.w * sc), ch = Math.round(box.h * sc);
+function renderReceipt(img, box, targetW){
+  let sc = targetW / box.w; sc = Math.min(sc, 4200 / box.h, 3);
+  const cw = Math.max(1, Math.round(box.w * sc)), ch = Math.max(1, Math.round(box.h * sc));
   const gray = document.createElement('canvas'); gray.width = cw; gray.height = ch;
   const g = gray.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(img, box.x, box.y, box.w, box.h, 0, 0, cw, ch);
-  let d; try { d = g.getImageData(0, 0, cw, ch); } catch(e){ return {gray, bin: gray}; }
+  let d; try { d = g.getImageData(0, 0, cw, ch); } catch(e){ return {gray, bin: gray, sc}; }
   const p = d.data, n = cw * ch, L = new Uint8ClampedArray(n);
   for (let i = 0; i < n; i++){ const y = 0.299*p[i*4] + 0.587*p[i*4+1] + 0.114*p[i*4+2]; L[i] = y; p[i*4] = p[i*4+1] = p[i*4+2] = y; }
   g.putImageData(d, 0, 0);
@@ -2844,7 +2845,93 @@ async function prepareReceipt(file){
     }
   }
   bg.putImageData(out, 0, 0);
-  return {gray, bin};
+  return {gray, bin, sc};
+}
+// Schrift-Bereich im Schwarz/Weiß-Bild finden (ohne Ränder, Schattenkanten und Linien)
+function inkBox(bin){
+  const w = bin.width, h = bin.height, f = Math.min(1, 600 / w), sw = Math.round(w * f), sh = Math.round(h * f);
+  const c = document.createElement('canvas'); c.width = sw; c.height = sh; const g = c.getContext('2d'); g.drawImage(bin, 0, 0, sw, sh);
+  let d; try { d = g.getImageData(0, 0, sw, sh).data; } catch(e){ return null; }
+  const ink = (x, y) => d[(y*sw + x)*4] < 140;
+  const col = new Array(sw).fill(0), row = new Array(sh).fill(0);
+  for (let y = 0; y < sh; y++) for (let x = 0; x < sw; x++) if (ink(x, y)){ col[x]++; row[y]++; }
+  const okC = col.map(v => v / sh > 0.004 && v / sh < 0.45), okR = row.map(v => v / sw > 0.01 && v / sw < 0.6);
+  // Größten zusammenhängenden Bereich mit Schrift nehmen (kleine Lücken erlaubt)
+  const span = (ok, val, n, gap) => {
+    let best = null, a = -1, last = -1, sum = 0;
+    const close = () => { if (a >= 0 && (!best || sum > best.s)) best = {a, b: last + 1, s: sum}; };
+    for (let i = 0; i < n; i++){ if (!ok[i]) continue; if (a >= 0 && i - last > gap){ close(); a = -1; sum = 0; } if (a < 0) a = i; last = i; sum += val[i]; }
+    close(); return best ? [best.a, best.b] : null;
+  };
+  const cx = span(okC, col, sw, Math.round(sw * 0.06)), cy = span(okR, row, sh, Math.round(sh * 0.08)); if (!cx || !cy) return null;
+  const mx = 0.03 * sw, my = 0.015 * sh;
+  return {x: Math.max(0, cx[0] - mx) / f, y: Math.max(0, cy[0] - my) / f, w: Math.min(sw, cx[1] - cx[0] + 2*mx) / f, h: Math.min(sh, cy[1] - cy[0] + 2*my) / f};
+}
+// Schräglage je Höhenabschnitt schätzen (gewölbte Bons sind oben anders schief als unten)
+function skewBands(bin, nb){
+  const w = bin.width, h = bin.height, f = Math.min(1, 500 / w), sw = Math.round(w * f), sh = Math.round(h * f);
+  const c = document.createElement('canvas'); c.width = sw; c.height = sh; const g = c.getContext('2d'); g.drawImage(bin, 0, 0, sw, sh);
+  let d; try { d = g.getImageData(0, 0, sw, sh).data; } catch(e){ return null; }
+  const colN = new Array(sw).fill(0);
+  for (let y = 0; y < sh; y++) for (let x = 0; x < sw; x++) if (d[(y*sw + x)*4] < 128) colN[x]++;
+  const est = (y0, y1) => {
+    const xs = [], ys = [];
+    for (let y = y0; y < y1; y++) for (let x = Math.round(sw*0.04); x < sw*0.96; x++) if (colN[x] / sh < 0.3 && d[(y*sw + x)*4] < 128){ xs.push(x); ys.push(y); }
+    if (xs.length < 150) return null;
+    let best = 0, bestS = -1;
+    for (let a = -6; a <= 6.001; a += 0.25){
+      const t = Math.tan(a * Math.PI / 180), prof = new Float64Array(sh + 2*sw + 2);
+      for (let i = 0; i < xs.length; i++){ const yy = Math.round(ys[i] - xs[i] * t) + sw; if (yy >= 0 && yy < prof.length) prof[yy]++; }
+      let sc = 0; for (let i = 0; i < prof.length; i++) sc += prof[i] * prof[i];
+      if (sc > bestS){ bestS = sc; best = a; }
+    }
+    return best;
+  };
+  const all = est(0, sh) || 0, out = [];
+  for (let b = 0; b < nb; b++){ const v = est(Math.floor(b * sh / nb), Math.floor((b + 1) * sh / nb)); out.push(v === null ? all : v); }
+  // glätten (Median aus Nachbarn)
+  return out.map((v, i) => { const q = [out[i-1] ?? v, v, out[i+1] ?? v].sort((a, b) => a - b); return q[1]; });
+}
+// Zeilen gerade ziehen: jede Spalte je nach Höhe passend verschieben
+function straighten(src, bands){
+  const w = src.width, h = src.height, nb = bands.length;
+  const g0 = src.getContext('2d'); let d; try { d = g0.getImageData(0, 0, w, h); } catch(e){ return src; }
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'), o = g.createImageData(w, h);
+  const sp = d.data, op = o.data, xc = w / 2;
+  const tanAt = y => { const pos = y / h * nb - 0.5, i = Math.max(0, Math.min(nb - 1, Math.floor(pos))), j = Math.min(nb - 1, i + 1), t = Math.max(0, Math.min(1, pos - i)); return Math.tan(((1 - t) * bands[i] + t * bands[j]) * Math.PI / 180); };
+  const tans = new Float32Array(h); for (let y = 0; y < h; y++) tans[y] = tanAt(y);
+  for (let y = 0; y < h; y++){
+    const t = tans[y];
+    for (let x = 0; x < w; x++){
+      const sy = Math.round(y + (x - xc) * t), k = (y*w + x) * 4;
+      if (sy < 0 || sy >= h){ op[k] = op[k+1] = op[k+2] = 255; op[k+3] = 255; continue; }
+      const q = (sy*w + x) * 4; op[k] = sp[q]; op[k+1] = sp[q+1]; op[k+2] = sp[q+2]; op[k+3] = 255;
+    }
+  }
+  g.putImageData(o, 0, 0); return c;
+}
+function rotateCanvas(src, deg){
+  const r = deg * Math.PI / 180, cs = Math.abs(Math.cos(r)), sn = Math.abs(Math.sin(r));
+  const w = Math.round(src.width * cs + src.height * sn), h = Math.round(src.width * sn + src.height * cs);
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.translate(w/2, h/2); g.rotate(r); g.drawImage(src, -src.width/2, -src.height/2);
+  return c;
+}
+async function prepareReceipt(file){
+  const img = await loadImg(file);
+  const W = img.naturalWidth, H = img.naturalHeight;
+  const box = findPaper(img) || {x:0, y:0, w:W, h:H};
+  let out = renderReceipt(img, box, 1500);
+  // Nur den Bereich mit Schrift nehmen und dafür größer rechnen
+  const ib = inkBox(out.bin);
+  if (ib && (ib.w < out.bin.width * 0.85 || ib.h < out.bin.height * 0.85)){
+    const box2 = {x: box.x + ib.x / out.sc, y: box.y + ib.y / out.sc, w: ib.w / out.sc, h: ib.h / out.sc};
+    if (box2.w > W * 0.15 && box2.h > H * 0.1) out = renderReceipt(img, box2, 1500);
+  }
+  // Schief fotografierte Bons gerade drehen
+  const bands = skewBands(out.bin, 8);
+  if (bands && bands.some(v => Math.abs(v) >= 0.5)){ out = {gray: straighten(out.gray, bands), bin: straighten(out.bin, bands)}; }
+  return {gray: out.gray, bin: out.bin};
 }
 // Wie gut passt ein Ergebnis? Positionen = Summe ist am besten
 function receiptScore(r){
@@ -3069,7 +3156,8 @@ function niceName(n){
   return n.slice(0, 40);
 }
 function parseItems(lines, total, shop){
-  let end = lines.findIndex(l => /(zu\s*zahlen|summe|gesamtbetrag|gesamt|endbetrag|total)/i.test(l) && !/zwischen/i.test(l));
+  // Artikel stehen vor der Summe; auch bei schlecht gelesener Summenzeile spätestens vor Zahlungs-/Kartenteil aufhören
+  let end = lines.findIndex(l => /(zahlen|summe|gesamtbetrag|gesamt|endbetrag|total|k-?u-?n-?d-?e|terminal|kartenzahlung|girocard|ec[- ]?cash|bar\s*gegeben|gegeben)/i.test(l) && !/zwischen/i.test(l));
   if (end < 0) end = lines.length;
   const LET = /[A-Za-zÄÖÜäöüß]/;
   const letters = x => x.replace(/[^A-Za-zÄÖÜäöüß]/g, '').length;
@@ -3130,6 +3218,8 @@ function parseItems(lines, total, shop){
       out.push({n: niceName(nm[nm.length-1] || g.lines[g.lines.length-1]), a: best.rest, at: g.first, guess: true}); filled = true;
     }
   }
+  // Eine „Position“ mit genau der Summe ist meist die Summenzeile selbst
+  if (total > 0 && out.length > 1){ for (let i = out.length - 1; i >= 0; i--) if (out[i].a === total && !out[i].guess) out.splice(i, 1); }
   const items = out.sort((x, y) => x.at - y.at).map(({n, a, guess}) => guess ? {n, a, g: 1} : {n, a}).slice(0, 60);
   return {items, filled};
 }
