@@ -341,6 +341,7 @@ body.single .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .ocr-raw{margin:0;padding:10px 12px;border-top:1px solid var(--line);font:.78rem/1.4 var(--f-num);white-space:pre-wrap;max-height:30vh;overflow:auto}
 .split-btn{justify-self:start}
 #f-split{display:grid}
+.scan-tips{margin:0;padding:8px 12px 10px 30px;border-top:1px solid var(--line);font-size:.86rem;color:var(--muted);display:grid;gap:4px}
 .pos-det{border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .pos-det summary{padding:10px 12px;font-weight:600;font-size:.9rem;cursor:pointer}
 .pos-list{display:grid;border-top:1px solid var(--line);max-height:30vh;overflow-y:auto}
@@ -600,9 +601,10 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '2.11.4';
+const APP_VERSION = '2.12.0';
 const SECTIONS = [['finanzen','Finanzen'],['sparen','Sparen'],['stundenplan','Stundenplan'],['hausaufgaben','Hausaufgaben'],['aufgaben','Aufgaben']];
 const CHANGELOG = [
+  ['2.12.0', '20.10.2026, 06:40 Uhr', ['Kassenbon-Erkennung deutlich verbessert: der Bon wird automatisch aus dem Foto ausgeschnitten, vergrößert und in Schwarz/Weiß umgewandelt (gleicht Schatten aus)', 'Passen die Positionen nicht zur Summe, liest die App den Bon ein zweites Mal anders und nimmt das bessere Ergebnis', 'Falsch gelesene Kommas (z. B. „1769“ statt „1,69“) werden über die Summe korrigiert; fehlt genau ein Preis, wird er aus der Summe ergänzt', 'Fototipps im Scan-Fenster']],
   ['2.11.4', '19.10.2026, 13:37 Uhr', ['Neuer Knopf „🧾 Positionen / nach Kategorien aufteilen“ bei jeder neuen Ausgabe – auch wenn der Scan keine Positionen erkannt hat, lassen sich Positionen selbst eintragen und aufteilen']],
   ['2.11.3', '19.10.2026, 13:27 Uhr', ['Kassenbon: Positionen werden zuverlässiger erkannt (Texterkennung liest den Bon jetzt zeilenweise, mehr Schreibweisen von Preisen und Steuerkennzeichen, Preis in eigener Zeile oder Spalte)', 'Nach dem Scannen lässt sich der erkannte Text anzeigen und kopieren – hilft bei der Fehlersuche']],
   ['2.11.2', '19.10.2026, 09:43 Uhr', ['Kindermodus: „Portemonnaie“ heißt jetzt überall „Bargeld“']],
@@ -2721,7 +2723,8 @@ const SHOPS = [
   [/\bthalia\b/i,'Thalia','Freizeit'], [/\bsmyths\b|\bspielwaren\b/i,'Spielwaren','Kinder'], [/\bfressnapf\b/i,'Fressnapf','Haushalt']
 ];
 function parseReceipt(text){
-  const lines = String(text || '').split(/\r?\n/).map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  // Zeilen säubern: Störzeichen am Zeilenende (z. B. „¢“, „‘“, „|“, einzelne Kleinbuchstaben) entfernen
+  const lines = String(text || '').split(/\r?\n/).map(l => l.replace(/\s+/g, ' ').trim().replace(/(\s+[^\sA-Z0-9€*%]{1,2})+$/, '').replace(/^[^\wÄÖÜäöü€-]{1,2}\s+/, '').trim()).filter(Boolean);
   const amounts = l => { const out = []; const re = /(\d{1,5})\s?[,.]\s?(\d{2})(?![\d])/g; let m; while ((m = re.exec(l))) out.push(parseInt(m[1],10)*100 + parseInt(m[2],10)); return out; };
   const EXCL = /(zwischen\s*summe|netto|mwst|m\.?w\.?st|ust\b|steuer|gegeben|r(ü|ue)ckgeld|wechselgeld|zur(ü|ue)ck|rabatt|ersparnis|gespart|punkte|payback|pfandbon)/i;
   const P1 = /(zu\s*zahlen|zahlbetrag|summe|gesamtbetrag|gesamt|endbetrag|rechnungsbetrag|total|betrag\s*eur|eur\s*gesamt)/i;
@@ -2736,8 +2739,20 @@ function parseReceipt(text){
     });
     return found.length ? Math.max(...found) : 0;
   };
-  let amount = pick(P1), sure = !!amount;
-  if (!amount) amount = pick(P2);
+  // Kandidaten für die Summe sammeln – die Summe steht meist mehrfach auf dem Bon (Summe, Kartenzahlung, „EUR 14,62“)
+  const cand = new Map();
+  const add = (v, w) => { if (v > 0) cand.set(v, (cand.get(v) || 0) + w); };
+  const P3 = /^(eur|fur|€)\s*\d/i;
+  lines.forEach((l, i) => {
+    if (EXCL.test(l)) return;
+    const w = P1.test(l) ? 3 : P2.test(l) ? 2 : P3.test(l) ? 2 : 0;
+    if (!w) return;
+    let a = amounts(l);
+    if (!a.length && lines[i+1] && !EXCL.test(lines[i+1])) a = amounts(lines[i+1]);
+    if (a.length) add(a[a.length - 1], w);
+  });
+  const ranked = [...cand.entries()].sort((x, y) => y[1] - x[1] || y[0] - x[0]).map(x => x[0]);
+  let amount = ranked[0] || 0, sure = !!amount && (cand.get(amount) >= 3);
   if (!amount){ const all = []; lines.forEach(l => { if (!EXCL.test(l)) all.push(...amounts(l)); }); amount = all.length ? Math.max(...all) : 0; }
   // Datum
   let date = '';
@@ -2765,7 +2780,80 @@ function parseReceipt(text){
     const cand = lines.slice(0, 6).find(l => /[a-zäöüß]{3,}/i.test(l) && (l.replace(/[^\d]/g,'').length / l.length) < 0.3 && !/(beleg|kasse|bon\b|str\.|stra(ß|ss)e|tel|www|http|@|ust|steuer|filiale)/i.test(l));
     if (cand) shop = cand.replace(/[^\wäöüÄÖÜß&' .-]/g, '').trim().slice(0, 30);
   }
-  return {amount, sure, date, shop, cat, lines: lines.length, items: parseItems(lines)};
+  let pi = parseItems(lines, amount, shop);
+  // Passen die Positionen zu einem anderen Summen-Kandidaten, diesen nehmen
+  if (pi.items.length && Math.abs(itemsSum(pi.items) - amount) >= 1){
+    for (const c of ranked.slice(1, 4)){ const q = parseItems(lines, c, shop); if (q.items.length && Math.abs(itemsSum(q.items) - c) < 1 && !q.filled){ amount = c; pi = q; sure = true; break; } }
+  }
+  return {amount, sure, date, shop, cat, lines: lines.length, items: pi.items, filled: pi.filled};
+}
+// Bon-Foto für die Texterkennung aufbereiten: Papier ausschneiden, passend skalieren, Graustufen + Schwarz/Weiß
+function loadImg(file){
+  return new Promise((res, rej) => { const url = URL.createObjectURL(file), img = new Image(); img.onload = () => { URL.revokeObjectURL(url); res(img); }; img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('img')); }; img.src = url; });
+}
+function findPaper(img){
+  // Kleine Kopie, helle Fläche (Papier) suchen
+  const W = img.naturalWidth || img.width, H = img.naturalHeight || img.height, sc = Math.min(1, 360 / Math.max(W, H));
+  const w = Math.max(1, Math.round(W * sc)), h = Math.max(1, Math.round(H * sc));
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.drawImage(img, 0, 0, w, h);
+  let d; try { d = g.getImageData(0, 0, w, h).data; } catch(e){ return null; }
+  const lum = new Float32Array(w * h), hist = new Array(256).fill(0);
+  for (let i = 0; i < w * h; i++){ const y = 0.299*d[i*4] + 0.587*d[i*4+1] + 0.114*d[i*4+2]; lum[i] = y; hist[y|0]++; }
+  // Otsu-Schwelle
+  let sum = 0; for (let t = 0; t < 256; t++) sum += t * hist[t];
+  let sB = 0, wB = 0, best = 0, thr = 160;
+  for (let t = 0; t < 256; t++){ wB += hist[t]; if (!wB) continue; const wF = w*h - wB; if (!wF) break; sB += t * hist[t]; const mB = sB / wB, mF = (sum - sB) / wF, v = wB * wF * (mB - mF) * (mB - mF); if (v > best){ best = v; thr = t; } }
+  const run = (frac, len) => { let bs = -1, bl = 0, cs = -1; for (let i = 0; i <= len; i++){ const on = i < len && frac[i] > 0.45; if (on && cs < 0) cs = i; if (!on && cs >= 0){ if (i - cs > bl){ bl = i - cs; bs = cs; } cs = -1; } } return bl ? [bs, bs + bl] : null; };
+  const colF = new Array(w).fill(0), rowF = new Array(h).fill(0);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (lum[y*w + x] > thr){ colF[x]++; rowF[y]++; }
+  const cx = run(colF.map(v => v / h), w); if (!cx) return null;
+  const pw = cx[1] - cx[0];
+  for (let y = 0; y < h; y++){ let n = 0; for (let x = cx[0]; x < cx[1]; x++) if (lum[y*w + x] > thr) n++; rowF[y] = n / pw; }
+  const cy = run(rowF, h); if (!cy) return null;
+  const bw = (cx[1] - cx[0]) / w, bh = (cy[1] - cy[0]) / h;
+  if (bw * bh < 0.12 || bw > 0.98 && bh > 0.98) return null;
+  const m = 0.015;
+  return {x: Math.max(0, (cx[0]/w - m)) * W, y: Math.max(0, (cy[0]/h - m)) * H, w: Math.min(1, bw + 2*m) * W, h: Math.min(1, bh + 2*m) * H};
+}
+async function prepareReceipt(file){
+  const img = await loadImg(file);
+  const W = img.naturalWidth, H = img.naturalHeight;
+  const box = findPaper(img) || {x:0, y:0, w:W, h:H};
+  // Breite des Bons auf ca. 1500 px bringen (Schrift groß genug), Höhe begrenzen
+  let sc = 1500 / box.w; sc = Math.min(sc, 4200 / box.h, 2.5);
+  const cw = Math.round(box.w * sc), ch = Math.round(box.h * sc);
+  const gray = document.createElement('canvas'); gray.width = cw; gray.height = ch;
+  const g = gray.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(img, box.x, box.y, box.w, box.h, 0, 0, cw, ch);
+  let d; try { d = g.getImageData(0, 0, cw, ch); } catch(e){ return {gray, bin: gray}; }
+  const p = d.data, n = cw * ch, L = new Uint8ClampedArray(n);
+  for (let i = 0; i < n; i++){ const y = 0.299*p[i*4] + 0.587*p[i*4+1] + 0.114*p[i*4+2]; L[i] = y; p[i*4] = p[i*4+1] = p[i*4+2] = y; }
+  g.putImageData(d, 0, 0);
+  // Schwarz/Weiß mit örtlicher Schwelle (Bradley): gleicht Schatten und Wölbung aus
+  const bin = document.createElement('canvas'); bin.width = cw; bin.height = ch;
+  const bg = bin.getContext('2d'), out = bg.createImageData(cw, ch), o = out.data;
+  const I = new Float64Array((cw + 1) * (ch + 1));
+  for (let y = 1; y <= ch; y++){ let row = 0; for (let x = 1; x <= cw; x++){ row += L[(y-1)*cw + x-1]; I[y*(cw+1) + x] = I[(y-1)*(cw+1) + x] + row; } }
+  const s2 = Math.max(8, Math.round(cw / 24)), T = 0.16;
+  for (let y = 0; y < ch; y++){
+    const y1 = Math.max(0, y - s2), y2 = Math.min(ch - 1, y + s2);
+    for (let x = 0; x < cw; x++){
+      const x1 = Math.max(0, x - s2), x2 = Math.min(cw - 1, x + s2), cnt = (x2 - x1 + 1) * (y2 - y1 + 1);
+      const s = I[(y2+1)*(cw+1) + x2+1] - I[y1*(cw+1) + x2+1] - I[(y2+1)*(cw+1) + x1] + I[y1*(cw+1) + x1];
+      const v = L[y*cw + x] * cnt <= s * (1 - T) ? 0 : 255, k = (y*cw + x) * 4;
+      o[k] = o[k+1] = o[k+2] = v; o[k+3] = 255;
+    }
+  }
+  bg.putImageData(out, 0, 0);
+  return {gray, bin};
+}
+// Wie gut passt ein Ergebnis? Positionen = Summe ist am besten
+function receiptScore(r){
+  if (!r) return -1;
+  const s = itemsSum(r.items || []), n = (r.items || []).length;
+  let sc = n;
+  if (r.amount && n){ if (Math.abs(s - r.amount) < 1) sc += 100 - (r.filled ? 20 : 0); else sc -= Math.min(50, Math.abs(s - r.amount) / 100); }
+  if (r.amount) sc += 5;
+  return sc;
 }
 function scanReceipt(file, done){
   let cancelled = false;
@@ -2774,6 +2862,7 @@ function scanReceipt(file, done){
     <div class="scan-bar"><i id="scan-bar"></i></div>
     <p class="hint" id="scan-st" style="margin:0">${window.Tesseract || ocrWorker ? 'Texterkennung startet …' : 'Texterkennung wird geladen. Beim ersten Mal sind das einige MB, danach geht es schneller und auch ohne Internet.'}</p>
     <p class="hint" style="margin:0">Das Foto bleibt auf diesem Gerät. Es wird nichts hochgeladen.</p>
+    <details class="pos-det"><summary>📷 Tipps für ein gutes Foto</summary><ul class="scan-tips"><li>Bon glatt streichen und auf einen dunklen Untergrund legen</li><li>Von oben fotografieren, Handy parallel zum Bon</li><li>Helles Licht ohne Schatten vom Handy, kein Blitz</li><li>Nur den Teil mit den Artikeln und der Summe aufs Bild – lieber näher ran</li><li>Lange Bons in zwei Fotos aufteilen</li></ul></details>
     <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" id="scan-cancel">Abbrechen</button></div>`, () => false);
   const bar = $('#scan-bar'), st = $('#scan-st');
   $('#scan-cancel').addEventListener('click', () => { cancelled = true; dlg.close(); });
@@ -2781,13 +2870,26 @@ function scanReceipt(file, done){
   const prog = (status, p) => { if (cancelled) return; const recog = status === 'recognizing text'; bar.style.width = Math.round((recog ? 40 + p*60 : p*40)) + '%'; if (phase[status]) st.textContent = phase[status] + (recog ? ' ' + Math.round(p*100) + ' %' : ''); };
   (async () => {
     try {
-      const img = await prepareImage(file);
-      let photo = null; try { photo = canvasToBeleg(img); } catch(e){}
+      st.textContent = 'Foto wird aufbereitet …';
+      const pic = await prepareReceipt(file);
+      let photo = null; try { photo = canvasToBeleg(pic.gray); } catch(e){}
       const w = await getOcrWorker(prog);
       if (cancelled) return;
-      const { data } = await w.recognize(img);
+      const pass = async (canvas, psm) => {
+        try { if (w.setParameters) await w.setParameters({ tessedit_pageseg_mode: psm, preserve_interword_spaces: '1' }); } catch(e){}
+        const { data } = await w.recognize(canvas);
+        const txt = String((data && data.text) || '');
+        const res = parseReceipt(txt); res.text = txt.trim(); return res;
+      };
+      let r = await pass(pic.bin, '4');
       if (cancelled) return;
-      const r = parseReceipt(data && data.text); if (photo) r.photo = photo; r.text = String((data && data.text) || '').trim();
+      const good = x => x.amount && x.items.length && Math.abs(itemsSum(x.items) - x.amount) < 1 && !x.filled;
+      if (!good(r)){
+        st.textContent = 'Zweiter Durchgang für ein besseres Ergebnis …'; bar.style.width = '40%';
+        try { const r2 = await pass(pic.gray, '6'); if (receiptScore(r2) > receiptScore(r)) r = r2; } catch(e){}
+        if (cancelled) return;
+      }
+      if (photo) r.photo = photo;
       dlg.close();
       if (!r.amount && !r.shop){ toast('Auf dem Foto wurde kein Betrag erkannt. Bitte den Bon gerade und gut beleuchtet fotografieren.'); }
       done(r);
@@ -2966,43 +3068,70 @@ function niceName(n){
   if (letters && letters === letters.toUpperCase()) n = n.toLowerCase().replace(/(^|[\s\-\/(])([a-zäöüß])/g, (m, a, b) => a + b.toUpperCase());
   return n.slice(0, 40);
 }
-function parseItems(lines){
+function parseItems(lines, total, shop){
   let end = lines.findIndex(l => /(zu\s*zahlen|summe|gesamtbetrag|gesamt|endbetrag|total)/i.test(l) && !/zwischen/i.test(l));
   if (end < 0) end = lines.length;
   const LET = /[A-Za-zÄÖÜäöüß]/;
   const letters = x => x.replace(/[^A-Za-zÄÖÜäöüß]/g, '').length;
-  // Preis am Zeilenende, danach evtl. „-“, „€“, Steuerkennzeichen (A, B, 1, 2 …) oder „*“
-  const ITEM = /^(.*?[A-Za-zÄÖÜäöüß].*?)\s+(-?)\s?(\d{1,4})\s?[,.]\s?(\d{2})(?!\d)\s*(-?)\s*(?:€|eur)?(?:\s*[A-Z0-9*#]{1,2})?\s*\*?\s*$/i;
-  const PRICE_ONLY = /^\s*(?:€|eur)?\s*(-?)\s?(\d{1,4})\s?[,.]\s?(\d{2})(?!\d)\s*(-?)\s*(?:€|eur)?(?:\s*[A-Z0-9*#]{1,2})?\s*\*?\s*$/i;
+  const TAIL = String.raw`\s*(?:€|eur)?(?:\s*[A-Z0-9*#]{1,2})?\s*\*?\s*$`;
+  const ITEM = new RegExp(String.raw`^(.*?[A-Za-zÄÖÜäöüß].*?)\s+(-?)\s?(\d{1,4})\s?[,.]\s?(\d{2})(?!\d)\s*(-?)` + TAIL, 'i');
+  const ITEM_NOSEP = new RegExp(String.raw`^(.*?[A-Za-zÄÖÜäöüß].*?)\s+(\d{3,5})` + TAIL, 'i');   // Komma nicht erkannt, z. B. „1769“
+  const PRICE_ONLY = new RegExp(String.raw`^\s*(?:€|eur)?\s*(-?)\s?(\d{1,4})\s?[,.]\s?(\d{2})(?!\d)\s*(-?)` + TAIL, 'i');
+  const HEAD = /(str\.|stra(ß|ss)e|weg\b|platz\b|\b\d{5}\b|tel|fax|www|http|@|filiale|markt\b|gmbh|kg\b|ust|steuer|öffnungs|danke|willkommen|kunden)/i;
+  const shopRe = shop ? new RegExp(shop.replace(/[^\wäöüß]/gi, '').split('').join('\\s*'), 'i') : null;
   const cents = (sg1, a, b, sg2) => { let v = parseInt(a,10)*100 + parseInt(b,10); return (sg1 === '-' || sg2 === '-') ? -v : v; };
   const okName = n => !ITEM_SKIP.test(n) && letters(n) >= 2 && !(/^\d+\s*(stk|st|x)\b/i.test(n) && letters(n) < 4);
-  const clean = n => n.replace(/\s+\d+\s?[,.]\s?\d{2}\s*(?:€|eur)?\s*$/i, '').replace(/\s+\d+\s*(?:stk\.?\s*)?[x×]\s*$/i, '').trim();
+  const clean = n => n.replace(/\s+\d+\s?[,.]\s?\d{2}\s*(?:€|eur)?\s*$/i, '').replace(/\s+\d+\s*(?:stk\.?\s*)?[x×]\s*$/i, '').replace(/\s+[0-9A-Z]$/, '').trim();
   const out = [], nameOnly = [], priceOnly = [];
   for (let i = 0; i < end; i++){
     const l = lines[i];
     let m = l.match(ITEM);
-    if (m){
-      const name = clean(m[1]);
-      if (okName(name)){ const a = cents(m[2], m[3], m[4], m[5]); if (a) out.push({n: niceName(name), a, at: i}); }
-      continue;
-    }
+    if (m){ const name = clean(m[1]); if (okName(name)){ const a = cents(m[2], m[3], m[4], m[5]); if (a) out.push({n: niceName(name), a, at: i}); } continue; }
     m = l.match(PRICE_ONLY);
     if (m){ priceOnly.push({i, a: cents(m[1], m[2], m[3], m[4])}); continue; }
-    if (LET.test(l) && okName(l) && !/\d{1,2}[.:]\d{2}[.:]\d{2,4}/.test(l)) nameOnly.push({i, n: l});
+    m = l.match(ITEM_NOSEP);
+    if (m && okName(clean(m[1])) && !HEAD.test(l)){
+      const dg = m[2], alts = [parseInt(dg, 10)];                       // „1769“ → 17,69
+      if (dg.length >= 4 && /[7142]/.test(dg[dg.length-3])) alts.push(parseInt(dg.slice(0, -3) + dg.slice(-2), 10));   // Komma als Ziffer gelesen → 1,69
+      out.push({n: niceName(clean(m[1])), a: alts[0], alts, at: i}); continue;
+    }
+    if (LET.test(l) && okName(l) && !/\d{1,2}[.:]\d{2}[.:]\d{2,4}/.test(l) && !HEAD.test(l) && !(shopRe && shopRe.test(l) && letters(l) <= shop.length + 2)) nameOnly.push({i, n: l});
   }
   // Namen ohne Preis + Preise in eigenen Zeilen: direkt darunter oder als eigene Spalte
   const seq = [...nameOnly.map(x => ({t:'N', i:x.i, n:x.n})), ...priceOnly.map(q => ({t:'P', i:q.i, a:q.a}))].sort((x, y) => x.i - y.i);
+  const usedN = new Set();
   let k = 0;
   while (k < seq.length){
     if (seq[k].t !== 'N'){ k++; continue; }
     let j = k; while (j < seq.length && seq[j].t === 'N') j++;
     let m2 = j; while (m2 < seq.length && seq[m2].t === 'P') m2++;
     const names = seq.slice(k, j), prices = seq.slice(j, m2);
-    if (prices.length === 1 && names[names.length-1].i + 1 === prices[0].i){ if (prices[0].a) out.push({n: niceName(names[names.length-1].n), a: prices[0].a, at: names[names.length-1].i}); }
-    else if (prices.length >= 2){ const c = Math.min(names.length, prices.length), ns = names.slice(names.length - c); for (let q = 0; q < c; q++) if (prices[q].a) out.push({n: niceName(ns[q].n), a: prices[q].a, at: ns[q].i}); }
+    if (prices.length === 1 && names[names.length-1].i + 1 === prices[0].i){ const nm = names[names.length-1]; usedN.add(nm.i); if (prices[0].a) out.push({n: niceName(clean(nm.n)), a: prices[0].a, at: nm.i}); }
+    else if (prices.length >= 2){ const c = Math.min(names.length, prices.length), ns = names.slice(names.length - c); for (let q = 0; q < c; q++){ usedN.add(ns[q].i); if (prices[q].a) out.push({n: niceName(clean(ns[q].n)), a: prices[q].a, at: ns[q].i}); } }
     k = Math.max(m2, j);
   }
-  return out.sort((x, y) => x.at - y.at).map(({n, a}) => ({n, a})).slice(0, 60);
+  // Übrige Namen ohne Preis: aufeinanderfolgende Zeilen gehören zu einem Artikel
+  const groups = [];
+  nameOnly.filter(x => !usedN.has(x.i)).forEach(x => { const g = groups[groups.length-1]; if (g && g.last + 1 === x.i){ g.last = x.i; g.lines.push(x.n); } else groups.push({first: x.i, last: x.i, lines: [x.n]}); });
+  // Mit der Summe abgleichen: mehrdeutige Preise auflösen, genau einen fehlenden Preis ergänzen
+  let filled = false;
+  if (total > 0 && out.length){
+    const amb = out.filter(x => x.alts && x.alts.length > 1).slice(0, 6);
+    let best = null;
+    for (let mask = 0; mask < (1 << amb.length); mask++){
+      amb.forEach((x, b) => { x.a = x.alts[(mask >> b) & 1]; });
+      const sum = out.reduce((s, x) => s + x.a, 0), rest = total - sum;
+      const sc = Math.abs(rest) < 1 ? 3 : (rest > 0 && groups.length === 1 ? 2 : 0);
+      if (!best || sc > best.sc || (sc === best.sc && Math.abs(rest) < Math.abs(best.rest))) best = {sc, rest, mask};
+    }
+    amb.forEach((x, b) => { x.a = x.alts[(best.mask >> b) & 1]; });
+    if (best.sc === 2){
+      const g = groups[0], nm = g.lines.map(l => clean(l)).filter(l => letters(l) >= 3);
+      out.push({n: niceName(nm[nm.length-1] || g.lines[g.lines.length-1]), a: best.rest, at: g.first, guess: true}); filled = true;
+    }
+  }
+  const items = out.sort((x, y) => x.at - y.at).map(({n, a, guess}) => guess ? {n, a, g: 1} : {n, a}).slice(0, 60);
+  return {items, filled};
 }
 // Kategorie-Vorschlag für eine Position
 const KID_SHORT = {'Süßigkeiten & Snacks':'Süßes', 'Spielzeug & Spiele':'Spielzeug', 'Bücher & Hefte':'Bücher & Hefte', 'Ausflug & Freizeit':'Freizeit', 'Geschenke':'Geschenke', 'Sonstiges':'Sonstiges'};
@@ -3049,7 +3178,8 @@ function itemsDialog(r, keepMode){
   const items = r.items.map(x => ({...x}));
   const total = r.amount || 0;
   const form = openDlg(`
-    <h3>${r.shop ? 'Bon von ' + esc(r.shop) : 'Kassenbon'} · <span id="it-n">${items.length}</span> Positionen</h3>
+    <h3>${r.shop ? 'Bon von ' + esc(r.shop) : 'Kassenbon'} · <span id="it-n">${items.length}</span> <span id="it-nl">${items.length === 1 ? 'Position' : 'Positionen'}</span></h3>
+    ${items.some(x => x.g) ? '<p class="hint warn" style="margin:0">Ein Preis war auf dem Foto nicht lesbar und wurde aus der Summe berechnet (markiert mit ≈). Bitte kurz prüfen.</p>' : ''}
     <p class="hint" style="margin:0">Namen und Preise kannst du direkt ändern. Falsch erkannte Zeilen mit ✕ entfernen.</p>
     <div class="it-list" id="it-list"></div>
     <button type="button" class="btn sm" id="it-add" style="justify-self:start">+ Position</button>
@@ -3074,7 +3204,7 @@ function itemsDialog(r, keepMode){
   const listEl = form.querySelector('#it-list'), sumEl = form.querySelector('#it-sum');
   const upd = () => {
     const s = itemsSum(items.filter(x => x.a));
-    form.querySelector('#it-n').textContent = items.length;
+    form.querySelector('#it-n').textContent = items.length; form.querySelector('#it-nl').textContent = items.length === 1 ? 'Position' : 'Positionen';
     if (!total){ sumEl.className = 'it-sum'; sumEl.innerHTML = `Zusammen <b class="num">${euro(s)}</b>`; return; }
     const d = total - s;
     if (Math.abs(d) < 1){ sumEl.className = 'it-sum ok'; sumEl.innerHTML = `✓ Passt zur Summe vom Bon <b class="num">${euro(total)}</b>`; }
@@ -3082,15 +3212,15 @@ function itemsDialog(r, keepMode){
   };
   const draw = () => {
     listEl.innerHTML = items.map((x, i) => `<div class="it-row" data-i="${i}">
-      <input class="it-name" value="${esc(x.n)}" aria-label="Name der Position ${i+1}">
-      <input class="it-amt" inputmode="decimal" value="${x.a < 0 ? '-' : ''}${amtInput(Math.abs(x.a))}" aria-label="Preis der Position ${i+1}">
+      <input class="it-name" value="${esc(x.n)}" aria-label="Name der Position ${i+1}"${x.g ? ' style="font-style:italic"' : ''}>
+      <input class="it-amt" inputmode="decimal" value="${x.g ? '≈ ' : ''}${x.a < 0 ? '-' : ''}${amtInput(Math.abs(x.a))}" aria-label="Preis der Position ${i+1}">
       <button type="button" class="it-x" aria-label="Position entfernen">✕</button></div>`).join('');
     upd();
   };
   listEl.addEventListener('input', e => {
     const row = e.target.closest('.it-row'); if (!row) return; const x = items[+row.dataset.i];
     if (e.target.classList.contains('it-name')) x.n = e.target.value;
-    else { const v = e.target.value.trim(), neg = v.startsWith('-'); const a = parseAmt(v.replace(/^-/, '')); x.a = isNaN(a) ? 0 : (neg ? -a : a); upd(); }
+    else { delete x.g; const v = e.target.value.replace(/≈/g, '').trim(), neg = v.startsWith('-'); const a = parseAmt(v.replace(/^-/, '')); x.a = isNaN(a) ? 0 : (neg ? -a : a); upd(); }
   });
   listEl.addEventListener('click', e => { const b = e.target.closest('.it-x'); if (!b) return; items.splice(+b.closest('.it-row').dataset.i, 1); draw(); });
   form.querySelector('#it-add').addEventListener('click', () => { items.push({n:'', a:0}); draw(); const ins = listEl.querySelectorAll('.it-name'); ins[ins.length-1].focus(); });
