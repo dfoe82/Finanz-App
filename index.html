@@ -364,6 +364,65 @@ dialog.bel-dlg::backdrop{background:rgba(0,0,0,.6)}
 .bel-pdf{display:flex;flex-direction:column;align-items:center;gap:6px;padding:30px 16px;font-size:1.2rem;text-align:center}.bel-pdf small{font-size:.82rem;color:var(--muted)}
 .bel-act{display:flex;gap:8px;align-items:center}
 .bel-row .set-ic{font-size:1rem}
+.fx-page{display:grid;gap:12px}
+.flow2{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:end}.flow2>span{padding-bottom:12px;color:var(--muted);font-weight:700}
+.box2{display:grid;gap:10px;padding:12px;border-radius:12px;background:var(--sunk)}
+.tg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.tg-c{display:grid;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c);overflow:hidden}
+.tg-main{display:grid;gap:4px;padding:12px 14px 8px;border:0;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.tg-main .l{display:flex;align-items:center;gap:7px;font-weight:600;font-size:.92rem}.tg-main .l i,.tg-s i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.tg-main b{font:600 1.45rem/1.15 var(--f-num)}.tg-main small{color:var(--muted);font-size:.76rem}
+.tg-goal{height:6px;border-radius:99px;background:var(--sunk);overflow:hidden}.tg-goal span{display:block;height:100%;background:var(--c)}
+.tg-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 10px}.tg-btns .btn{justify-content:center}
+.tg-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;margin-top:12px;scrollbar-width:none}
+.tg-s{display:grid;gap:2px;flex:0 0 auto;min-width:128px;padding:9px 12px;border-radius:12px;border:1px solid var(--line);border-top:3px solid var(--c);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.tg-s span{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);white-space:nowrap}.tg-s b{font:600 1.02rem var(--f-num)}
+.tg-acts{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.kx-hd,.kx-row{display:grid;grid-template-columns:minmax(0,1.2fr) auto minmax(96px,.9fr);gap:6px 10px;align-items:center}
+.kx-hd{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 2px}.kx-hd span:nth-child(2){text-align:right}
+.kx-row{padding:10px 2px;border-top:1px solid var(--line)}.kx-row>span:first-child{font-weight:600;font-size:.92rem;min-width:0}.kx-row small{display:block;font-weight:400;color:var(--muted);font-size:.74rem}
+.kx-row .calc{font:500 .9rem var(--f-num);color:var(--muted);text-align:right}
+.kx-row input.amount-in{font:inherit;font-size:16px;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0;width:100%;text-align:right}
+.kx-d{grid-column:1/-1;font-size:.82rem;font-weight:600;text-align:right}.kx-d:empty{display:none}
+.kx-z input{width:18px;height:18px;margin:0}.kx-z{grid-column:1/-1;display:flex;gap:6px;justify-content:flex-end;align-items:center;font-size:.82rem;color:var(--muted)}
+.kx-tab{width:100%;border-collapse:collapse;font-size:.88rem}.kx-tab th{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:right;padding:4px}.kx-tab th:first-child,.kx-tab td:first-child{text-align:left}
+.kx-tab td{padding:7px 4px;border-top:1px solid var(--line);text-align:right;font-family:var(--f-num)}.kx-tab td:first-child{font-family:inherit}
+.kx-sum{display:grid;gap:6px;padding:12px;border-radius:12px;background:var(--sunk)}.kx-sum div{display:flex;justify-content:space-between;gap:10px;font-size:.9rem}.kx-sum b{font-family:var(--f-num)}
+.kx-bars{display:flex;gap:8px;align-items:flex-end;height:96px;padding:4px 2px}.kx-bars div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}.kx-bars i{display:block;width:100%;max-width:38px;border-radius:6px 6px 2px 2px;background:color-mix(in srgb,var(--accent) 45%,var(--sunk))}
+.fx-hero{display:grid;gap:10px;padding:16px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
+.fx-hero .big{font:600 2rem/1.1 var(--f-num)}
+.fx-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fx-grid div{padding:9px 10px;border-radius:12px;background:var(--sunk)}
+.fx-grid small{display:block;font-size:.66rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.fx-grid b{font-family:var(--f-num);font-size:1rem}
+.fx-hint{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,transparent);font-size:.86rem}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
+.fx-rem{display:grid;gap:4px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.fx-rem button{display:flex;flex-direction:column;align-items:flex-start;border:0;background:none;padding:4px 0;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.fx-rem small{color:var(--muted)}
+.fx-list{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);overflow:hidden}
+.fx-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;width:100%;padding:11px 14px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.fx-row:first-child{border-top:0}.fx-row.off{opacity:.55}
+.fx-row b{font-size:.95rem}.fx-row small{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
+.fx-amt{text-align:right}.fx-amt b{font-family:var(--f-num);white-space:nowrap}.fx-amt small{font-family:var(--f-num);white-space:nowrap}
+.fx-b{display:inline-block;padding:1px 7px;border-radius:999px;background:var(--sunk);font-weight:700;font-size:.7rem;color:var(--ink)}
+.fx-b.alt{background:color-mix(in srgb,var(--warn) 24%,transparent)}
+.fx-h{display:flex;justify-content:space-between;align-items:center;margin:4px 2px -4px}.fx-h span{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fx-tl{display:grid;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);padding:2px 14px}
+.fx-tl div{display:grid;grid-template-columns:66px minmax(0,1fr) auto;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:.9rem}.fx-tl div:first-child{border-top:0}
+.fx-tl span:first-child{color:var(--muted);font-family:var(--f-num);font-size:.8rem;white-space:nowrap}.fx-tl b{font-family:var(--f-num);white-space:nowrap}.fx-tl small{color:var(--muted)}
+.ivl{display:grid;grid-template-columns:auto 64px 1fr;gap:8px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--sunk);font-size:.9rem}
+.ivl input,.ivl select,.fx-frist input,.fx-frist select{font:inherit;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
+.fx-frist{display:grid;grid-template-columns:64px 1fr;gap:6px}
+details.fx-v{border:1px solid var(--line);border-radius:12px}details.fx-v summary{padding:10px 12px;font-weight:600;font-size:.9rem;cursor:pointer}
+.fx-vb{display:grid;gap:10px;padding:0 12px 12px}
+.fx-acts{display:flex;flex-wrap:wrap;gap:6px}
+.fx-due{display:grid;gap:8px}
+.fx-due-row{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px}
+.fx-due-row small{display:block;color:var(--muted);font-size:.78rem}
+.fx-due-row input{font:inherit;font-family:var(--f-num);padding:8px;border:1px solid var(--line);border-radius:8px;text-align:right;background:var(--sunk);color:var(--ink);min-width:0}
+.fx-due-b{grid-column:1/-1;display:flex;justify-content:flex-end;gap:6px}
+.fix-due{width:100%;font:inherit;color:var(--ink);text-align:left;cursor:pointer;background:var(--surface);border-color:var(--warn)}
 .acc-ask{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .acc-pick{display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 8px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
 .acc-pick:hover:not(:disabled),.acc-pick:focus-visible{border-color:var(--accent)}
@@ -551,7 +610,8 @@ form.dlg > .scan-btn{justify-content:center;border-style:dashed}
     <button class="btn sm" id="backupBtn" type="button" aria-label="Daten sichern">Sichern</button>
     <nav class="tabs" role="tablist" aria-label="Bereiche">
       <button role="tab" data-tab="finanzen" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg>Finanzen</button>
-      <button role="tab" data-tab="sparen" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 7 20.5z"/><path d="M5 5.5h14V8H5z"/><path d="M12 11.5v6M9.5 14h5"/></svg>Sparen</button>
+      <button role="tab" data-tab="fixkosten" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8.5 15l2 2 4-4"/></svg>Fixkosten</button>
+      <button role="tab" data-tab="sparen" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/></svg>Tagesgeld</button>
     </nav>
   </header>
   <div class="upd-banner" id="updBanner" hidden role="status">
@@ -598,13 +658,19 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.1.0';
-const SECTIONS = [['finanzen','Finanzen'],['sparen','Sparen']];
+const APP_VERSION = '1.3.0';
+const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld']];
 const CHANGELOG = [
+  ['1.3.0', '29.10.2026, 19:45 Uhr', ['„Sparen“ heißt jetzt „Tagesgeld“: beliebig viele Tagesgeld-Konten und Töpfe (z. B. Fixkosten, Weihnachten, Geburtstage, Urlaub) – mehrere Töpfe können zu einem echten Konto gehören', 'Umbuchungen zwischen allen Konten, einmalig oder regelmäßig – z. B. am Monatsende die Fixkosten fürs nächste Monat aufs Tagesgeld und am 20. ein fester Betrag zurück aufs Girokonto', 'Kontoabgleich: echte Kontostände eintragen, Differenzen werden als „Nicht erfasst“ (beim Tagesgeld auf Wunsch als Zinsen) gebucht, danach rechnet die App mit den echten Ständen weiter', 'Bilanz zum vorherigen Abgleich: Veränderung je Konto, erfasste Einnahmen und Ausgaben, nicht erfasste Beträge, Zinsen, Entwicklung des Gesamtvermögens', 'Fester Abgleich-Tag (Monatsende, fester Tag oder ohne) mit Hinweis, wenn der Abgleich fällig ist – einstellbar unter Einstellungen › Konten & Abgleich', 'Fixkosten: Vorschlag für die Fixkosten-Rücklage des nächsten Monats mit Rückbuchung am 20.', 'Bisheriges Sparen wird automatisch als Tagesgeld-Konto „Sparen“ übernommen']],
+  ['1.2.0', '29.10.2026, 19:18 Uhr', ['Neuer Bereich „Fixkosten“: monatlich, vierteljährlich, halbjährlich, jährlich, wöchentlich, alle 2 Wochen oder eigenes Intervall', 'Übersicht: Fixkosten pro Monat umgerechnet, feste Einnahmen, was übrig bleibt, Fälligkeiten der nächsten 30 Tage, Kategorien', 'Rücklage-Hinweis für seltene Kosten, auf Wunsch als Sparplan', 'Schnellauswahl (Miete, Strom, Versicherung …), „Erst bestätigen“ für schwankende Beträge', 'Vertragsangaben mit Kündigungserinnerung, Betrag ab Datum ändern, pausieren, überspringen, Beleg anhängen', 'Die App ist jetzt nur für Erwachsene – der Kindermodus ist im Organizer']],
   ['1.1.0', '24.10.2026, 18:51 Uhr', ['Geliehen & verliehen: neues Feld „Wofür?“ – steht in der Übersicht, in der Monatsliste und im Verlauf', 'Geliehen & verliehen gibt es jetzt auch im Erwachsenenmodus (Bankkonto oder Bargeld)']],
   ['1.0.0', '23.10.2026, 16:33 Uhr', ['Eigene App nur mit Finanzen und Sparen – Aussehen und Funktionen wie im Organizer 2.12.1', 'Eigener Datenspeicher, getrennt vom Organizer', 'Sicherungen aus dem Organizer lassen sich hier wiederherstellen (übernommen werden Finanzen, Sparen, Belege und Einstellungen)']]
 ];
 const DEFAULT_NAME = 'Finanzen';
+// Organizer: nur Kindermodus (Erwachsene nutzen die App „Finanzen“). In der App „Finanzen“ steht hier false.
+const KID_ONLY = false;
+// App „Finanzen“: nur Erwachsene, mit Fixkosten. Im Organizer false.
+const ADULT_ONLY = true;
 const KEYS = ['finance','schedule','tasks','homework','settings','log','kids'];
 const DEF = {
   finance: { start:{bank:0,cash:0,save:0}, tx:[], recurring:[] },
@@ -618,15 +684,17 @@ const DEF = {
 function normalize(key, v){
   const d = clone(DEF[key]);
   if (!v || typeof v !== 'object') return d;
-  if (key==='finance'){ d.start = {bank:+(v.start?.bank)||0, cash:+(v.start?.cash)||0, save:+(v.start?.save)||0}; d.tx = Array.isArray(v.tx)?v.tx:[]; d.recurring = Array.isArray(v.recurring)?v.recurring:[]; d.goal = (v.goal && +v.goal.amount > 0) ? {name: String(v.goal.name||'').slice(0,60), amount: Math.round(+v.goal.amount)} : null; }
+  if (key==='finance'){ d.start = {bank:+(v.start?.bank)||0, cash:+(v.start?.cash)||0, save:+(v.start?.save)||0}; if (v.start) for (const k in v.start) if (!(k in d.start)) d.start[k] = +v.start[k] || 0; d.accounts = Array.isArray(v.accounts) ? v.accounts.filter(a => a && a.id && a.name).map(a => ({id:String(a.id), name:String(a.name).slice(0,40), bank:String(a.bank||'').slice(0,40), goal: +a.goal > 0 ? Math.round(+a.goal) : 0})) : null; d.checks = Array.isArray(v.checks) ? v.checks.filter(c => c && c.date && c.rows) : []; d.accNames = (v.accNames && typeof v.accNames === 'object') ? {bank: String(v.accNames.bank||'').slice(0,40), cash: String(v.accNames.cash||'').slice(0,40)} : {}; d.tx = Array.isArray(v.tx)?v.tx:[]; d.recurring = Array.isArray(v.recurring)?v.recurring:[]; d.goal = (v.goal && +v.goal.amount > 0) ? {name: String(v.goal.name||'').slice(0,60), amount: Math.round(+v.goal.amount)} : null;
+    if (ADULT_ONLY && !d.accounts){ d.accounts = []; if (d.start.save || d.goal || d.tx.some(t => t.type==='sparen'||t.type==='entsparen') || d.recurring.some(r => r.type==='sparen')) d.accounts.push({id:'save', name: (d.goal && d.goal.name) || 'Sparen', bank:'', goal: d.goal ? d.goal.amount : 0}); }
+    if (!d.accounts) d.accounts = []; }
   if (key==='schedule'){ d.plans = Array.isArray(v.plans)?v.plans:[]; d.active = v.active ?? d.plans[0]?.id ?? null; }
-  if (key==='settings'){ d.appName = typeof v.appName==='string' ? v.appName.slice(0,40) : ''; d.combined = !!v.combined; d.savings = !!v.savings; d.kid = !!v.kid; d.kidAccounts = ['cash','bank','both'].includes(v.kidAccounts) ? v.kidAccounts : 'cash'; d.kidSave = v.kidSave === 'konto' ? 'konto' : 'schwein'; d.devId = typeof v.devId === 'string' ? v.devId : ''; d.pin = (v.pin && v.pin.h && v.pin.s) ? {s:String(v.pin.s), h:String(v.pin.h), r:String(v.pin.r||''), wk: (v.pin.wk && v.pin.wk.salt && v.pin.wk.wp) ? v.pin.wk : null} : null; d.confirmIncome = v.confirmIncome !== false; d.hidden = Array.isArray(v.hidden) ? v.hidden.filter(x => SECTIONS.some(s => s[0]===x)) : []; if (d.hidden.length >= SECTIONS.length) d.hidden = []; }
+  if (key==='settings'){ d.appName = typeof v.appName==='string' ? v.appName.slice(0,40) : ''; d.combined = !!v.combined; d.savings = !!v.savings; d.kid = KID_ONLY ? true : ADULT_ONLY ? false : !!v.kid; d.kidAccounts = ['cash','bank','both'].includes(v.kidAccounts) ? v.kidAccounts : 'cash'; d.kidSave = v.kidSave === 'konto' ? 'konto' : 'schwein'; d.devId = typeof v.devId === 'string' ? v.devId : ''; d.pin = (v.pin && v.pin.h && v.pin.s) ? {s:String(v.pin.s), h:String(v.pin.h), r:String(v.pin.r||''), wk: (v.pin.wk && v.pin.wk.salt && v.pin.wk.wp) ? v.pin.wk : null} : null; d.confirmIncome = v.confirmIncome !== false; d.recon = (v.recon && ['month','day','off'].includes(v.recon.mode)) ? {mode:v.recon.mode, day: Math.max(1, Math.min(28, +v.recon.day || 1))} : {mode:'month', day:1}; d.hidden = Array.isArray(v.hidden) ? v.hidden.filter(x => SECTIONS.some(s => s[0]===x)) : []; if (d.hidden.length >= SECTIONS.length) d.hidden = []; }
   if (key==='kids'){ d.items = Array.isArray(v.items) ? v.items.filter(k => k && k.id && k.finance).map(k => ({...k, name: String(k.name||'Kind').slice(0,30), finance: normalize('finance', k.finance)})) : []; }
   if (key==='log'){ d.items = Array.isArray(v.items) ? v.items.filter(e => e && e.ts && e.txt).slice(-500) : []; }
   if (key==='tasks' || key==='homework'){ d.items = Array.isArray(v.items)?v.items:[]; }
   return d;
 }
-const hasContent = (key, v) => key==='log' ? false : key==='kids' ? v.items.length>0 : key==='finance' ? (v.tx.length>0 || v.recurring.length>0 || v.start.bank!==0 || v.start.cash!==0 || v.start.save!==0)
+const hasContent = (key, v) => key==='log' ? false : key==='kids' ? v.items.length>0 : key==='finance' ? (v.tx.length>0 || v.recurring.length>0 || v.start.bank!==0 || v.start.cash!==0 || v.start.save!==0 || (v.accounts||[]).length>0)
   : key==='schedule' ? v.plans.length>0 : key==='settings' ? (!!v.appName || v.combined || v.savings || v.hidden.length>0) : v.items.length>0;
 
 const LS = 'finanzen.v1.';
@@ -708,7 +776,7 @@ function addLog(txt){
   try { localStorage.setItem(LS+'log', JSON.stringify(S.log)); } catch(e){}
 }
 const logNew = () => S.log.items.filter(e => e.ts > (+(lsGet('logSeen')||0))).length;
-const txKind = t => ({einnahme:'Einnahme', ausgabe:'Ausgabe', einzahlung:'Einzahlung', auszahlung:'Auszahlung', sparen:'Sparen', entsparen:'Vom Sparen', verliehen:'Verliehen', geliehen:'Geliehen', zurueckbekommen:'Zurückbekommen', zurueckgezahlt:'Zurückgezahlt'})[t.type] || 'Buchung';
+const txKind = t => ({einnahme:'Einnahme', ausgabe:'Ausgabe', einzahlung:'Einzahlung', auszahlung:'Auszahlung', sparen:'Sparen', entsparen:'Vom Sparen', verliehen:'Verliehen', geliehen:'Geliehen', zurueckbekommen:'Zurückbekommen', zurueckgezahlt:'Zurückgezahlt', umbuchung:'Umbuchung'})[t.type] || 'Buchung';
 const txSign = t => (t.type==='einnahme' || t.type==='entsparen' || t.type==='geliehen' || t.type==='zurueckbekommen') ? '+' : (t.type==='ausgabe' || t.type==='sparen' || t.type==='verliehen' || t.type==='zurueckgezahlt') ? '−' : '';
 const txDesc = t => `${txKind(t)} ${txSign(t)}${euro(t.amount)}${t.text ? ' „' + t.text + '“' : ''}${t.who ? ' (' + t.who + ')' : ''} (${fmtShort(t.date)})`;
 function finSnap(){
@@ -1202,8 +1270,8 @@ function applyName(){
   const m = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (m) m.setAttribute('content', n);
 }
 /* ---------- Einstellungen: Übersicht mit Unterseiten ---------- */
-const SET_PAGES = ['main','profile','name','mode','sections','money','fixed','kids','pin','version','belege'];
-const SET_TITLES = {main:'Einstellungen', profile:'Name & Modus', sections:'Bereiche', money:'Geld & Sparen', fixed:'Taschengeld & feste Beträge', belege:'Belege & Garantie', kids:'Finanzen der Kinder', pin:'Eltern-PIN', version:'Versionshistorie'};
+const SET_PAGES = ['main','profile','name','mode','sections','money','fixed','kids','pin','version','belege','konten'];
+const SET_TITLES = {main:'Einstellungen', profile: KID_ONLY || ADULT_ONLY ? 'Name der App' : 'Name & Modus', sections:'Bereiche', money:'Geld & Sparen', fixed:'Taschengeld & feste Beträge', belege:'Belege & Garantie', kids:'Finanzen der Kinder', pin:'Eltern-PIN', version:'Versionshistorie', konten:'Konten & Abgleich'};
 const belegCountTxt = () => { const n = belegIds().length, g = S.finance.tx.filter(t => t.beleg && t.garantie && t.garantie >= today()).length; return n ? n + (n === 1 ? ' Beleg' : ' Belege') + (g ? ' · ' + g + ' mit Garantie' : '') : 'Fotos von Kassenbons und Rechnungen'; };
 const SET_ICONS = {
   grid:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
@@ -1244,10 +1312,11 @@ function settingsDialog(page){
   if (page === 'name' || page === 'mode') page = 'profile';
   if (page === 'money') { if (!isKid()) page = 'main'; }
   if (page === 'kids' && isKid()) page = 'main';
+  if (page === 'konten' && !ADULT_ONLY) page = 'main';
   const kid = isKid();
   const vis = SECTIONS.filter(([k]) => isVisible(k));
   const last = +(lsGet('lastBackup')||0);
-  const fixedCount = S.finance.recurring.filter(r => r.type !== 'sparen').length;
+  const fixedCount = S.finance.recurring.filter(r => r.type !== 'sparen' && r.type !== 'umbuchung').length;
   const badge = pinSet() && isUnlocked() ? '<span class="set-badge">PIN entsperrt</span>' : '';
   let body = '';
 
@@ -1258,7 +1327,7 @@ function settingsDialog(page){
       <span class="set-tx"><b>${esc(name)}</b><small>${kid ? 'Kinder-Modus' : 'Erwachsenen-Modus'}</small></span>
       ${badge}<span class="set-chev" aria-hidden="true">›</span></button></div>`;
     const nNew = logNew(), newTag = nNew ? `<span class="set-new">${nNew} neu</span>` : '';
-    const fixedList = S.finance.recurring.filter(r => r.type !== 'sparen');
+    const fixedList = S.finance.recurring.filter(r => r.type !== 'sparen' && r.type !== 'umbuchung');
     const fixedSub = fixedList.length ? esc(fixedList.slice(0, 2).map(r => r.text + ' ' + euro(r.amount)).join(', ') + (fixedList.length > 2 ? ' …' : '')) : 'Noch keine';
     body += setGroup('', setRow({page:'sections', ic:'grid', c:'var(--s1)', t:'Bereiche', s:'Was unten in der Leiste steht', v: vis.length + ' von ' + SECTIONS.length}));
     if (kid){
@@ -1277,7 +1346,8 @@ function settingsDialog(page){
       body += setGroup('Finanzen',
         setToggle({id:'set-combined', ic:'swap', c:'var(--bank)', t:'Bank & Bargeld zusammenlegen', s:'Nur ein Kontostand', on: !!S.settings.combined}) +
         setRow({act:'start', ic:'euro', c:'var(--accent)', t: isCombined() ? 'Anfangsbestand' : 'Anfangsbestände', s:'Stand, mit dem du angefangen hast', v: euro(S.finance.start.bank + S.finance.start.cash)}) +
-        setRow({page:'fixed', ic:'repeat', c:'var(--s3)', t:'Regelmäßige Buchungen', s: fixedSub, v: fixedList.length ? String(fixedList.length) : ''}) +
+        (ADULT_ONLY ? setRow({page:'konten', ic:'wallet', c:'var(--pos)', t:'Konten & Abgleich', s: tgList().length + (tgList().length === 1 ? ' Tagesgeld-Konto' : ' Tagesgeld-Konten') + ' · ' + ({month:'Abgleich am Monatsende', day:'Abgleich am ' + (S.settings.recon||{}).day + '.', off:'kein fester Abgleich-Tag'})[(S.settings.recon||{mode:'month'}).mode]}) : '') +
+        (ADULT_ONLY ? setRow({act:'goto-fix', ic:'repeat', c:'var(--s3)', t:'Fixkosten', s: fixedSub, v: fixedList.length ? String(fixedList.length) : ''}) : setRow({page:'fixed', ic:'repeat', c:'var(--s3)', t:'Regelmäßige Buchungen', s: fixedSub, v: fixedList.length ? String(fixedList.length) : ''})) +
         setRow({page:'kids', ic:'users', c:'var(--s6)', t:'Finanzen der Kinder', s: S.kids.items.length ? S.kids.items.length + (S.kids.items.length === 1 ? ' Kind · ' : ' Kinder · ') + esc(S.kids.items.map(k => k.name).join(', ')) : 'Sicherung eines Kindes einlesen'}));
       body += setGroup('Daten', setRow({act:'backup', ic:'download', c:'var(--warn)', t:'Sichern & Wiederherstellen', s:'Letzte Sicherung: ' + ago(last)}) +
         setRow({page:'belege', ic:'receipt', c:'var(--s5)', t:'Belege & Garantie', s: belegCountTxt()}));
@@ -1293,9 +1363,9 @@ function settingsDialog(page){
       <input class="set-input" name="appName" value="${esc(S.settings.appName || '')}" maxlength="40" placeholder="${esc(DEFAULT_NAME)}" id="set-name" aria-label="Name der App">
       <button type="submit" class="btn primary" style="justify-content:center">Name übernehmen</button>
     </div><p class="set-note">Erscheint als Überschrift und im Browser-Tab. Leer lassen für „${esc(DEFAULT_NAME)}“.</p></div>
-    <div class="set-grp"><div class="set-gl">Für wen ist die App?</div><div class="set-card set-pad">
+    ${KID_ONLY || ADULT_ONLY ? '' : `<div class="set-grp"><div class="set-gl">Für wen ist die App?</div><div class="set-card set-pad">
       <div class="seg"><label><input type="radio" name="mode" value="adult" ${kid ? '' : 'checked'}><span>Erwachsene</span></label><label><input type="radio" name="mode" value="kid" ${kid ? 'checked' : ''}><span>Kinder (ab 10)</span></label></div>
-    </div><p class="set-note">Im Kindermodus sind Finanzen und Sparen einfacher: ein Betrag „Mein Geld“, große Knöpfe und einfache Wörter. In den Einstellungen gibt es dann Eltern-Ansicht, Taschengeld und das Senden an die Eltern. Alle Daten bleiben beim Umschalten erhalten.</p></div>`;
+    </div><p class="set-note">Im Kindermodus sind Finanzen und Sparen einfacher: ein Betrag „Mein Geld“, große Knöpfe und einfache Wörter. In den Einstellungen gibt es dann Eltern-Ansicht, Taschengeld und das Senden an die Eltern. Alle Daten bleiben beim Umschalten erhalten.</p></div>`}`;
   }
 
   if (page === 'sections'){
@@ -1350,6 +1420,21 @@ function settingsDialog(page){
       : '<button type="button" class="btn primary" data-do="pin-setup">PIN festlegen</button>'}</div>`;
   }
 
+  if (page === 'konten'){
+    const R = S.settings.recon || {mode:'month', day:1}, ch = S.finance.checks || [], lc = ch[ch.length-1];
+    body += `<div class="set-grp"><div class="set-gl">Kontoabgleich</div><div class="set-card set-pad">
+      <p class="hint" style="margin:0">An einem festen Tag trägst du die echten Kontostände ein. Die App bucht die Differenz als „Nicht erfasst“, zieht Bilanz zum letzten Abgleich und rechnet ab dann mit den echten Ständen weiter.</p>
+      <div class="seg" role="radiogroup" aria-label="Abgleich-Tag"><label><input type="radio" name="recon" value="month" ${R.mode === 'month' ? 'checked' : ''}><span>Monatsende</span></label><label><input type="radio" name="recon" value="day" ${R.mode === 'day' ? 'checked' : ''}><span>Fester Tag</span></label><label><input type="radio" name="recon" value="off" ${R.mode === 'off' ? 'checked' : ''}><span>Ohne</span></label></div>
+      ${R.mode === 'day' ? `<div class="ivl"><span>Am</span><input name="reconDay" inputmode="numeric" value="${R.day}" id="set-recon-day" aria-label="Tag des Monats"><span>. jedes Monats</span></div>` : ''}
+      </div><div class="set-card">${setRow({act:'recon', ic:'repeat', c:'var(--accent)', t:'Jetzt Kontostände abgleichen', s: lc ? 'Zuletzt am ' + fmtShort(lc.date) + ' ' + lc.date.slice(0,4) : 'Noch nie'})}${ch.length ? setRow({act:'bilanz', ic:'list', c:'var(--s3)', t:'Bilanzen ansehen', s: ch.length + (ch.length === 1 ? ' Abgleich' : ' Abgleiche')}) : ''}</div></div>`;
+    body += `<div class="set-grp"><div class="set-gl">Namen der Konten</div><div class="set-card set-pad">
+      <label class="field"><span>Girokonto</span><input class="set-input" name="accnBank" value="${esc((S.finance.accNames||{}).bank || '')}" placeholder="Girokonto" maxlength="40" id="set-accn-bank"></label>
+      ${isCombined() ? '' : `<label class="field"><span>Bargeld</span><input class="set-input" name="accnCash" value="${esc((S.finance.accNames||{}).cash || '')}" placeholder="Bargeld" maxlength="40" id="set-accn-cash"></label>`}</div></div>`;
+    body += `<div class="set-grp"><div class="set-gl">Tagesgeld-Konten & Töpfe</div><div class="set-card">
+      ${tgList().map(a => `<button type="button" class="set-it" data-do="acc-edit" data-id="${esc(a.id)}">${setIcon('wallet', a.color)}<span class="set-tx"><b>${esc(a.name)}</b><small>${esc(a.bank || 'eigenes Konto')}${a.goal ? ' · Ziel ' + euro(a.goal) : ''}</small></span><span class="set-val">${euro(accBalance(a.id))}</span><span class="set-chev" aria-hidden="true">›</span></button>`).join('')}
+      ${setRow({act:'acc-new', ic:'wallet', c:'var(--pos)', t:'+ Tagesgeld-Konto anlegen', s:'z. B. Fixkosten, Weihnachten, Urlaub'})}</div></div>`;
+  }
+
   if (page === 'version'){
     body += `<div class="set-grp"><div class="set-card set-pad">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><b>Version ${APP_VERSION}</b><span style="color:var(--muted);font-size:.85rem">${esc(CHANGELOG[0][1])}</span></div>
@@ -1386,8 +1471,13 @@ function settingsDialog(page){
     else if (a === 'log') logDialog();
     else if (a === 'backup') backupDialog();
     else if (a === 'start') startDialog();
+    else if (a === 'goto-fix'){ closeDlg(); ui.tab = 'fixkosten'; lsSet('tab','fixkosten'); if (!isVisible('fixkosten')){ S.settings.hidden = (S.settings.hidden||[]).filter(k => k !== 'fixkosten'); save('settings'); } render(); window.scrollTo(0,0); }
     else if (a === 'kid-reset') kidResetStart();
-    else if (a === 'bel-open'){ const t = S.finance.tx.find(x => x.id === b.dataset.id); if (t) belegViewer(t.beleg, t); }
+    else if (a === 'recon') reconDialog();
+    else if (a === 'bilanz') bilanzDialog();
+    else if (a === 'acc-new') accDialog();
+    else if (a === 'acc-edit'){ const ac = tgList().find(x => x.id === b.dataset.id); if (ac) accDialog(ac); }
+    else if (a === 'bel-open'){ const t = S.finance.tx.find(x => x.id === b.dataset.id); if (t) belegViewer(t.beleg, t); else { const r = (S.finance.recurring || []).find(x => x.id === b.dataset.id); if (r) belegViewer(r.beleg, {text: r.text, date: r.start, amount: amountAt(r, today())}); } }
     else if (a === 'kid-add') kidAddDialog();
     else if (a === 'kid-view'){ ui.finView = b.dataset.id; lsSet('finView', ui.finView); ui.tab = 'finanzen'; lsSet('tab','finanzen'); closeDlg(); window.scrollTo(0,0); }
     else if (a === 'kid-remove'){ if (!armed(b, 'Wirklich?')) return; const k = S.kids.items.find(x => x.id === b.dataset.id); S.kids.items = S.kids.items.filter(x => x.id !== b.dataset.id); save('kids'); if (k) addLog('Finanzen von ' + k.name + ' entfernt'); if (ui.finView === b.dataset.id){ ui.finView = 'me'; lsSet('finView','me'); } render(); settingsDialog('kids'); toast('Entfernt'); }
@@ -1406,6 +1496,9 @@ function settingsDialog(page){
     const t = e.target;
     if (t.dataset && t.dataset.kidUpdate && t.files && t.files[0]){ readKidBackup(t.files[0], t.dataset.kidUpdate); return; }
     if (t.id === 'set-combined') changeSetting(() => { S.settings.combined = t.checked; }, 'main');
+    else if (t.name === 'recon') changeSetting(() => { S.settings.recon = {mode: t.value, day: (S.settings.recon||{}).day || 1}; }, 'konten');
+    else if (t.name === 'reconDay'){ const v = Math.max(1, Math.min(28, parseInt(t.value, 10) || 1)); setTimeout(() => changeSetting(() => { S.settings.recon = {mode:'day', day: v}; }, 'konten'), 0); }
+    else if (t.name === 'accnBank' || t.name === 'accnCash'){ S.finance.accNames = S.finance.accNames || {}; S.finance.accNames[t.name === 'accnBank' ? 'bank' : 'cash'] = t.value.trim().slice(0,40); save('finance'); setTimeout(render, 0); toast('Name gespeichert'); }
     else if (t.name === 'mode') changeSetting(() => { S.settings.kid = t.value === 'kid'; ui.parentView = false; }, 'profile');
     else if (t.name === 'sec'){
       const shown = [...form.querySelectorAll('input[name=sec]:checked')].map(i => i.value);
@@ -1430,7 +1523,8 @@ function render(){
   if (ui.tab==='finanzen') m.innerHTML = renderFinance();
   else if (ui.tab==='stundenplan') m.innerHTML = renderSchedule();
   else if (ui.tab==='hausaufgaben') m.innerHTML = renderHomework();
-  else if (ui.tab==='sparen') m.innerHTML = renderSavings();
+  else if (ui.tab==='sparen') m.innerHTML = ADULT_ONLY ? renderTagesgeld() : renderSavings();
+  else if (ui.tab==='fixkosten') m.innerHTML = renderFixkosten();
   else m.innerHTML = renderTasks();
 }
 
@@ -1447,28 +1541,35 @@ const TYPES = {
   verliehen: {label:'Verliehen', sym:'↗', cls:'loan'},
   geliehen:  {label:'Geliehen',  sym:'↙', cls:'loan'},
   zurueckbekommen:{label:'Zurückbekommen', sym:'↙', cls:'loan'},
-  zurueckgezahlt: {label:'Zurückgezahlt',  sym:'↗', cls:'loan'}
+  zurueckgezahlt: {label:'Zurückgezahlt',  sym:'↗', cls:'loan'},
+  umbuchung: {label:'Umbuchung', sym:'⇄', cls:'sparen'}
 };
 const ACCT = {bank:'Bankkonto', cash:'Bargeld', save:'Sparen'};
-const DEFAULT_CATS = ['Lebensmittel','Haushalt','Wohnen','Auto & Tanken','Kinder','Freizeit','Gesundheit','Versicherungen','Kleidung','Geschenke','Gehalt','Kindergeld','Sonstiges'];
+const DEFAULT_CATS = ['Lebensmittel','Haushalt','Wohnen','Auto & Tanken','Kinder','Freizeit','Gesundheit','Versicherungen','Kommunikation','Abos','Kleidung','Geschenke','Gehalt','Kindergeld','Sonstiges'];
 
-function effect(t){
-  if (t.pending) return {bank:0,cash:0,save:0};
-  const a = t.amount||0, c = t.account==='cash';
+function effMap(t){
+  if (t.pending) return {};
+  const a = t.amount||0, acc = t.account || 'bank', m = {};
+  const add = (k, v) => { if (k) m[k] = (m[k] || 0) + v; };
   switch(t.type){
-    case 'einnahme': return c ? {bank:0,cash:a,save:0} : {bank:a,cash:0,save:0};
-    case 'ausgabe':  return c ? {bank:0,cash:-a,save:0} : {bank:-a,cash:0,save:0};
-    case 'einzahlung': return {bank:a,cash:-a,save:0};
-    case 'auszahlung': return {bank:-a,cash:a,save:0};
-    case 'sparen':    return c ? {bank:0,cash:-a,save:a} : {bank:-a,cash:0,save:a};
-    case 'entsparen': return c ? {bank:0,cash:a,save:-a} : {bank:a,cash:0,save:-a};
-    case 'geliehen': case 'zurueckbekommen': return c ? {bank:0,cash:a,save:0} : {bank:a,cash:0,save:0};
-    case 'verliehen': case 'zurueckgezahlt': return c ? {bank:0,cash:-a,save:0} : {bank:-a,cash:0,save:0};
+    case 'einnahme': case 'geliehen': case 'zurueckbekommen': add(acc, a); break;
+    case 'ausgabe': case 'verliehen': case 'zurueckgezahlt': add(acc, -a); break;
+    case 'einzahlung': add('bank', a); add('cash', -a); break;
+    case 'auszahlung': add('bank', -a); add('cash', a); break;
+    case 'sparen': add(acc, -a); add(t.to || 'save', a); break;
+    case 'entsparen': add(acc, a); add(t.from || 'save', -a); break;
+    case 'umbuchung': add(t.from || 'bank', -a); add(t.to || 'save', a); break;
   }
-  return {bank:0,cash:0,save:0};
+  return m;
 }
+function effect(t){
+  const m = effMap(t); let sv = 0;
+  for (const k in m) if (k !== 'bank' && k !== 'cash') sv += m[k];
+  return {bank:m.bank||0, cash:m.cash||0, save:sv};
+}
+const startSave = F => Object.keys(F.start || {}).reduce((s, k) => k === 'bank' || k === 'cash' ? s : s + (+F.start[k] || 0), 0);
 function savingsBalance(excludeId){
-  return S.finance.tx.reduce((sum, t) => t.id===excludeId ? sum : sum + effect(t).save, S.finance.start.save || 0);
+  return S.finance.tx.reduce((sum, t) => t.id===excludeId ? sum : sum + effect(t).save, startSave(S.finance));
 }
 const sortTx = list => list.slice().sort((x,y) => x.date===y.date ? (x.created||0)-(y.created||0) : (x.date<y.date?-1:1));
 function touches(t, acct){ if (acct==='all') return true; const e = effect(t); return e[acct] !== 0; }
@@ -1482,7 +1583,7 @@ function renderFinance(){
   const sv = savingsOn();
   if (ui.acct==='save' || one) ui.acct = 'all';
   const all = sortTx(F.tx);
-  const bal = {bank:F.start.bank, cash:F.start.cash, save:F.start.save||0};
+  const bal = {bank:F.start.bank, cash:F.start.cash, save:startSave(F)};
   const running = {};
   all.forEach(t => { const e = effect(t); bal.bank += e.bank; bal.cash += e.cash; bal.save += e.save; running[t.id] = {bank:bal.bank, cash:bal.cash, save:bal.save}; });
   const total = bal.bank + bal.cash + (sv ? bal.save : 0);
@@ -1510,16 +1611,17 @@ function renderFinance(){
       <span class="sub">${sub}</span>
     </button>`;
 
-  let html = kv + pendingBanner() + `
+  let html = kv + pendingBanner() + (ADULT_ONLY ? fixDueBanner() : '') + `
   ${one ? `<section class="accounts one ${sv?'has-save':''}" aria-label="Kontostand">
     ${sv ? `<div class="acct total-sub"><span class="label"><i></i>Kontostand</span><span class="bal ${cashTotal<0?'neg':''}">${euro(cashTotal)}</span><span class="sub">Bank und Bargeld</span></div>`
-         + `<div class="acct total-sub"><span class="label"><i></i>Gesamt</span><span class="bal ${total<0?'neg':''}">${euro(total)}</span><span class="sub">inkl. ${euro(bal.save)} Sparen</span></div>`
+         + `<div class="acct total-sub"><span class="label"><i></i>Gesamt</span><span class="bal ${total<0?'neg':''}">${euro(total)}</span><span class="sub">inkl. ${euro(bal.save)} ${ADULT_ONLY ? 'Tagesgeld' : 'Sparen'}</span></div>`
          : `<div class="acct total"><span class="label"><i></i>Kontostand</span><span class="bal ${total<0?'neg':''}">${euro(total)}</span><span class="sub">Bank und Bargeld zusammen</span></div>`}
   </section>` : `<section class="accounts" aria-label="Kontostände">
-    ${acctCard('bank','bank','Bankkonto',bal.bank, ui.acct==='bank'?'Filter aktiv':'Antippen zum Filtern')}
-    ${acctCard('cash','cash','Bargeld',bal.cash, ui.acct==='cash'?'Filter aktiv':'Antippen zum Filtern')}
-    ${acctCard('all','total','Gesamt',total, sv ? (ui.acct==='all'?'inkl. '+euro(bal.save)+' Sparen':'Alle anzeigen') : (ui.acct==='all'?'Alle Konten':'Alle anzeigen'))}
+    ${acctCard('bank','bank',ADULT_ONLY ? esc(accName('bank')) : 'Bankkonto',bal.bank, ui.acct==='bank'?'Filter aktiv':'Antippen zum Filtern')}
+    ${acctCard('cash','cash',ADULT_ONLY ? esc(accName('cash')) : 'Bargeld',bal.cash, ui.acct==='cash'?'Filter aktiv':'Antippen zum Filtern')}
+    ${acctCard('all','total','Gesamt',total, sv ? (ui.acct==='all'?'inkl. '+euro(bal.save)+(ADULT_ONLY?' Tagesgeld':' Sparen'):'Alle anzeigen') : (ui.acct==='all'?'Alle Konten':'Alle anzeigen'))}
   </section>`}
+  ${ADULT_ONLY ? tgStrip() : ''}
   ${lendPanel()}
   <div class="sec-head">
     <div class="monthbar">
@@ -1539,9 +1641,9 @@ function renderFinance(){
         <div><span class="label">Ausgaben</span><span class="v amt neg">${euro(exp)}</span></div>
         <div><span class="label">Bilanz</span><span class="v ${inc-exp<0?'amt neg':''}">${euro(inc-exp)}</span></div>
         ${one ? `<div><span class="label">Buchungen</span><span class="v">${monthTx.length}</span></div>` : `<div><span class="label">Ein- / Auszahlung</span><span class="v" style="font-size:.9rem">${euro(tin)} / ${euro(tout)}</span></div>`}
-        ${sv ? `<div><span class="label">Aufs Sparen</span><span class="v save-v">${euro(sIn)}</span></div><div><span class="label">Vom Sparen</span><span class="v">${euro(sOut)}</span></div>` : ''}
+        ${sv && !ADULT_ONLY ? `<div><span class="label">Aufs Sparen</span><span class="v save-v">${euro(sIn)}</span></div><div><span class="label">Vom Sparen</span><span class="v">${euro(sOut)}</span></div>` : ''}
       </div>
-      ${renderRecurringPanel()}
+      ${ADULT_ONLY ? '' : renderRecurringPanel()}
       <div class="panel cats">
         <span class="label">Ausgaben nach Kategorie</span>
         ${catList.length ? catList.map(([c,v]) => `<div class="cat-row"><span>${esc(c)}</span><span class="num">${euro(v)}</span><div class="bar"><i style="width:${Math.max(3,v/catMax*100)}%"></i></div></div>`).join('') : '<span style="color:var(--muted);font-size:.88rem">Keine Ausgaben in diesem Monat.</span>'}
@@ -1574,18 +1676,20 @@ function renderLedger(list, running){
       else if (t.type==='sparen'){ amtCls='neu'; amtTxt='−'+euro(t.amount); }
       else if (t.type==='entsparen'){ amtCls='neu'; amtTxt='+'+euro(t.amount); }
       else if (isLoan(t)){ amtCls='neu'; amtTxt=(loanPlus(t)?'+':'−')+euro(t.amount); }
+      else if (t.type==='umbuchung'){ const fo = t.from==='bank'||t.from==='cash', tb = t.to==='bank'||t.to==='cash'; amtCls='neu'; amtTxt=(fo&&!tb?'−':!fo&&tb?'+':'')+euro(t.amount); }
       else { amtCls='neu'; amtTxt=euro(t.amount); }
     } else {
       const v = effect(t)[ui.acct];
       amtCls = v>=0?'pos':'neg'; amtTxt = (v>=0?'+':'−')+euro(Math.abs(v));
     }
-    const accName = t.account==='cash' ? 'Bargeld' : 'Bank', accCls = t.account==='cash' ? 'cash' : 'bank';
+    const accNm = t.account==='cash' ? 'Bargeld' : 'Bank', accCls = t.account==='cash' ? 'cash' : 'bank';
     const saveTag = '<span class="tag save"><i></i>Sparen</span>';
-    const acctTag = isSave(t) ? (one ? saveTag : t.type==='sparen' ? `<span class="tag ${accCls}"><i></i>${accName}</span>→${saveTag}` : `${saveTag}→<span class="tag ${accCls}"><i></i>${accName}</span>`)
+    const ubTag = id => `<span class="tag ${id==='cash'?'cash':id==='bank'?'bank':'save'}"><i></i>${esc(accName(id))}</span>`;
+    const acctTag = t.type==='umbuchung' ? ubTag(t.from)+'→'+ubTag(t.to) : (ADULT_ONLY && t.account && t.account!=='bank' && t.account!=='cash' && !isSave(t)) ? ubTag(t.account) : isSave(t) ? (one ? saveTag : t.type==='sparen' ? `<span class="tag ${accCls}"><i></i>${accNm}</span>→${saveTag}` : `${saveTag}→<span class="tag ${accCls}"><i></i>${accNm}</span>`)
       : one ? '' : (T.cls==='transfer')
       ? `<span class="tag ${t.type==='einzahlung'?'cash':'bank'}"><i></i>${t.type==='einzahlung'?'Bargeld':'Bank'}</span>→<span class="tag ${t.type==='einzahlung'?'bank':'cash'}"><i></i>${t.type==='einzahlung'?'Bank':'Bargeld'}</span>`
       : `<span class="tag ${t.account}"><i></i>${t.account==='cash'?'Bargeld':'Bank'}</span>`;
-    const title = isLoan(t) ? loanTitle(t) : t.text || (t.type==='sparen' ? 'Aufs Sparen gelegt' : t.type==='entsparen' ? 'Vom Sparen genommen' : T.cls==='transfer' ? (t.type==='einzahlung'?'Bargeld eingezahlt':'Geld abgehoben') : T.label);
+    const title = isLoan(t) ? loanTitle(t) : t.text || (t.type==='umbuchung' ? accName(t.from)+' → '+accName(t.to) : '') || (t.type==='sparen' ? 'Aufs Sparen gelegt' : t.type==='entsparen' ? 'Vom Sparen genommen' : T.cls==='transfer' ? (t.type==='einzahlung'?'Bargeld eingezahlt':'Geld abgehoben') : T.label);
     const run = !running[t.id] ? '' : ui.acct!=='all' ? `<span class="run">${euro(running[t.id][ui.acct])}</span>` : one ? `<span class="run">${euro(running[t.id].bank + running[t.id].cash)}</span>` : '';
     html += `<button class="tx${t.pending?' is-pending':''}" data-act="edittx" data-id="${esc(t.id)}">
       <span class="ico ${T.cls}" aria-hidden="true">${T.sym}</span>
@@ -1606,7 +1710,7 @@ function txDialog(t, preset){
   const cats = [...new Set([...S.finance.tx.map(x=>x.cat).filter(Boolean), ...DEFAULT_CATS])];
   const one = isCombined();
   if (one && isTransfer(t)) t.type = 'ausgabe';
-  const typeRadios = Object.entries(TYPES).filter(([k]) => !isSave({type:k}) && !LOAN_TYPES.includes(k) && (!one || !isTransfer({type:k}))).map(([k,v]) => `<label><input type="radio" name="type" value="${k}" ${t.type===k?'checked':''}><span>${v.label}</span></label>`).join('');
+  const typeRadios = Object.entries(TYPES).filter(([k]) => !isSave({type:k}) && k !== 'umbuchung' && !LOAN_TYPES.includes(k) && (!one || !isTransfer({type:k}))).map(([k,v]) => `<label><input type="radio" name="type" value="${k}" ${t.type===k?'checked':''}><span>${v.label}</span></label>`).join('');
   const form = openDlg(`
     <h3>${isNew?'Neue Buchung':'Buchung bearbeiten'}</h3>
     ${isNew ? (t.scan ? scanHint(t.scan) : scanButton('tx-scan', 'Kassenbon scannen')) : ''}
@@ -1702,15 +1806,16 @@ function saveDialog(t, preset){
 }
 // Erster Start: Für wen ist die App? Danach den Startbetrag abfragen
 function firstSetupDialog(){
+  if (ADULT_ONLY){ S.settings.kid = false; save('settings'); render(); return startDialog(true); }
   const form = openDlg(`
     <h3>Los geht's</h3>
-    <div class="field"><span>Für wen ist die App auf diesem Gerät?</span>
-      <div class="seg"><label><input type="radio" name="mode" value="adult" ${isKid() ? '' : 'checked'}><span>Erwachsene</span></label><label><input type="radio" name="mode" value="kid" ${isKid() ? 'checked' : ''}><span>Kind (ab 10)</span></label></div></div>
-    <div class="field" id="fs-acc" ${isKid() ? '' : 'hidden'}><span>Wo hat das Kind sein Geld?</span>
+    <div class="field" ${KID_ONLY ? 'hidden' : ''}><span>Für wen ist die App auf diesem Gerät?</span>
+      <div class="seg"><label><input type="radio" name="mode" value="adult" ${isKid() || KID_ONLY ? '' : 'checked'}><span>Erwachsene</span></label><label><input type="radio" name="mode" value="kid" ${isKid() || KID_ONLY ? 'checked' : ''}><span>Kind (ab 10)</span></label></div></div>
+    <div class="field" id="fs-acc" ${isKid() || KID_ONLY ? '' : 'hidden'}><span>${KID_ONLY ? 'Wo hast du dein Geld?' : 'Wo hat das Kind sein Geld?'}</span>
       <div class="seg"><label><input type="radio" name="kacc" value="cash" ${kidAcc()==='cash'?'checked':''}><span>Bargeld</span></label><label><input type="radio" name="kacc" value="bank" ${kidAcc()==='bank'?'checked':''}><span>Bankkonto</span></label><label><input type="radio" name="kacc" value="both" ${kidAcc()==='both'?'checked':''}><span>Beides</span></label></div></div>
     <p class="hint" style="margin:0">Das lässt sich später in den Einstellungen ändern.</p>
     <div class="dlg-actions"><span class="spacer"></span><button class="btn primary" type="submit">Weiter</button></div>`, f => {
-      const kid = f.querySelector('input[name=mode]:checked').value === 'kid';
+      const kid = KID_ONLY || f.querySelector('input[name=mode]:checked').value === 'kid';
       S.settings.kid = kid;
       if (kid) S.settings.kidAccounts = f.querySelector('input[name=kacc]:checked').value;
       save('settings'); applyName(); render();
@@ -1760,40 +1865,64 @@ function startDialog(first){
 
 /* ---------- Regelmäßige Buchungen ---------- */
 const WEEKDAYS = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
-const RHYTHM = {monthly:'Monatlich', weekly:'Wöchentlich', yearly:'Jährlich'};
+const RHYTHM = {monthly:'Monatlich', weekly:'Wöchentlich', yearly:'Jährlich', biweekly:'Alle 2 Wochen', quarterly:'Vierteljährlich', halfyearly:'Halbjährlich', custom:'Eigenes Intervall'};
+const RHYTHM_BASE = {monthly:'Monatlich', weekly:'Wöchentlich', yearly:'Jährlich'};
 const parseIso = x => { const [y,m,d] = x.split('-').map(Number); return new Date(y, m-1, d); };
 const dim = (y,m) => new Date(y, m, 0).getDate();
+// Schrittweite eines Rhythmus: Tage oder Monate
+function recStep(r){
+  const n = Math.max(1, Math.min(999, parseInt(r.every, 10) || 1));
+  switch (r.rhythm){
+    case 'weekly': return {d:7}; case 'biweekly': return {d:14};
+    case 'quarterly': return {m:3}; case 'halfyearly': return {m:6}; case 'yearly': return {m:12};
+    case 'custom': return r.unit === 'd' ? {d:n} : r.unit === 'w' ? {d:7*n} : r.unit === 'y' ? {m:12*n} : {m:n};
+    default: return {m:1};
+  }
+}
 function occAfter(r, after){
   if (!r.start) return null;
   const st = parseIso(r.start), sy = st.getFullYear(), sm = st.getMonth()+1, sd = st.getDate();
   const ok = dt => dt >= r.start && (!after || dt > after);
+  const step = recStep(r);
   let res = null;
-  if (r.rhythm === 'weekly'){
-    const k = after && after >= r.start ? Math.floor(daysBetween(r.start, after)/7) + 1 : 0;
-    res = iso(new Date(sy, sm-1, sd + 7*k));
-  } else if (r.rhythm === 'yearly'){
-    const fromY = after ? Math.max(sy, parseIso(after).getFullYear()) : sy;
-    for (let y = fromY; y < fromY + 3; y++){ const dt = iso(new Date(y, sm-1, Math.min(sd, dim(y, sm)))); if (ok(dt)){ res = dt; break; } }
+  if (step.d){
+    const k = after && after >= r.start ? Math.floor(daysBetween(r.start, after)/step.d) + 1 : 0;
+    res = iso(new Date(sy, sm-1, sd + step.d*k));
   } else {
+    const day = step.m === 1 ? (r.day || sd) : sd;
     const a = after ? parseIso(after) : st;
-    let i = Math.max(0, (a.getFullYear()-sy)*12 + (a.getMonth()+1-sm));
-    for (let n = 0; n < 3; n++, i++){
-      const b = new Date(sy, sm-1+i, 1), y = b.getFullYear(), m = b.getMonth()+1;
-      const dt = iso(new Date(y, m-1, Math.min(r.day || sd, dim(y, m))));
+    let k = Math.max(0, Math.floor(((a.getFullYear()-sy)*12 + (a.getMonth()+1-sm)) / step.m));
+    for (let n = 0; n < 4; n++, k++){
+      const b = new Date(sy, sm-1+k*step.m, 1), y = b.getFullYear(), m = b.getMonth()+1;
+      const dt = iso(new Date(y, m-1, Math.min(day, dim(y, m))));
       if (ok(dt)){ res = dt; break; }
     }
   }
   if (res && r.end && res > r.end) return null;
   return res;
 }
+const nextDue = occAfter;
+// Betrag zu einem Datum (Betragsänderungen „ab Datum“ berücksichtigen)
+function amountAt(r, date){
+  let a = r.amount;
+  (r.changes || []).forEach(c => { if (!date || c.from <= date) a = c.amount; });
+  return a;
+}
+const rhyLabel = r => r.rhythm === 'custom' ? 'Alle ' + (Math.max(1, +r.every || 1) === 1 ? '' : Math.max(1, +r.every || 1) + ' ') + (FIX_UNITS[r.unit || 'm'] || FIX_UNITS.m)[Math.max(1, +r.every || 1) === 1 ? 0 : 1] : (RHYTHM[r.rhythm] || 'Monatlich');
+function recTx(r, date, amount, k){
+  const t = {id:newId(), created:Date.now()+(k||0), type:r.type, amount, date, text:r.text, cat:r.cat||'', account:r.account||'bank', rec:r.id};
+  if (r.type === 'umbuchung'){ t.from = r.from || 'bank'; t.to = r.to || 'save'; t.account = t.from; t.cat = ''; }
+  if (r.type === 'sparen' && r.to) t.to = r.to;
+  return t;
+}
 function runRecurring(){
   const F = S.finance; if (!F.recurring || !F.recurring.length) return 0;
   const t0 = today(); let made = 0;
   F.recurring.forEach(r => {
-    if (r.paused) return;
+    if (r.paused || r.confirm) return;
     let next = occAfter(r, r.last || null), guard = 0;
     while (next && next <= t0 && guard++ < 400){
-      F.tx.push({id:newId(), created:Date.now()+made, type:r.type, amount:r.amount, date:next, text:r.text, cat:r.cat||'', account:r.account||'bank', rec:r.id});
+      F.tx.push(recTx(r, next, amountAt(r, next), made));
       r.last = next; made++;
       next = occAfter(r, next);
     }
@@ -1801,11 +1930,537 @@ function runRecurring(){
   return made;
 }
 function recSummary(r){
-  const st = r.start ? parseIso(r.start) : new Date();
+  const st = r.start ? parseIso(r.start) : new Date(), dm = st.getDate() + '. ' + MONTHS[st.getMonth()];
   if (r.rhythm === 'weekly') return 'Jeden ' + WEEKDAYS[st.getDay()];
-  if (r.rhythm === 'yearly') return 'Jährlich am ' + st.getDate() + '. ' + MONTHS[st.getMonth()];
+  if (r.rhythm === 'biweekly') return 'Jeden zweiten ' + WEEKDAYS[st.getDay()];
+  if (r.rhythm === 'yearly') return 'Jährlich am ' + dm;
+  if (r.rhythm === 'quarterly') return 'Vierteljährlich, ab ' + dm;
+  if (r.rhythm === 'halfyearly') return 'Halbjährlich, ab ' + dm;
+  if (r.rhythm === 'custom') return rhyLabel(r) + ', ab ' + dm + (st.getFullYear() !== new Date().getFullYear() ? ' ' + st.getFullYear() : '');
   return 'Monatlich am ' + (r.day || st.getDate()) + '.';
 }
+/* =========================================================
+   KONTEN, TAGESGELD, UMBUCHUNGEN, KONTOABGLEICH (nur App „Finanzen“)
+   ========================================================= */
+const ACC_COLORS = ['#7c3aed','#059669','#0f766e','#db2777','#ea580c','#2563eb','#65a30d','#9333ea'];
+// Alle Konten: Girokonto, Bargeld und die Tagesgeld-Konten/Töpfe
+function accList(){
+  const F = S.finance, n = F.accNames || {};
+  return [{id:'bank', name: n.bank || 'Girokonto', kind:'giro', color:'var(--bank)'}, {id:'cash', name: n.cash || 'Bargeld', kind:'bar', color:'var(--cash)'},
+    ...(F.accounts || []).map((a, i) => ({kind:'tagesgeld', color: ACC_COLORS[i % ACC_COLORS.length], ...a})),
+    ...(!(F.accounts || []).some(a => a.id === 'save') && (F.start.save || F.tx.some(t => (t.type === 'sparen' && !t.to) || (t.type === 'entsparen' && !t.from))) ? [{id:'save', name:'Sparen', bank:'', goal:0, kind:'tagesgeld', color: ACC_COLORS[(F.accounts || []).length % ACC_COLORS.length]}] : [])];
+}
+const tgList = () => accList().filter(a => a.kind === 'tagesgeld');
+const accName = id => (accList().find(a => a.id === id) || {name: id === 'save' ? 'Sparen' : 'Konto'}).name;
+function accBalance(id, upto){
+  return S.finance.tx.reduce((s, t) => (upto && t.date > upto) ? s : s + (effMap(t)[id] || 0), +(S.finance.start[id] || 0));
+}
+const tgTotal = upto => tgList().reduce((s, a) => s + accBalance(a.id, upto), 0);
+// Auswahl „auf“ mit „+ Neues Tagesgeld-Konto“
+const accOpts = (sel, withNew) => accList().map(a => `<option value="${esc(a.id)}" ${a.id === sel ? 'selected' : ''}>${esc(a.name)}</option>`).join('') + (withNew ? `<option value="__new" ${sel === '__new' || !sel ? 'selected' : ''}>+ Neues Tagesgeld-Konto …</option>` : '');
+const newAccField = id => `<label class="field" id="${id}-newf" hidden><span>Name des neuen Tagesgeld-Kontos</span><input name="newacc" placeholder="z. B. Fixkosten" id="${id}-new"></label>`;
+function newAccFrom(f, field){
+  if (f[field].value !== '__new') return f[field].value;
+  const name = f.newacc.value.trim(); if (!name) return null;
+  const F = S.finance; F.accounts = F.accounts || []; const id = 'a' + newId(); F.accounts.push({id, name, bank:'', goal:0}); F.start[id] = 0;
+  if (!S.settings.savings){ S.settings.savings = true; save('settings'); }
+  return id;
+}
+// Umbuchung (manuell)
+function moveDialog2(t, preset){
+  const isNew = !t, accs = accList();
+  t = t ? clone(t) : Object.assign({type:'umbuchung', from:'bank', to:(tgList()[0] || {}).id || '__new', amount:0, date: today(), text:''}, preset || {});
+  const form = openDlg(`
+    <h3>${isNew ? 'Umbuchung' : 'Umbuchung bearbeiten'}</h3>
+    <div class="flow2"><label class="field"><span>von</span><select name="from" id="mv2-from">${accOpts(t.from)}</select></label><span aria-hidden="true">→</span><label class="field"><span>auf</span><select name="to" id="mv2-to">${accOpts(t.to, true)}</select></label></div>${newAccField('mv2')}
+    <div class="row2"><label class="field"><span>Betrag (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(t.amount)}" autofocus id="mv2-amount"></label>
+      <label class="field"><span>Datum</span><input type="date" name="date" value="${esc(t.date)}" id="mv2-date"></label></div>
+    <label class="field"><span>Notiz (freiwillig)</span><input name="text" value="${esc(t.text || '')}" placeholder="z. B. Weihnachtsgeld zurücklegen" id="mv2-text"></label>
+    <p class="hint" id="mv2-hint" style="margin:0"></p>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : '<button type="button" class="btn danger" id="mv2-del">Löschen</button>'}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const amount = parseAmt(f.amount.value), err = f.querySelector('#f-err');
+      if (f.from.value === f.to.value){ err.textContent = 'Bitte zwei verschiedene Konten wählen.'; return false; }
+      if (!(amount > 0)){ err.textContent = 'Bitte einen Betrag eingeben.'; f.amount.focus(); return false; }
+      if (f.to.value === '__new' && !f.newacc.value.trim()){ err.textContent = 'Bitte einen Namen für das neue Tagesgeld-Konto eingeben.'; f.newacc.focus(); return false; }
+      const toId = newAccFrom(f, 'to');
+      const rec = {id: t.id || newId(), created: t.created || Date.now(), type:'umbuchung', from: f.from.value, to: toId, account: f.from.value, amount, date: f.date.value || today(), text: f.text.value.trim()};
+      const i = S.finance.tx.findIndex(x => x.id === rec.id); if (i >= 0) S.finance.tx[i] = rec; else S.finance.tx.push(rec);
+      ui.month = rec.date.slice(0,7); save('finance'); toast(euro(amount) + ' umgebucht');
+    });
+  const upd = () => { const a = parseAmt(form.amount.value) || 0, fr = form.from.value, to = form.to.value; form.querySelector('#mv2-newf').hidden = to !== '__new'; if (to === '__new'){ form.querySelector('#mv2-hint').textContent = ''; return; } form.querySelector('#mv2-hint').textContent = `${accName(fr)}: ${euro(accBalance(fr) + (isNew ? 0 : t.amount) - a)} · ${accName(to)}: ${euro(accBalance(to) - (isNew ? 0 : t.amount) + a)} danach`; };
+  form.addEventListener('input', upd); form.addEventListener('change', upd); upd();
+  const del = form.querySelector('#mv2-del');
+  if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich löschen?')) return; S.finance.tx = S.finance.tx.filter(x => x.id !== t.id); save('finance'); closeDlg(); toast('Gelöscht'); });
+}
+// Regelmäßige Umbuchung (mit optionaler Rückbuchung)
+function uebRecDialog(r0, preset){
+  const isNew = !r0, accs = accList();
+  const lastDay = (() => { const d = new Date(); return iso(new Date(d.getFullYear(), d.getMonth()+1, 0)); })();
+  const r = r0 ? clone(r0) : Object.assign({type:'umbuchung', from:'bank', to:(tgList()[0] || {}).id || '__new', amount:0, text:'', rhythm:'monthly', start:lastDay, day:31, end:'', paused:false, confirm:false}, preset || {});
+  const isLast = (r.day || 0) >= 31;
+  const pair = r0 && r0.pair ? S.finance.recurring.find(x => x.id === r0.pair) : null;
+  const form = openDlg(`
+    <h3>${isNew ? 'Regelmäßige Umbuchung' : esc(r.text || 'Umbuchung')}</h3>
+    <label class="field"><span>Bezeichnung</span><input name="text" value="${esc(r.text)}" placeholder="z. B. Fixkosten-Rücklage" id="ub-text"></label>
+    <div class="flow2"><label class="field"><span>von</span><select name="from" id="ub-from">${accOpts(r.from)}</select></label><span aria-hidden="true">→</span><label class="field"><span>auf</span><select name="to" id="ub-to">${accOpts(r.to, true)}</select></label></div>${newAccField('ub')}
+    <label class="field"><span>Betrag (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(r.amount)}" id="ub-amount"></label>
+    <div class="field"><span>Wann? (jeden Monat)</span><div class="seg"><label><input type="radio" name="when" value="last" ${isLast ? 'checked' : ''}><span>Letzter Tag</span></label><label><input type="radio" name="when" value="day" ${isLast ? '' : 'checked'}><span>Am Tag …</span></label></div></div>
+    <div class="ivl" id="ub-dayf" ${isLast ? 'hidden' : ''}><span>Am</span><input name="day" inputmode="numeric" value="${isLast ? 1 : (r.day || 1)}" id="ub-day"><span>. des Monats</span></div>
+    ${isNew ? `<div class="box2"><label class="bel-keep"><input type="checkbox" id="ub-back" ${preset && preset.back ? 'checked' : ''}><span>Später zurückbuchen</span></label>
+      <div id="ub-backf" ${preset && preset.back ? '' : 'hidden'} style="display:grid;gap:8px">
+        <p class="hint" style="margin:0" id="ub-backhint"></p>
+        <div class="row2"><label class="field"><span>am … des Monats</span><input name="bday" inputmode="numeric" value="${preset && preset.bday || 20}" id="ub-bday"></label><label class="field"><span>Betrag (€)</span><input class="amount-in" name="bamount" inputmode="decimal" placeholder="gleicher Betrag" id="ub-bamount"></label></div>
+      </div></div>` : (pair ? `<p class="hint" style="margin:0">Gehört zusammen mit „${esc(pair.text)}“ am ${pair.day}. (${euro(amountAt(pair, today()))}).</p>` : '')}
+    <div class="field"><span>Wie buchen?</span><div class="seg"><label><input type="radio" name="confirm" value="0" ${r.confirm ? '' : 'checked'}><span>Automatisch</span></label><label><input type="radio" name="confirm" value="1" ${r.confirm ? 'checked' : ''}><span>Erst bestätigen</span></label></div></div>
+    <p class="hint" id="ub-sum" style="margin:0"></p>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : `<button type="button" class="btn danger" id="ub-del">${pair ? 'Beide löschen' : 'Löschen'}</button><button type="button" class="btn sm" id="ub-pause">${r.paused ? '▶ Fortsetzen' : '⏸ Pausieren'}</button>`}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const err = f.querySelector('#f-err'), amount = parseAmt(f.amount.value);
+      if (f.from.value === f.to.value){ err.textContent = 'Bitte zwei verschiedene Konten wählen.'; return false; }
+      if (!(amount > 0)){ err.textContent = 'Bitte einen Betrag eingeben.'; f.amount.focus(); return false; }
+      if (f.to.value === '__new' && !f.newacc.value.trim()){ err.textContent = 'Bitte einen Namen für das neue Tagesgeld-Konto eingeben.'; f.newacc.focus(); return false; }
+      const toId = newAccFrom(f, 'to');
+      const last = f.querySelector('input[name=when]:checked').value === 'last';
+      const day = last ? 31 : Math.max(1, Math.min(31, parseInt(f.day.value, 10) || 1));
+      const firstOcc = d => { const t0 = parseIso(today()), y = t0.getFullYear(), m = t0.getMonth(); let dt = new Date(y, m, Math.min(d, dim(y, m+1))); if (iso(dt) < today()) dt = new Date(y, m+1, Math.min(d, dim(y, m+2))); return iso(dt); };
+      const text = f.text.value.trim() || ('Umbuchung → ' + accName(toId));
+      const rec = {...(r0 || {}), id: r.id || newId(), type:'umbuchung', from: f.from.value, to: toId, account: f.from.value, text, rhythm:'monthly', day,
+        start: isNew ? firstOcc(day) : (r0.day === day ? r0.start : firstOcc(day)), end: r.end || '', paused: !!r.paused, confirm: f.querySelector('input[name=confirm]:checked').value === '1', last: isNew ? null : (r0.day === day ? r0.last : null)};
+      if (isNew || amount !== amountAt(r0, today())){ rec.amount = amount; rec.changes = []; }
+      const list = S.finance.recurring, i = list.findIndex(x => x.id === rec.id);
+      if (i >= 0) list[i] = rec; else list.push(rec);
+      const bk = f.querySelector('#ub-back');
+      if (isNew && bk && bk.checked){
+        const bday = Math.max(1, Math.min(31, parseInt(f.bday.value, 10) || 20)), bam = parseAmt(f.bamount.value) > 0 ? parseAmt(f.bamount.value) : amount;
+        const s0 = parseIso(rec.start); let bs = new Date(s0.getFullYear(), s0.getMonth(), Math.min(bday, dim(s0.getFullYear(), s0.getMonth()+1)));
+        if (iso(bs) <= rec.start) bs = new Date(s0.getFullYear(), s0.getMonth()+1, Math.min(bday, dim(s0.getFullYear(), s0.getMonth()+2)));
+        const back = {id: newId(), type:'umbuchung', from: rec.to, to: rec.from, account: rec.to, amount: bam, text: text + ' – zurück', rhythm:'monthly', day: bday, start: iso(bs), end:'', paused:false, confirm: rec.confirm, last:null, pair: rec.id};
+        rec.pair = back.id; list.push(back);
+      }
+      save('finance'); toast(isNew ? 'Umbuchung angelegt' : 'Gespeichert');
+    });
+  const sum = () => {
+    const last = form.querySelector('input[name=when]:checked').value === 'last';
+    form.querySelector('#ub-dayf').hidden = last; const isN = form.to.value === '__new'; form.querySelector('#ub-newf').hidden = !isN;
+    const toN = isN ? (form.newacc.value.trim() || 'neues Tagesgeld-Konto') : accName(form.to.value);
+    const a = parseAmt(form.amount.value) || 0, d = last ? 'am letzten Tag' : 'am ' + (parseInt(form.day.value, 10) || 1) + '.';
+    form.querySelector('#ub-sum').textContent = a > 0 ? `Jeden Monat ${d}: ${euro(a)} von ${accName(form.from.value)} auf ${toN}.` : '';
+    const bh = form.querySelector('#ub-backhint'); if (bh) bh.textContent = `Rückbuchung von ${toN} auf ${accName(form.from.value)} – z. B. am 20., um die zweite Monatshälfte zu bedienen.`;
+    const bf = form.querySelector('#ub-backf'), bk = form.querySelector('#ub-back'); if (bf && bk) bf.hidden = !bk.checked;
+  };
+  if (isNew && preset && preset.text) form.newacc.value = /Fixkosten/.test(preset.text) ? 'Fixkosten' : /Jahres/.test(preset.text) ? 'Jahreskosten' : '';
+  form.addEventListener('input', sum); form.addEventListener('change', sum); sum();
+  const del = form.querySelector('#ub-del');
+  if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich löschen?')) return; S.finance.recurring = S.finance.recurring.filter(x => x.id !== r0.id && x.id !== r0.pair); save('finance'); closeDlg(); toast('Gelöscht – bisherige Buchungen bleiben'); });
+  const pz = form.querySelector('#ub-pause');
+  if (pz) pz.addEventListener('click', () => { r0.paused = !r0.paused; if (pair) pair.paused = r0.paused; save('finance'); closeDlg(); toast(r0.paused ? 'Pausiert' : 'Läuft wieder'); });
+}
+// Tagesgeld-Konto / Topf anlegen oder ändern
+function accDialog(a0){
+  const isNew = !a0, a = a0 ? {...a0} : {name:'', bank:'', goal:0};
+  const banks = [...new Set(tgList().map(x => x.bank).filter(Boolean))];
+  const used = a0 && (S.finance.tx.some(t => effMap(t)[a0.id]) || S.finance.recurring.some(r => r.from === a0.id || r.to === a0.id || r.account === a0.id));
+  const form = openDlg(`
+    <h3>${isNew ? 'Neues Tagesgeld-Konto' : esc(a.name)}</h3>
+    <label class="field"><span>Name</span><input name="name" value="${esc(a.name)}" placeholder="z. B. Fixkosten, Urlaub, Weihnachten" autofocus id="ac-name"></label>
+    <label class="field"><span>Bei welcher Bank / welchem echten Konto? (freiwillig)</span><input name="bank" list="ac-banks" value="${esc(a.bank || '')}" placeholder="z. B. Tagesgeld DKB" id="ac-bank"><datalist id="ac-banks">${banks.map(b => `<option value="${esc(b)}">`).join('')}</datalist></label>
+    <p class="hint" style="margin:0">Mehrere Töpfe (z. B. Weihnachten, Geburtstage) können zum selben echten Tagesgeldkonto gehören. Beim Kontoabgleich trägst du dann nur den Gesamtstand des echten Kontos ein.</p>
+    <div class="row2">
+      <label class="field"><span>Stand am Anfang (€)</span><input class="amount-in" name="start" inputmode="decimal" placeholder="0,00" value="${amtInput(a0 ? (S.finance.start[a0.id] || 0) : 0)}" id="ac-start"></label>
+      <label class="field"><span>Sparziel (freiwillig, €)</span><input class="amount-in" name="goal" inputmode="decimal" placeholder="z. B. 500,00" value="${a.goal ? amtInput(a.goal) : ''}" id="ac-goal"></label>
+    </div>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : '<button type="button" class="btn danger" id="ac-del">Löschen</button>'}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const name = f.name.value.trim(), err = f.querySelector('#f-err');
+      if (!name){ err.textContent = 'Bitte einen Namen eingeben.'; f.name.focus(); return false; }
+      const st = f.start.value.trim() ? parseAmt(f.start.value) : 0, goal = f.goal.value.trim() ? parseAmt(f.goal.value) : 0;
+      if (isNaN(st) || isNaN(goal)){ err.textContent = 'Bitte Beträge wie 250,00 eingeben.'; return false; }
+      const F = S.finance; F.accounts = F.accounts || [];
+      const rec = {id: a0 ? a0.id : 'a' + newId(), name, bank: f.bank.value.trim(), goal: goal > 0 ? goal : 0};
+      const i = F.accounts.findIndex(x => x.id === rec.id); if (i >= 0) F.accounts[i] = {...F.accounts[i], ...rec}; else F.accounts.push(rec);
+      F.start[rec.id] = st;
+      if (!S.settings.savings){ S.settings.savings = true; save('settings'); }
+      save('finance'); toast(isNew ? 'Konto angelegt' : 'Gespeichert');
+    });
+  const del = form.querySelector('#ac-del');
+  if (del) del.addEventListener('click', () => {
+    if (used){ form.querySelector('#f-err').textContent = 'Dieses Konto hat schon Buchungen oder Umbuchungen und kann nicht gelöscht werden. Buch den Rest auf ein anderes Konto um, dann bleibt es einfach bei 0 €.'; return; }
+    if (!armed(del, 'Wirklich löschen?')) return;
+    S.finance.accounts = S.finance.accounts.filter(x => x.id !== a0.id); delete S.finance.start[a0.id]; save('finance'); closeDlg(); toast('Gelöscht');
+  });
+}
+// Tagesgeld-Seite (ersetzt „Sparen“ in der App „Finanzen“)
+function renderTagesgeld(){
+  const accs = tgList(), total = tgTotal();
+  const groups = {}; accs.forEach(a => { const g = a.bank || ''; (groups[g] = groups[g] || []).push(a); });
+  const rec = (S.finance.recurring || []).filter(r => r.type === 'umbuchung' || r.type === 'sparen');
+  const recent = sortTx(S.finance.tx.filter(t => (t.type === 'umbuchung' || isSave(t)) && t.date.startsWith(ui.month))).reverse();
+  const card = a => { const b = accBalance(a.id), g = a.goal; return `<div class="tg-c" style="--c:${a.color}">
+      <button type="button" class="tg-main" data-act="acc-edit" data-id="${esc(a.id)}"><span class="l"><i></i>${esc(a.name)}</span><b class="${b < 0 ? 'neg-t' : ''}">${euro(b)}</b>
+      ${g ? `<span class="tg-goal"><span style="width:${Math.max(2, Math.min(100, b / g * 100))}%"></span></span><small>${Math.round(Math.max(0, b) / g * 100)} % von ${euro(g)}</small>` : ''}</button>
+      <div class="tg-btns"><button type="button" class="btn sm" data-act="tg-in" data-id="${esc(a.id)}">↓ Einzahlen</button><button type="button" class="btn sm" data-act="tg-out" data-id="${esc(a.id)}">↑ Auszahlen</button></div></div>`; };
+  return `<div class="fx-page">
+  <div class="sec-head" style="margin:0"><h2>Tagesgeld</h2><span style="margin-right:auto"></span><button class="btn primary" data-act="acc-new">+ Konto</button></div>
+  ${reconBanner()}
+  <section class="fx-hero"><span class="label">Tagesgeld gesamt</span><span class="big">${euro(total)}</span>
+    <div class="fx-grid"><div><small>Konten / Töpfe</small><b>${accs.length}</b></div><div><small>Girokonto</small><b class="${accBalance('bank') < 0 ? 'neg-t' : ''}">${euro(accBalance('bank'))}</b></div></div></section>
+  ${accs.length ? Object.entries(groups).map(([g, list]) => `${g ? `<div class="fx-h"><span>🏦 ${esc(g)}</span><span>${euro(list.reduce((s, a) => s + accBalance(a.id), 0))}</span></div>` : ''}<div class="tg-grid">${list.map(card).join('')}</div>`).join('')
+    : `<div class="panel empty"><strong>Noch keine Tagesgeld-Konten</strong>Leg Konten oder Töpfe an, z. B. „Fixkosten“, „Urlaub“, „Weihnachten“, „Geburtstage“ oder „Notgroschen“.<div class="row"><button class="btn primary" data-act="acc-new">+ Erstes Konto anlegen</button></div></div>`}
+  <div class="fx-h"><span>🔁 Regelmäßige Umbuchungen</span><span></span></div>
+  <div class="fx-list">${rec.length ? rec.map(r => { const nx = r.paused ? null : nextDue(r, r.last || null); const to = r.type === 'sparen' ? 'save' : r.to, from = r.type === 'sparen' ? r.account : r.from;
+      return `<button type="button" class="fx-row${r.paused || !nx ? ' off' : ''}" data-act="ueb-edit" data-id="${esc(r.id)}"><div><b>${esc(r.text || 'Umbuchung')}</b><small>${esc(accName(from))} → ${esc(accName(to))} · ${(r.day || 0) >= 31 ? 'letzter Tag' : 'am ' + (r.day || parseIso(r.start).getDate()) + '.'} · ${r.paused ? 'pausiert' : nx ? 'nächste ' + fmtShort(nx) : 'beendet'}${r.confirm ? ' · bestätigen' : ''}</small></div><div class="fx-amt"><b>${euro(amountAt(r, nx || today()))}</b></div></button>`; }).join('')
+    : '<div class="fx-row" style="cursor:default"><div><small>Zum Beispiel am Monatsende einen festen Betrag fürs nächste Monat aufs Tagesgeld legen und am 20. wieder zurückholen.</small></div><div></div></div>'}
+  </div>
+  <button type="button" class="btn" data-act="ueb-new" style="justify-self:start">+ Regelmäßige Umbuchung</button>
+  <div class="fx-h"><span>Umbuchungen im ${MONTHS[+ui.month.slice(5,7)-1]}</span><span><button type="button" class="linkbtn" data-act="tg-move">+ Umbuchen</button></span></div>
+  <div class="fx-tl">${recent.length ? recent.map(t => { const m = effMap(t), ids = Object.keys(m), fr = ids.find(k => m[k] < 0), to = ids.find(k => m[k] > 0);
+      return `<div data-act="edittx" data-id="${esc(t.id)}" style="cursor:pointer"><span>${fmtShort(t.date)}</span><span>${esc(accName(fr))} → ${esc(accName(to))}${t.text ? ' <small>' + esc(t.text) + '</small>' : ''}</span><b>${euro(t.amount)}</b></div>`; }).join('') : '<div><span></span><span style="color:var(--muted)">In diesem Monat keine Umbuchungen.</span><b></b></div>'}</div>
+  </div>`;
+}
+/* ---------- Kontoabgleich ---------- */
+function reconDue(){
+  const R = S.settings.recon || {mode:'month'}; if (R.mode === 'off') return null;
+  const t0 = parseIso(today()), y = t0.getFullYear(), m = t0.getMonth();
+  let due;
+  if (R.mode === 'day'){ const d = Math.max(1, Math.min(28, +R.day || 1)); due = new Date(y, m, d); if (due > t0) due = new Date(y, m-1, d); }
+  else { due = new Date(y, m+1, 0); if (due > t0) due = new Date(y, m, 0); }
+  const dd = iso(due), checks = S.finance.checks || [];
+  if (checks.length) return checks[checks.length-1].date >= dd ? null : dd;
+  return dd === today() ? dd : null;
+}
+function reconBanner(){
+  const d = reconDue(); if (!d) return '';
+  return `<button type="button" class="pend-banner fix-due" data-act="recon"><b>📋 ${d === today() ? 'Heute ist Abgleich-Tag' : 'Kontoabgleich vom ' + fmtShort(d) + ' offen'}</b><span>Echte Kontostände eintragen und Bilanz ziehen ›</span></button>`;
+}
+// Zeilen für den Abgleich: Girokonto, Bargeld (oder zusammen), echte Tagesgeldkonten (Töpfe zusammengefasst)
+function reconRows(date){
+  const rows = [], one = isCombined();
+  if (one) rows.push({key:'bank', label:'Konto (Bank + Bargeld)', ids:['bank','cash'], book:'bank'});
+  else { rows.push({key:'bank', label: accName('bank'), ids:['bank'], book:'bank'}); rows.push({key:'cash', label: accName('cash'), ids:['cash'], book:'cash'}); }
+  const seen = {};
+  tgList().forEach(a => {
+    if (a.bank){ if (seen[a.bank]){ seen[a.bank].ids.push(a.id); return; } const r = {key:'g:' + a.bank, label: a.bank, ids:[a.id], book:a.id, tg:true}; seen[a.bank] = r; rows.push(r); }
+    else rows.push({key:a.id, label:a.name, ids:[a.id], book:a.id, tg:true});
+  });
+  rows.forEach(r => { r.calc = r.ids.reduce((s, id) => s + accBalance(id, date), 0); r.sub = r.ids.length > 1 ? r.ids.map(accName).join(', ') : ''; });
+  return rows;
+}
+function reconDialog(){
+  const due = reconDue(), date0 = due || today();
+  const checks = S.finance.checks || [], prev = checks[checks.length-1];
+  const draw = date => reconRows(date).map(r => `<div class="kx-row" data-key="${esc(r.key)}">
+      <span>${esc(r.label)}<small>${[r.sub ? esc(r.sub) : '', prev && prev.rows && prev.rows[r.key] !== undefined ? 'zuletzt ' + fmtShort(prev.date) + ': ' + euro(prev.rows[r.key]) : ''].filter(Boolean).join(' · ')}</small></span>
+      <span class="calc" data-c="${r.calc}">${euro(r.calc)}</span><input class="amount-in" inputmode="decimal" placeholder="${amtInput(r.calc)}" aria-label="Tatsächlicher Stand ${esc(r.label)}">
+      <span class="kx-d"></span>${r.tg ? `<label class="kx-z" hidden><input type="checkbox" checked> Plus als Zinsen buchen</label>` : ''}</div>`).join('');
+  const form = openDlg(`
+    <h3>Kontostände abgleichen</h3>
+    <label class="field"><span>Stichtag</span><input type="date" name="date" value="${date0}" id="rc-date"></label>
+    <p class="hint" style="margin:0">Trag ein, was wirklich auf den Konten ist (Online-Banking, Portemonnaie). Leere Felder bleiben, wie die App rechnet. Differenzen werden als „Nicht erfasst“ gebucht – danach rechnet die App mit den echten Ständen weiter.</p>
+    <div class="kx-hd"><span>Konto</span><span>App rechnet</span><span>Tatsächlich</span></div>
+    <div id="rc-rows">${draw(date0)}</div>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Übernehmen &amp; Bilanz</button></div>`, f => {
+      const date = f.date.value || today(), rows = reconRows(date), out = {}; let n = 0;
+      rows.forEach(r => {
+        const el = f.querySelector(`.kx-row[data-key="${CSS.escape(r.key)}"]`), v = el.querySelector('input.amount-in').value.trim();
+        let real = r.calc;
+        if (v){ const a = parseAmt(v); if (!isNaN(a)) real = a; }
+        const diff = real - r.calc;
+        if (Math.abs(diff) >= 1){
+          const z = el.querySelector('.kx-z input'), zins = r.tg && diff > 0 && z && z.checked;
+          S.finance.tx.push({id:newId(), created:Date.now() + n, type: diff > 0 ? 'einnahme' : 'ausgabe', amount: Math.abs(diff), date, text: zins ? 'Zinsen' : 'Kontoabgleich', cat: zins ? 'Zinsen' : 'Nicht erfasst', account: r.book, abgleich: true}); n++;
+        }
+        out[r.key] = real;
+      });
+      const bal = {}; accList().forEach(a => { bal[a.id] = accBalance(a.id, date); });
+      S.finance.checks = (S.finance.checks || []).filter(c => c.date !== date).concat([{date, rows: out, bal, labels: Object.fromEntries(rows.map(r => [r.key, r.label]))}]).sort((a, b) => a.date.localeCompare(b.date));
+      save('finance'); toast(n ? n + (n === 1 ? ' Differenz gebucht' : ' Differenzen gebucht') : 'Alles stimmt 👍');
+      setTimeout(() => bilanzDialog(date), 0);
+    });
+  const wire = () => form.querySelectorAll('.kx-row').forEach(row => {
+    const inp = row.querySelector('input.amount-in'), d = row.querySelector('.kx-d'), z = row.querySelector('.kx-z');
+    const calc = +row.querySelector('.calc').dataset.c;
+    const upd = () => { const v = inp.value.trim(); if (!v){ d.textContent = ''; if (z) z.hidden = true; return; } const a = parseAmt(v); if (isNaN(a)){ d.textContent = ''; return; } const df = a - calc;
+      d.textContent = Math.abs(df) < 1 ? '✓ stimmt' : (df > 0 ? '+' : '−') + euro(Math.abs(df)) + (df > 0 ? ' mehr als erfasst' : ' nicht erfasst'); d.className = 'kx-d ' + (Math.abs(df) < 1 ? 'pos-t' : df > 0 ? 'pos-t' : 'neg-t'); if (z) z.hidden = !(df >= 1); };
+    inp.addEventListener('input', upd); upd();
+  });
+  wire();
+  form.date.addEventListener('change', () => { form.querySelector('#rc-rows').innerHTML = draw(form.date.value || today()); wire(); });
+}
+function bilanzDialog(date){
+  const checks = S.finance.checks || [];
+  let i = date ? checks.findIndex(c => c.date === date) : checks.length - 1; if (i < 0) i = checks.length - 1;
+  const cur = checks[i]; if (!cur){ toast('Noch kein Kontoabgleich – trag zuerst die echten Kontostände ein.'); return; }
+  const prev = checks[i-1];
+  const keys = [...new Set([...Object.keys(cur.rows), ...(prev ? Object.keys(prev.rows) : [])])];
+  const lab = k => (cur.labels && cur.labels[k]) || (prev && prev.labels && prev.labels[k]) || accName(k);
+  const sumR = c => Object.values(c.rows).reduce((s, v) => s + v, 0);
+  const totNow = sumR(cur), totPrev = prev ? sumR(prev) : null;
+  let inc = 0, exp = 0, nich = 0, zins = 0, loan = 0;
+  if (prev) S.finance.tx.forEach(t => { if (t.pending || t.date <= prev.date || t.date > cur.date) return;
+    if (t.abgleich){ const v = t.type === 'einnahme' ? t.amount : -t.amount; if (t.cat === 'Zinsen') zins += v; else nich += v; return; }
+    if (t.type === 'einnahme') inc += t.amount; else if (t.type === 'ausgabe') exp += t.amount; else if (isLoan(t)) loan += loanPlus(t) ? t.amount : -t.amount; });
+  const hist = checks.slice(Math.max(0, i - 5), i + 1), hMax = Math.max(1, ...hist.map(c => Math.abs(sumR(c))));
+  const nf = v => euro(v).replace(/\s*€/, '');
+  const fmtD = d => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'});
+  const form = openDlg(`
+    <h3>Bilanz ${prev ? fmtD(prev.date).slice(0,6) + ' → ' : ''}${fmtD(cur.date)}</h3>
+    <table class="kx-tab"><tr><th>Konto</th>${prev ? `<th>${fmtD(prev.date).slice(0,6)}</th>` : ''}<th>${fmtD(cur.date).slice(0,6)}</th>${prev ? '<th>Δ</th>' : ''}</tr>
+    ${keys.map(k => { const a = cur.rows[k] || 0, b = prev ? (prev.rows[k] || 0) : 0, d = a - b; return `<tr><td>${esc(lab(k))}</td>${prev ? `<td>${nf(b)}</td>` : ''}<td>${nf(a)}</td>${prev ? `<td class="${d > 0 ? 'pos-t' : d < 0 ? 'neg-t' : ''}">${d > 0 ? '+' : d < 0 ? '−' : ''}${nf(Math.abs(d))}</td>` : ''}</tr>`; }).join('')}
+    <tr><td><b>Gesamt</b></td>${prev ? `<td><b>${nf(totPrev)}</b></td>` : ''}<td><b>${nf(totNow)}</b></td>${prev ? `<td class="${totNow - totPrev >= 0 ? 'pos-t' : 'neg-t'}"><b>${totNow - totPrev >= 0 ? '+' : '−'}${nf(Math.abs(totNow - totPrev))}</b></td>` : ''}</tr></table>
+    ${prev ? `<div class="kx-sum"><div><span>Erfasste Einnahmen</span><b class="pos-t">+${euro(inc)}</b></div><div><span>Erfasste Ausgaben</span><b class="neg-t">−${euro(exp)}</b></div>
+      ${loan ? `<div><span>Geliehen / verliehen</span><b>${loan > 0 ? '+' : '−'}${euro(Math.abs(loan))}</b></div>` : ''}
+      <div><span>Nicht erfasst (Differenz)</span><b class="${nich < 0 ? 'neg-t' : 'pos-t'}">${nich < 0 ? '−' : '+'}${euro(Math.abs(nich))}</b></div>
+      ${zins ? `<div><span>Zinsen</span><b class="pos-t">+${euro(zins)}</b></div>` : ''}
+      <div style="border-top:1px solid var(--line);padding-top:6px"><span><b>Vermögen verändert</b></span><b class="${totNow - totPrev >= 0 ? 'pos-t' : 'neg-t'}">${totNow - totPrev >= 0 ? '+' : '−'}${euro(Math.abs(totNow - totPrev))}</b></div></div>`
+      : '<p class="hint" style="margin:0">Das ist der erste Kontoabgleich. Ab dem nächsten siehst du hier, wie sich die Konten verändert haben und wie viel nicht erfasst war.</p>'}
+    ${hist.length > 1 ? `<span class="label">Gesamtvermögen bei den Abgleichen</span><div class="kx-bars">${hist.map((c, k) => `<div><i style="height:${Math.max(4, Math.abs(sumR(c)) / hMax * 70)}px;${k === hist.length - 1 ? 'background:var(--pos)' : ''}"></i>${fmtD(c.date).slice(0,5)}</div>`).join('')}</div>` : ''}
+    <div class="dlg-actions">${i > 0 ? `<button type="button" class="btn ghost" id="bz-prev">‹ Davor</button>` : ''}${i < checks.length - 1 ? `<button type="button" class="btn ghost" id="bz-next">Danach ›</button>` : ''}<span class="spacer"></span><button type="button" class="btn primary" data-close>Fertig</button></div>`, () => {});
+  const p = form.querySelector('#bz-prev'); if (p) p.addEventListener('click', () => bilanzDialog(checks[i-1].date));
+  const n = form.querySelector('#bz-next'); if (n) n.addEventListener('click', () => bilanzDialog(checks[i+1].date));
+}
+// Kacheln der Tagesgeld-Konten auf der Finanzseite
+function tgStrip(){
+  const accs = tgList(), checks = S.finance.checks || [];
+  return `${reconBanner()}
+  ${accs.length ? `<div class="tg-strip">${accs.map(a => { const b = accBalance(a.id); return `<button type="button" class="tg-s" data-act="goto-tg" style="--c:${a.color}"><span><i></i>${esc(a.name)}</span><b class="${b < 0 ? 'neg-t' : ''}">${euro(b)}</b></button>`; }).join('')}</div>` : ''}
+  <div class="tg-acts"><button type="button" class="btn sm" data-act="recon">⚖️ Kontostände abgleichen</button>${checks.length ? '<button type="button" class="btn sm ghost" data-act="bilanz">📊 Bilanzen</button>' : ''}</div>`;
+}
+/* =========================================================
+   FIXKOSTEN (nur App „Finanzen“, Erwachsene)
+   ========================================================= */
+const FIX_RHY = [['weekly','Wöchentlich'],['biweekly','Alle 2 Wochen'],['monthly','Monatlich'],['quarterly','Vierteljährlich'],['halfyearly','Halbjährlich'],['yearly','Jährlich'],['custom','Eigenes Intervall']];
+const FIX_UNITS = {d:['Tag','Tage'], w:['Woche','Wochen'], m:['Monat','Monate'], y:['Jahr','Jahre']};
+const FIX_PRESETS = [
+  {t:'Miete', type:'ausgabe', cat:'Wohnen', rhythm:'monthly', day:1},
+  {t:'Strom', type:'ausgabe', cat:'Wohnen', rhythm:'monthly'},
+  {t:'Internet', type:'ausgabe', cat:'Wohnen', rhythm:'monthly'},
+  {t:'Handy', type:'ausgabe', cat:'Kommunikation', rhythm:'monthly'},
+  {t:'Kfz-Versicherung', type:'ausgabe', cat:'Auto & Tanken', rhythm:'yearly'},
+  {t:'Kfz-Steuer', type:'ausgabe', cat:'Auto & Tanken', rhythm:'yearly'},
+  {t:'Rundfunkbeitrag', type:'ausgabe', cat:'Wohnen', rhythm:'quarterly', amount:5508},
+  {t:'Streaming', type:'ausgabe', cat:'Abos', rhythm:'monthly'},
+  {t:'Hausrat & Haftpflicht', type:'ausgabe', cat:'Versicherungen', rhythm:'yearly'},
+  {t:'Gehalt', type:'einnahme', cat:'Gehalt', rhythm:'monthly'},
+  {t:'Kindergeld', type:'einnahme', cat:'Kindergeld', rhythm:'monthly', amount:25500}
+];
+const occPerYear = r => { const n = Math.max(1, +r.every || 1); return ({weekly:52, biweekly:26, monthly:12, quarterly:4, halfyearly:2, yearly:1})[r.rhythm] || (r.rhythm === 'custom' ? ({d:365/n, w:52/n, m:12/n, y:1/n})[r.unit || 'm'] : 12); };
+const fixNext = r => r.paused ? null : nextDue(r, r.last || null);
+const perMonth = r => amountAt(r, fixNext(r) || today()) * occPerYear(r) / 12;
+const isFix = r => r.type === 'einnahme' || r.type === 'ausgabe';
+const fixActive = r => !r.paused && !!fixNext(r);
+// Kündigungstermin = Laufzeitende minus Kündigungsfrist
+function noticeDate(v){
+  if (!v || !v.bis) return '';
+  const n = Math.max(0, +v.fristN || 0);
+  if (!n) return v.bis;
+  // Frist rückwärts ab Beginn der nächsten Laufzeit, z. B. 1 Monat zum 31.12. → bis 30.11.
+  const d = parseIso(v.bis); d.setDate(d.getDate() + 1);
+  if (v.fristU === 'w') d.setDate(d.getDate() - 7*n); else if (v.fristU === 'd') d.setDate(d.getDate() - n); else d.setMonth(d.getMonth() - n);
+  d.setDate(d.getDate() - 1);
+  return iso(d);
+}
+function fixDueConfirm(){
+  const t0 = today(), out = [];
+  (S.finance.recurring || []).filter(r => (isFix(r) || r.type === 'umbuchung') && r.confirm && !r.paused).forEach(r => {
+    let d = nextDue(r, r.last || null), n = 0; const first = d;
+    while (d && d <= t0 && n < 50){ n++; d = nextDue(r, d); }
+    if (n) out.push({r, date: first, more: n - 1});
+  });
+  return out.sort((a, b) => a.date.localeCompare(b.date));
+}
+function fixDueBanner(){
+  const due = fixDueConfirm(); if (!due.length) return '';
+  return `<button type="button" class="pend-banner fix-due" data-act="fix-due"><b>${due.length === 1 ? '1 regelmäßige Buchung' : due.length + ' regelmäßige Buchungen'} fällig</b><span>Betrag prüfen und bestätigen ›</span></button>`;
+}
+function fixDueDialog(){
+  const due = fixDueConfirm();
+  if (!due.length){ closeDlg(); render(); return; }
+  const form = openDlg(`
+    <h3>${due.some(x => !isFix(x.r)) ? 'Fällige Buchungen bestätigen' : 'Fällige Fixkosten bestätigen'}</h3>
+    <p class="hint" style="margin:0">Diese Buchungen werden nicht automatisch gebucht. Trag den echten Betrag ein und tippe auf „Buchen“.</p>
+    <div class="fx-due">${due.map(({r, date, more}) => `<div class="fx-due-row" data-id="${esc(r.id)}" data-date="${date}">
+      <div><b>${esc(r.text)}</b><small>fällig ${fmtShort(date)}${date.slice(0,4) !== today().slice(0,4) ? ' ' + date.slice(0,4) : ''}${more ? ' · danach noch ' + more + ' weitere' : ''}</small></div>
+      <input class="amount-in" inputmode="decimal" value="${amtInput(amountAt(r, date))}" aria-label="Betrag für ${esc(r.text)}">
+      <div class="fx-due-b"><button type="button" class="btn sm ghost" data-fx="skip">Überspringen</button><button type="button" class="btn sm primary" data-fx="book">Buchen</button></div>
+    </div>`).join('')}</div>
+    <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Schließen</button></div>`, () => false);
+  form.addEventListener('click', e => {
+    const b = e.target.closest('[data-fx]'); if (!b) return;
+    const row = b.closest('.fx-due-row'), r = S.finance.recurring.find(x => x.id === row.dataset.id), date = row.dataset.date; if (!r) return;
+    if (b.dataset.fx === 'book'){
+      const a = parseAmt(row.querySelector('input').value);
+      if (!(a > 0)){ toast('Bitte einen Betrag eingeben.'); return; }
+      S.finance.tx.push(recTx(r, date, a, 0));
+      toast(euro(a) + ' gebucht');
+    } else toast('Übersprungen');
+    r.last = date; save('finance'); fixDueDialog();
+  });
+}
+function fixReminders(){
+  const t0 = today(), out = [];
+  (S.finance.recurring || []).filter(r => isFix(r) && r.vertrag && r.vertrag.bis && !(r.end && r.end < t0)).forEach(r => {
+    const nd = noticeDate(r.vertrag); if (!nd) return;
+    const days = daysBetween(t0, nd);
+    if (days <= 60 && r.vertrag.bis >= t0) out.push({r, nd, days});
+  });
+  return out.sort((a, b) => a.days - b.days);
+}
+function renderFixkosten(){
+  const list = (S.finance.recurring || []).filter(isFix);
+  const act = list.filter(fixActive), out = act.filter(r => r.type === 'ausgabe'), inn = act.filter(r => r.type === 'einnahme');
+  const mOut = out.reduce((s, r) => s + perMonth(r), 0), mIn = inn.reduce((s, r) => s + perMonth(r), 0);
+  const reserve = out.filter(r => occPerYear(r) < 12).reduce((s, r) => s + perMonth(r), 0);
+  const nmD = (() => { const d = parseIso(today()); return new Date(d.getFullYear(), d.getMonth()+1, 1); })(), nmA = iso(nmD), nmB = iso(new Date(nmD.getFullYear(), nmD.getMonth()+1, 0));
+  let nmSum = 0; out.filter(fixActive).forEach(r => { let d = nextDue(r, r.last || null), n = 0; while (d && d <= nmB && n++ < 60){ if (d >= nmA) nmSum += amountAt(r, d); d = nextDue(r, d); } });
+  const t0 = today(), d30 = iso(new Date(parseIso(t0).getTime() + 30*864e5));
+  const soon = [];
+  act.forEach(r => { let d = nextDue(r, r.last || null), n = 0; while (d && d <= d30 && n < 40){ if (d >= t0) soon.push({r, d}); d = nextDue(r, d); n++; } });
+  soon.sort((a, b) => a.d.localeCompare(b.d));
+  const soonSum = soon.filter(x => x.r.type === 'ausgabe').reduce((s, x) => s + amountAt(x.r, x.d), 0);
+  const cats = {}; out.forEach(r => { const c = r.cat || 'Sonstiges'; cats[c] = (cats[c] || 0) + perMonth(r); });
+  const catList = Object.entries(cats).sort((a, b) => b[1] - a[1]), cMax = catList[0]?.[1] || 1;
+  const rem = fixReminders();
+  const badge = r => `<span class="fx-b${r.rhythm === 'monthly' ? '' : ' alt'}">${esc(rhyLabel(r))}</span>`;
+  const row = r => {
+    const nx = fixNext(r), pm = perMonth(r), one = isCombined(), inc = r.type === 'einnahme';
+    const sub = [badge(r), r.paused ? 'pausiert' : nx ? 'nächste ' + fmtShort(nx) + (nx.slice(0,4) !== t0.slice(0,4) ? ' ' + nx.slice(0,4) : '') : 'beendet', r.confirm ? 'bestätigen' : '', one ? '' : (r.account === 'cash' ? 'Bargeld' : 'Bank'), r.beleg ? '📎' : ''].filter(Boolean).join(' · ');
+    return `<button type="button" class="fx-row${r.paused || !nx ? ' off' : ''}" data-act="fix-edit" data-id="${esc(r.id)}"><div><b>${esc(r.text)}</b><small>${sub}</small></div>
+      <div class="fx-amt"><b class="${inc ? 'pos-t' : 'neg-t'}">${inc ? '+' : '−'}${euro(amountAt(r, nx || t0))}</b>${occPerYear(r) !== 12 && nx ? `<small>≈ ${euro(Math.round(pm))} / Monat</small>` : ''}</div></button>`;
+  };
+  const sortPM = (a, b) => perMonth(b) - perMonth(a);
+  const ended = list.filter(r => !fixActive(r));
+  if (!list.length) return `<div class="sec-head"><h2>Fixkosten</h2><span style="margin-right:auto"></span><button class="btn primary" data-act="fix-new">+ Fixkosten</button></div>
+    <div class="panel empty"><strong>Noch keine Fixkosten</strong>Trag hier alles ein, was regelmäßig vom Konto geht oder kommt: Miete, Strom, Versicherungen, Abos, Gehalt, Kindergeld. Monatlich, vierteljährlich, halbjährlich, jährlich oder in einem eigenen Rhythmus – die App bucht es am Stichtag von selbst.
+    <div class="row"><button class="btn primary" data-act="fix-new">+ Erste Fixkosten anlegen</button></div></div>`;
+  return `<div class="fx-page">
+  <div class="sec-head" style="margin:0"><h2>Fixkosten</h2><span style="margin-right:auto"></span><button class="btn primary" data-act="fix-new">+ Fixkosten</button></div>
+  ${fixDueBanner()}
+  <section class="fx-hero"><span class="label">Fixkosten pro Monat (umgerechnet)</span><span class="big neg-t">${euro(Math.round(mOut))}</span>
+    <div class="fx-grid"><div><small>Feste Einnahmen</small><b class="pos-t">${euro(Math.round(mIn))}</b></div><div><small>Bleibt pro Monat</small><b class="${mIn - mOut < 0 ? 'neg-t' : ''}">${euro(Math.round(mIn - mOut))}</b></div>
+    <div><small>Fixkosten pro Jahr</small><b>${euro(Math.round(mOut * 12))}</b></div><div><small>Verträge</small><b>${out.length}</b></div></div></section>
+  ${rem.length ? `<div class="fx-rem"><b>⏰ Kündigungsfristen</b>${rem.map(({r, nd, days}) => `<button type="button" data-act="fix-edit" data-id="${esc(r.id)}"><span>${esc(r.text)}${r.vertrag.anbieter ? ' (' + esc(r.vertrag.anbieter) + ')' : ''}</span><small>${days >= 0 ? 'kündbar bis ' + fmtShort(nd) + ' ' + nd.slice(0,4) + ' – noch ' + (days === 1 ? '1 Tag' : days + ' Tage') : 'Frist am ' + fmtShort(nd) + ' verpasst – läuft bis ' + fmtShort(r.vertrag.bis) + ' ' + r.vertrag.bis.slice(0,4)}</small></button>`).join('')}</div>` : ''}
+  ${ADULT_ONLY && nmSum > 0 && !S.finance.recurring.some(r => r.type === 'umbuchung' && r.pair) ? `<div class="fx-hint">🏦<span><b>Fixkosten-Rücklage:</b> Im ${MONTHS[nmD.getMonth()]} gehen ${euro(Math.round(nmSum))} Fixkosten ab. Leg den Betrag am Monatsende aufs Tagesgeld und hol dir am 20. einen festen Teil für die zweite Monatshälfte zurück. <button type="button" class="linkbtn" data-act="fix-reserve" data-v="${Math.round(nmSum)}" data-t="Fixkosten-Rücklage" data-back="1">Umbuchung einrichten</button></span></div>` : ''}
+  ${reserve >= 100 ? `<div class="fx-hint">💡<span><b>Rücklage:</b> Für vierteljährliche, halbjährliche und jährliche Kosten jeden Monat <b>${euro(Math.round(reserve))}</b> zurücklegen – dann trifft dich keine Jahresrechnung unvorbereitet. ${ADULT_ONLY ? `<button type="button" class="linkbtn" data-act="fix-reserve" data-v="${Math.round(reserve)}" data-t="Rücklage Jahreskosten">Als monatliche Umbuchung anlegen</button>` : savingsOn() ? `<button type="button" class="linkbtn" data-act="fix-reserve" data-v="${Math.round(reserve)}">Als Sparplan anlegen</button>` : ''}</span></div>` : ''}
+  <div class="fx-h"><span>Fällig in den nächsten 30 Tagen</span><span>${soonSum ? '−' + euro(soonSum) : ''}</span></div>
+  <div class="fx-tl">${soon.length ? soon.map(({r, d}) => `<div><span>${fmtShort(d)}</span><span>${esc(r.text)}${r.confirm ? ' <small>(bestätigen)</small>' : ''}</span><b class="${r.type === 'einnahme' ? 'pos-t' : 'neg-t'}">${r.type === 'einnahme' ? '+' : '−'}${euro(amountAt(r, d))}</b></div>`).join('') : '<div><span></span><span style="color:var(--muted)">In den nächsten 30 Tagen ist nichts fällig.</span><b></b></div>'}</div>
+  ${catList.length ? `<div class="fx-h"><span>Nach Kategorie</span><span>pro Monat</span></div>
+  <div class="panel cats">${catList.map(([c, v]) => `<div class="cat-row"><span>${esc(c)}</span><span class="num">${euro(Math.round(v))}</span><div class="bar"><i style="width:${Math.max(3, v / cMax * 100)}%"></i></div></div>`).join('')}</div>` : ''}
+  ${out.length ? `<div class="fx-h"><span>Ausgaben</span><span>sortiert nach Monatsanteil</span></div><div class="fx-list">${out.slice().sort(sortPM).map(row).join('')}</div>` : ''}
+  ${inn.length ? `<div class="fx-h"><span>Feste Einnahmen</span><span></span></div><div class="fx-list">${inn.slice().sort(sortPM).map(row).join('')}</div>` : ''}
+  ${ended.length ? `<div class="fx-h"><span>Pausiert oder beendet</span><span></span></div><div class="fx-list">${ended.map(row).join('')}</div>` : ''}
+  </div>`;
+}
+function fixDialog(r0, preset){
+  const isNew = !r0, one = isCombined();
+  const nextFirst = (() => { const d = new Date(); return iso(new Date(d.getFullYear(), d.getMonth()+1, 1)); })();
+  const r = r0 ? clone(r0) : Object.assign({type:'ausgabe', account:'bank', amount:0, text:'', cat:'', rhythm:'monthly', every:2, unit:'m', start:nextFirst, end:'', paused:false, confirm:false}, preset || {});
+  const nx = isNew ? null : fixNext(r);
+  const curAmt = isNew ? r.amount : amountAt(r, nx || today());
+  const cats = [...new Set([...S.finance.tx.map(x => x.cat).filter(Boolean), ...(S.finance.recurring || []).map(x => x.cat).filter(Boolean), ...DEFAULT_CATS])];
+  const V = r.vertrag || {};
+  const hist = (r.changes || []).length ? [{from: r.start, amount: r.amount}, ...r.changes].map(c => `${euro(c.amount)} ab ${fmtShort(c.from)} ${c.from.slice(0,4)}`).join(' → ') : '';
+  const form = openDlg(`
+    <h3>${isNew ? 'Neue Fixkosten' : esc(r.text)}</h3>
+    <div class="seg"><label><input type="radio" name="type" value="einnahme" ${r.type==='einnahme'?'checked':''}><span>Einnahme</span></label><label><input type="radio" name="type" value="ausgabe" ${r.type!=='einnahme'?'checked':''}><span>Ausgabe</span></label></div>
+    ${isNew ? `<div class="field"><span>Schnell wählen</span><div class="mini-chips fx-pre">${FIX_PRESETS.map((p, i) => `<label><input type="radio" name="pre" value="${i}"><span>${esc(p.t)}</span></label>`).join('')}</div></div>` : ''}
+    <div class="row2">
+      <label class="field"><span>Bezeichnung</span><input name="text" value="${esc(r.text)}" placeholder="z. B. Miete" id="fx-text" ${isNew ? '' : ''}></label>
+      <label class="field"><span>Betrag (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(curAmt)}" id="fx-amount"></label>
+    </div>
+    ${isNew ? '' : `<div class="field fx-from" id="fx-fromf" hidden><span>Neuer Betrag gilt ab</span><input type="date" name="from" value="${esc(nx || today())}" id="fx-from"><small class="hint" style="margin:0">Bisherige Buchungen bleiben unverändert.</small></div>`}
+    ${hist ? `<p class="hint" style="margin:0">Verlauf: ${esc(hist)}</p>` : ''}
+    <div class="field"><span>Rhythmus</span><div class="mini-chips fx-rhy">${FIX_RHY.map(([k, l]) => `<label><input type="radio" name="rhythm" value="${k}" ${r.rhythm===k?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
+    <div class="ivl" id="fx-ivl" ${r.rhythm==='custom' ? '' : 'hidden'}><span>Alle</span><input name="every" inputmode="numeric" value="${esc(String(r.every || 2))}" id="fx-every"><select name="unit" id="fx-unit">${Object.entries(FIX_UNITS).map(([k, [, pl]]) => `<option value="${k}" ${(r.unit||'m')===k?'selected':''}>${pl}</option>`).join('')}</select></div>
+    <div class="row2">
+      <label class="field"><span>${isNew ? 'Erste Fälligkeit' : 'Startdatum'}</span><input type="date" name="start" value="${esc(r.start)}" id="fx-start"></label>
+      <label class="field"><span>Endet am (freiwillig)</span><input type="date" name="end" value="${esc(r.end || '')}" id="fx-end"></label>
+    </div>
+    <p class="hint" id="fx-sum" style="margin:0"></p>
+    <div class="row2">
+      <label class="field"><span>Kategorie</span><input name="cat" list="fxcats" value="${esc(r.cat)}" placeholder="z. B. Wohnen" id="fx-cat"><datalist id="fxcats">${cats.map(c => `<option value="${esc(c)}">`).join('')}</datalist></label>
+      ${one ? '<span></span>' : `<div class="field"><span>Konto</span><div class="seg"><label><input type="radio" name="account" value="bank" ${r.account!=='cash'?'checked':''}><span>Bank</span></label><label><input type="radio" name="account" value="cash" ${r.account==='cash'?'checked':''}><span>Bargeld</span></label></div></div>`}
+    </div>
+    <div class="field"><span>Wie buchen?</span><div class="seg"><label><input type="radio" name="confirm" value="0" ${r.confirm?'':'checked'}><span>Automatisch</span></label><label><input type="radio" name="confirm" value="1" ${r.confirm?'checked':''}><span>Erst bestätigen</span></label></div>
+      <small class="hint" style="margin:0">„Erst bestätigen“ für schwankende Beträge: Die App erinnert am Stichtag, du trägst den echten Betrag ein.</small></div>
+    <details class="fx-v" ${V.anbieter || V.bis ? 'open' : ''}><summary>📄 Vertrag (freiwillig)</summary><div class="fx-vb">
+      <div class="row2"><label class="field"><span>Anbieter</span><input name="anbieter" value="${esc(V.anbieter || '')}" id="fx-anb"></label><label class="field"><span>Vertragsnr.</span><input name="vnr" value="${esc(V.nr || '')}" id="fx-vnr"></label></div>
+      <div class="row2"><label class="field"><span>Läuft bis</span><input type="date" name="bis" value="${esc(V.bis || '')}" id="fx-bis"></label>
+        <div class="field"><span>Kündigungsfrist</span><div class="fx-frist"><input name="fristN" inputmode="numeric" value="${esc(String(V.fristN ?? ''))}" placeholder="z. B. 3" id="fx-fn"><select name="fristU" id="fx-fu">${['w','m'].map(k => `<option value="${k}" ${(V.fristU||'m')===k?'selected':''}>${FIX_UNITS[k][1]}</option>`).join('')}</select></div></div></div>
+      <p class="hint" id="fx-notice" style="margin:0"></p>
+    </div></details>
+    ${belegBlock(r, {noGar: true})}
+    ${isNew ? '' : `<div class="field"><span>Weitere Aktionen</span><div class="fx-acts">
+      <button type="button" class="btn sm" id="fx-pause">${r.paused ? '▶ Fortsetzen' : '⏸ Pausieren'}</button>
+      ${nx ? `<button type="button" class="btn sm" id="fx-skip">⏭ ${fmtShort(nx)} überspringen</button><button type="button" class="btn sm" id="fx-now">✓ ${fmtShort(nx)} jetzt buchen</button>` : ''}
+    </div></div>`}
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : (nx ? '<button type="button" class="btn danger" id="fx-endbtn">Beenden</button>' : '<button type="button" class="btn danger" id="fx-del">Löschen</button>')}<span class="spacer"></span>
+      <button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const err = f.querySelector('#f-err'), amount = parseAmt(f.amount.value), text = f.text.value.trim();
+      if (!text){ err.textContent = 'Bitte eine Bezeichnung eingeben, z. B. Miete.'; f.text.focus(); return false; }
+      if (!(amount > 0)){ err.textContent = 'Bitte einen Betrag größer als 0 eingeben.'; f.amount.focus(); return false; }
+      if (!f.start.value){ err.textContent = 'Bitte das Datum der ersten Fälligkeit wählen.'; return false; }
+      if (f.end.value && f.end.value < f.start.value){ err.textContent = 'Das Enddatum liegt vor dem Start.'; return false; }
+      const rhythm = f.querySelector('input[name=rhythm]:checked').value;
+      const every = Math.max(1, Math.min(99, parseInt(f.every.value, 10) || 1));
+      const rec = {...(r0 || {}), id: r.id || newId(), type: f.querySelector('input[name=type]:checked').value, account: one ? (r.account || 'bank') : f.querySelector('input[name=account]:checked').value,
+        text, cat: f.cat.value.trim(), rhythm, start: f.start.value, day: parseIso(f.start.value).getDate(), end: f.end.value, paused: !!r.paused, confirm: f.querySelector('input[name=confirm]:checked').value === '1', last: r.last || null};
+      if (rhythm === 'custom'){ rec.every = every; rec.unit = f.unit.value; } else { delete rec.every; delete rec.unit; }
+      // Betrag: neu = Grundbetrag; geändert = ab Datum
+      if (isNew || !r0) rec.amount = amount;
+      else if (amount !== curAmt){
+        const from = (f.from && f.from.value) || today();
+        if (from <= rec.start){ rec.amount = amount; rec.changes = []; }
+        else { rec.changes = [...(r0.changes || []).filter(c => c.from < from), {from, amount}]; }
+      }
+      const v = {anbieter: f.anbieter.value.trim(), nr: f.vnr.value.trim(), bis: f.bis.value, fristN: f.fristN.value.trim() === '' ? '' : Math.max(0, parseInt(f.fristN.value, 10) || 0), fristU: f.fristU.value};
+      if (v.anbieter || v.nr || v.bis) rec.vertrag = v; else delete rec.vertrag;
+      belegApply(f, r, belSt, rec); delete rec.garantie;
+      const list = S.finance.recurring, i = list.findIndex(x => x.id === rec.id);
+      if (i >= 0) list[i] = rec; else list.push(rec);
+      save('finance'); toast(isNew ? 'Fixkosten angelegt' : 'Gespeichert');
+    });
+  const belSt = belegWire(form, r);
+  const sum = () => {
+    const rhythm = form.querySelector('input[name=rhythm]:checked').value;
+    form.querySelector('#fx-ivl').hidden = rhythm !== 'custom';
+    const pr = {rhythm, every: parseInt(form.every.value, 10) || 1, unit: form.unit.value, start: form.start.value, day: form.start.value ? parseIso(form.start.value).getDate() : 1, end: form.end.value, last: isNew ? null : r.last};
+    const a = parseAmt(form.amount.value) || 0, el = form.querySelector('#fx-sum');
+    if (!pr.start){ el.textContent = ''; return; }
+    const n1 = nextDue(pr, pr.last || null);
+    let t = recSummary(pr) + (n1 ? ' · nächste Buchung ' + fmtShort(n1) + ' ' + n1.slice(0,4) : ' · keine weitere Buchung');
+    if (a > 0 && occPerYear(pr) !== 12) t += ' · entspricht ' + euro(Math.round(a * occPerYear(pr) / 12)) + ' pro Monat';
+    if (isNew && pr.start <= today()){ let n = 0, d = nextDue(pr, null); while (d && d <= today() && n < 400){ n++; d = nextDue(pr, d); } if (n) t += ` · beim Speichern ${n === 1 ? 'wird 1 fällige Buchung' : 'werden ' + n + ' fällige Buchungen'} eingetragen`; }
+    el.textContent = t;
+    const fv = form.querySelector('#fx-fromf'); if (fv) fv.hidden = Math.abs((parseAmt(form.amount.value) || 0) - curAmt) < 1;
+  };
+  const notice = () => {
+    const v = {bis: form.bis.value, fristN: form.fristN.value, fristU: form.fristU.value}, el = form.querySelector('#fx-notice');
+    if (!v.bis){ el.textContent = ''; el.className = 'hint'; return; }
+    const nd = noticeDate(v), days = daysBetween(today(), nd);
+    el.textContent = days >= 0 ? `⏰ Kündbar bis ${new Date(nd + 'T12:00:00').toLocaleDateString('de-DE')} – noch ${days === 1 ? '1 Tag' : days + ' Tage'}. Die App erinnert 60 Tage vorher auf der Fixkosten-Seite.` : `Kündigungsfrist am ${new Date(nd + 'T12:00:00').toLocaleDateString('de-DE')} abgelaufen.`;
+    el.className = days >= 0 && days <= 60 ? 'hint warn' : 'hint';
+  };
+  form.addEventListener('input', () => { sum(); notice(); }); form.addEventListener('change', () => { sum(); notice(); });
+  form.querySelectorAll('input[name=pre]').forEach(x => x.addEventListener('change', () => {
+    const p = FIX_PRESETS[+x.value]; form.text.value = p.t; form.cat.value = p.cat;
+    form.querySelector(`input[name=type][value=${p.type}]`).checked = true;
+    form.querySelector(`input[name=rhythm][value=${p.rhythm}]`).checked = true;
+    if (p.amount) form.amount.value = amtInput(p.amount);
+    if (p.day){ const s0 = parseIso(form.start.value || nextFirst); s0.setDate(p.day); form.start.value = iso(s0); }
+    sum(); form.amount.focus();
+  }));
+  sum(); notice();
+  const g = id => form.querySelector(id);
+  if (g('#fx-pause')) g('#fx-pause').addEventListener('click', () => { r0.paused = !r0.paused; save('finance'); closeDlg(); toast(r0.paused ? 'Pausiert – es wird nichts gebucht' : 'Läuft wieder'); });
+  if (g('#fx-skip')) g('#fx-skip').addEventListener('click', () => { r0.last = nx; save('finance'); closeDlg(); toast(fmtShort(nx) + ' übersprungen'); });
+  if (g('#fx-now')) g('#fx-now').addEventListener('click', () => { const a = amountAt(r0, nx); S.finance.tx.push({id:newId(), created:Date.now(), type:r0.type, amount:a, date:nx, text:r0.text, cat:r0.cat||'', account:r0.account||'bank', rec:r0.id}); r0.last = nx; save('finance'); closeDlg(); toast(euro(a) + ' gebucht'); });
+  if (g('#fx-endbtn')) g('#fx-endbtn').addEventListener('click', () => { const b = g('#fx-endbtn'); if (!armed(b, 'Wirklich beenden?')) return; r0.end = today(); save('finance'); closeDlg(); toast('Beendet – bisherige Buchungen bleiben'); });
+  if (g('#fx-del')) g('#fx-del').addEventListener('click', () => { const b = g('#fx-del'); if (!armed(b, 'Wirklich löschen?')) return; S.finance.recurring = S.finance.recurring.filter(x => x.id !== r0.id); if (r0.beleg) belegMaybeDelete(r0.beleg); save('finance'); closeDlg(); toast('Gelöscht – bisherige Buchungen bleiben'); });
+}
+
 function renderRecurringPanel(mode){
   const forSave = mode==='save';
   const list = (S.finance.recurring || []).filter(r => forSave ? r.type==='sparen' : r.type!=='sparen').slice().sort((a,b) => (a.paused?1:0)-(b.paused?1:0) || String(occAfter(a,a.last||null)||'9999').localeCompare(String(occAfter(b,b.last||null)||'9999')));
@@ -1820,12 +2475,12 @@ function renderRecurringPanel(mode){
     }).join('')}</div>` : `<span style="color:var(--muted);font-size:.88rem">${forSave ? (isKid() ? 'Zum Beispiel jede Woche 1 € ' + SV().inA + '. Das passiert dann von selbst.' : 'Zum Beispiel jeden Monat 50 € aufs Sparen. Wird am Stichtag automatisch gebucht.') : (isKid() ? 'Zum Beispiel dein Taschengeld jeden Monat am 1. Es wird dann von selbst eingetragen.' : 'Zum Beispiel Taschengeld am 1. jeden Monats oder die Miete. Wird am Stichtag automatisch gebucht.')}</span>`}
   </div>`;
 }
-function recDialog(r, mode){
+function recDialog(r, mode, preset){
   const isNew = !r;
   const forSave = mode==='save' || (r && r.type==='sparen');
   const one = isCombined();
   const nextFirst = (() => { const d = new Date(); return iso(new Date(d.getFullYear(), d.getMonth()+1, 1)); })();
-  r = r ? clone(r) : {type: forSave ? 'sparen' : 'einnahme', account: (isKid() && kidAcc()!=='both') ? kidAcc() : 'bank', amount:0, text:'', cat:'', rhythm:'monthly', start:nextFirst, end:'', paused:false};
+  r = r ? clone(r) : Object.assign({type: forSave ? 'sparen' : 'einnahme', account: (isKid() && kidAcc()!=='both') ? kidAcc() : 'bank', amount:0, text:'', cat:'', rhythm:'monthly', start:nextFirst, end:'', paused:false}, preset || {});
   const cats = [...new Set([...S.finance.tx.map(x=>x.cat).filter(Boolean), ...DEFAULT_CATS])];
   const form = openDlg(`
     <h3>${forSave ? (isNew?'Neuer Sparplan':'Sparplan') : (isNew?'Neue regelmäßige Buchung':'Regelmäßige Buchung')}</h3>
@@ -1840,7 +2495,7 @@ function recDialog(r, mode){
     <label class="field"><span>${forSave?'Wofür':'Bezeichnung'}</span><input name="text" value="${esc(r.text)}" placeholder="${forSave?'z. B. Urlaub':'z. B. Taschengeld'}" autofocus id="rec-text"></label>
     <div class="row2">
       <label class="field"><span>Betrag (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(r.amount)}" id="rec-amount"></label>
-      <label class="field"><span>Rhythmus</span><select name="rhythm" id="rec-rhythm">${Object.entries(RHYTHM).map(([k,l])=>`<option value="${k}" ${r.rhythm===k?'selected':''}>${l}</option>`).join('')}</select></label>
+      <label class="field"><span>Rhythmus</span><select name="rhythm" id="rec-rhythm">${Object.entries(RHYTHM_BASE).map(([k,l])=>`<option value="${k}" ${r.rhythm===k?'selected':''}>${l}</option>`).join('')}</select></label>
     </div>
     <div class="row2">
       <label class="field"><span>Erste Buchung am</span><input type="date" name="start" value="${esc(r.start)}" id="rec-start"></label>
@@ -2515,7 +3170,7 @@ function renderKidOverview(k, live){
   const F = k.finance, cfg = k.cfg || {};
   const mode = cfg.kid ? (cfg.kidAccounts || 'cash') : (cfg.combined ? 'cash' : 'both');
   const svName = cfg.kid ? (cfg.kidSave === 'konto' ? 'Sparkonto' : 'Sparschwein') : 'Sparen';
-  const b = {bank:F.start.bank, cash:F.start.cash, save:F.start.save||0};
+  const b = {bank:F.start.bank, cash:F.start.cash, save:startSave(F)};
   F.tx.forEach(t => { const e = effect(t); b.bank += e.bank; b.cash += e.cash; b.save += e.save; });
   const money = b.bank + b.cash, hasSave = cfg.savings || b.save !== 0 || F.tx.some(isSave);
   const pend = F.tx.filter(t => t.pending);
@@ -2989,8 +3644,8 @@ function belegAll(){
     tx.oncomplete = () => res(out); tx.onerror = () => rej(tx.error);
   }));
 }
-const belegIds = () => [...new Set(S.finance.tx.map(t => t.beleg).filter(Boolean))];
-function belegMaybeDelete(id, exceptTxId){ if (id && !S.finance.tx.some(x => x.beleg === id && x.id !== exceptTxId)) belegDel(id).catch(() => {}); }
+const belegIds = () => [...new Set([...S.finance.tx.map(t => t.beleg), ...(S.finance.recurring || []).map(r => r.beleg)].filter(Boolean))];
+function belegMaybeDelete(id, exceptTxId){ if (id && !S.finance.tx.some(x => x.beleg === id && x.id !== exceptTxId) && !(S.finance.recurring || []).some(x => x.beleg === id && x.id !== exceptTxId)) belegDel(id).catch(() => {}); }
 let persistAsked = false;
 function askPersist(){ if (persistAsked) return; persistAsked = true; try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch(e){} }
 // Bild verkleinern (Belegfoto) – max. 1600 px, JPEG
@@ -3016,7 +3671,7 @@ const belegSize = b => b && b.data ? Math.round(b.data.length * 0.75) : 0;
 const fmtSize = n => n >= 1e6 ? (n/1e6).toLocaleString('de-DE', {maximumFractionDigits:1}) + ' MB' : Math.max(1, Math.round(n/1e3)) + ' KB';
 function addYears(isoD, y){ const d = parseIso(isoD || today()); d.setFullYear(d.getFullYear() + y); return iso(d); }
 // Block im Buchungsdialog
-function belegBlock(t){
+function belegBlock(t, opts){
   const has = !!t.beleg, scanned = !t.beleg && !!t.photo;
   return `<div class="bel-box">
     <div class="bel-top">
@@ -3025,10 +3680,10 @@ function belegBlock(t){
         : `<label class="btn sm bel-add">📎 Beleg anhängen<input type="file" accept="image/*,application/pdf" class="file-hidden" id="bel-file"></label>`}
       <span class="bel-st" id="bel-st"></span>
     </div>
-    <div class="bel-g" id="bel-g" ${has || scanned ? '' : 'hidden'}>
+    ${opts && opts.noGar ? '' : `<div class="bel-g" id="bel-g" ${has || scanned ? '' : 'hidden'}>
       <label class="field"><span>Garantie bis (freiwillig)</span><input type="date" name="garantie" value="${esc(t.garantie || '')}" id="bel-gar"></label>
       <button type="button" class="btn sm ghost" id="bel-2y">+ 2 Jahre</button>
-    </div>
+    </div>`}
   </div>`;
 }
 function belegWire(form, t){
@@ -3036,12 +3691,12 @@ function belegWire(form, t){
   const g = form.querySelector('#bel-g'), gar = form.querySelector('#bel-gar'), stx = form.querySelector('#bel-st');
   const v = form.querySelector('#bel-view'); if (v) v.addEventListener('click', () => belegViewer(t.beleg, t));
   const rm = form.querySelector('#bel-rm');
-  if (rm) rm.addEventListener('click', () => { st.remove = !st.remove; rm.textContent = st.remove ? 'Doch behalten' : 'Beleg entfernen'; stx.textContent = st.remove ? 'wird beim Speichern entfernt' : ''; g.hidden = st.remove; });
-  const keep = form.querySelector('#bel-keep'); if (keep) keep.addEventListener('change', () => { g.hidden = !keep.checked; });
+  if (rm) rm.addEventListener('click', () => { st.remove = !st.remove; rm.textContent = st.remove ? 'Doch behalten' : 'Beleg entfernen'; stx.textContent = st.remove ? 'wird beim Speichern entfernt' : ''; if (g) g.hidden = st.remove; });
+  const keep = form.querySelector('#bel-keep'); if (keep) keep.addEventListener('change', () => { if (g) g.hidden = !keep.checked; });
   const fi = form.querySelector('#bel-file');
   if (fi) fi.addEventListener('change', e => {
     const f = e.target.files[0]; if (!f) return; stx.textContent = 'wird vorbereitet …';
-    fileToBeleg(f).then(d => { st.data = d; stx.textContent = '✓ ' + (d.type === 'application/pdf' ? 'PDF' : 'Foto') + ' angehängt (' + fmtSize(belegSize(d)) + ')'; g.hidden = false; })
+    fileToBeleg(f).then(d => { st.data = d; stx.textContent = '✓ ' + (d.type === 'application/pdf' ? 'PDF' : 'Foto') + ' angehängt (' + fmtSize(belegSize(d)) + ')'; if (g) g.hidden = false; })
       .catch(err => { stx.textContent = err && err.message === 'big' ? 'Die PDF ist zu groß (max. 8 MB).' : 'Die Datei konnte nicht gelesen werden.'; });
   });
   const y2 = form.querySelector('#bel-2y'); if (y2) y2.addEventListener('click', () => { const d = form.querySelector('[name=date]'); gar.value = addYears(d && d.value, 2); });
@@ -3089,7 +3744,8 @@ async function belegShare(b, name){
 }
 // Einstellungen: Liste aller Belege
 function belegePage(){
-  const list = S.finance.tx.filter(t => t.beleg).sort((a, b) => b.date.localeCompare(a.date) || (b.created||0) - (a.created||0));
+  const fixB = (S.finance.recurring || []).filter(r => r.beleg).map(r => ({id: r.id, beleg: r.beleg, text: r.text + ' (Fixkosten)', date: r.start, amount: amountAt(r, today()), cat: r.cat}));
+  const list = [...S.finance.tx.filter(t => t.beleg), ...fixB].sort((a, b) => b.date.localeCompare(a.date) || (b.created||0) - (a.created||0));
   const seen = new Set(), t0 = today();
   const rows = list.filter(t => { const k = t.beleg; if (seen.has(k)) return false; seen.add(k); return true; }).map(t => {
     const same = list.filter(x => x.beleg === t.beleg), amt = same.reduce((s, x) => s + x.amount, 0);
@@ -3687,7 +4343,7 @@ $('#main').addEventListener('click', e => {
   if (a==='acct'){ if (b.dataset.k==='save'){ ui.tab = 'sparen'; window.scrollTo(0,0); } else ui.acct = b.dataset.k; render(); }
   else if (a==='month'){ const [y,m] = ui.month.split('-').map(Number); const d = new Date(y, m-1+Number(b.dataset.d), 1); ui.month = d.getFullYear()+'-'+pad(d.getMonth()+1); render(); }
   else if (a==='newtx') txDialog();
-  else if (a==='edittx'){ const t = S.finance.tx.find(x=>x.id===b.dataset.id); if (t) (isLoan(t) ? loanInfoDialog(t.id) : isSave(t) ? saveDialog(t) : (isKid() && (t.type==='einnahme'||t.type==='ausgabe')) ? kidTxDialog(t) : (isKid() && isTransfer(t)) ? kidMoveDialog(t) : txDialog(t)); }
+  else if (a==='edittx'){ const t = S.finance.tx.find(x=>x.id===b.dataset.id); if (t) (t.type==='umbuchung' ? moveDialog2(t) : isLoan(t) ? loanInfoDialog(t.id) : isSave(t) ? saveDialog(t) : (isKid() && (t.type==='einnahme'||t.type==='ausgabe')) ? kidTxDialog(t) : (isKid() && isTransfer(t)) ? kidMoveDialog(t) : txDialog(t)); }
   else if (a==='save') saveDialog();
   else if (a==='start') requirePin('Der Startbetrag', () => startDialog());
   else if (a==='welcome-skip'){ lsSet('welcomed', 1); render(); firstSetupDialog(); }
@@ -3706,11 +4362,25 @@ $('#main').addEventListener('click', e => {
   else if (a==='kid-in') kidAskAccount('einnahme');
   else if (a==='kid-out') kidAskAccount('ausgabe');
   else if (a==='goal') goalDialog();
-  else if (a==='rec-new') requirePin('Das Anlegen regelmäßiger Buchungen', () => recDialog());
+  else if (a==='rec-new') requirePin('Das Anlegen regelmäßiger Buchungen', () => ADULT_ONLY ? fixDialog() : recDialog());
+  else if (a==='fix-new') requirePin('Das Anlegen von Fixkosten', () => fixDialog());
+  else if (a==='fix-edit'){ const r = S.finance.recurring.find(x=>x.id===b.dataset.id); if (r) requirePin('Das Ändern von Fixkosten', () => fixDialog(r)); }
+  else if (a==='fix-due') fixDueDialog();
+  else if (a==='fix-reserve') requirePin('Das Anlegen von Umbuchungen', () => ADULT_ONLY ? uebRecDialog(null, {amount: +b.dataset.v, text: b.dataset.t || 'Rücklage Jahreskosten', back: b.dataset.back === '1', day: b.dataset.back === '1' ? 31 : 1}) : recDialog(null, 'save', {amount: +b.dataset.v, text:'Rücklage Fixkosten'}));
+  else if (a==='acc-new') requirePin('Das Anlegen von Konten', () => accDialog());
+  else if (a==='acc-edit'){ const ac = tgList().find(x => x.id === b.dataset.id); if (ac) requirePin('Das Ändern von Konten', () => accDialog(ac)); }
+  else if (a==='tg-in') moveDialog2(null, {from:'bank', to:b.dataset.id});
+  else if (a==='tg-out') moveDialog2(null, {from:b.dataset.id, to:'bank'});
+  else if (a==='tg-move') moveDialog2();
+  else if (a==='ueb-new') requirePin('Das Anlegen von Umbuchungen', () => uebRecDialog());
+  else if (a==='ueb-edit'){ const r = S.finance.recurring.find(x=>x.id===b.dataset.id); if (r) requirePin('Das Ändern von Umbuchungen', () => r.type==='umbuchung' ? uebRecDialog(r) : recDialog(r)); }
+  else if (a==='recon') reconDialog();
+  else if (a==='bilanz') bilanzDialog();
+  else if (a==='goto-tg'){ ui.tab = 'sparen'; lsSet('tab','sparen'); render(); window.scrollTo(0,0); }
   else if (a==='rec-new-save') requirePin('Das Anlegen von Sparplänen', () => recDialog(null, 'save'));
   else if (a==='save-out') saveDialog(null, 'entsparen');
   else if (a==='save-start') requirePin('Der Anfangsbestand', saveStartDialog);
-  else if (a==='rec-edit'){ const r = S.finance.recurring.find(x=>x.id===b.dataset.id); if (r) requirePin('Das Ändern regelmäßiger Buchungen', () => recDialog(r)); }
+  else if (a==='rec-edit'){ const r = S.finance.recurring.find(x=>x.id===b.dataset.id); if (r) requirePin('Das Ändern regelmäßiger Buchungen', () => (ADULT_ONLY && isFix(r)) ? fixDialog(r) : recDialog(r)); }
   else if (a==='newplan') planDialog();
   else if (a==='editplan') planDialog(activePlan());
   else if (a==='plan'){ S.schedule.active = b.dataset.id; save('schedule'); render(); }
