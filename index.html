@@ -427,6 +427,7 @@ button.cc{cursor:pointer}.cc b{font-family:var(--f-num);font-weight:600;font-siz
 .lv-pick{display:grid;gap:3px;padding:12px 14px;border-radius:12px;border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface));color:var(--ink);font:inherit;text-align:left;cursor:pointer}.lv-pick small{color:var(--muted)}
 .lv-steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:.88rem}.lv-steps code{background:var(--sunk);padding:1px 5px;border-radius:5px}
 .lv-stat{padding:9px 12px;border-radius:10px;background:var(--sunk);font-size:.85rem}.lv-stat.ok{color:var(--pos)}.lv-stat.warn{background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.lv-box{display:grid;gap:8px;padding:12px;border-radius:12px;background:var(--sunk)}.lv-box .hint{background:none;padding:0;border:0}#lv-res:empty{display:none}.lv-box .lv-steps{font-size:.85rem}a.btn{text-decoration:none}a.btn.primary{color:var(--accent-ink,#fff)}
 .lv-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lv-btns .btn{justify-content:center}
 .ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px}
 .ov-c{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;align-content:start;min-width:0;width:100%;overflow:hidden;padding:10px 11px;border-radius:14px;border:1px solid var(--line);border-top:4px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
@@ -727,9 +728,13 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.8.0';
+const APP_VERSION = '1.8.1';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.8.1','11.11.2026, 21:23 Uhr',[
+    'Fester Link am iPhone ohne Hochladen: „Auf GitHub anlegen“ öffnet GitHub mit fertig ausgefülltem Dateinamen und Inhalt – nur noch „Commit changes“',
+    'Aktualisieren: Inhalt kopieren, Datei auf GitHub öffnen, ✏️, einfügen, Commit',
+    'Das GitHub-Repository wird aus der Adresse der Seite erkannt und lässt sich ändern']],
   ['1.8.0','11.11.2026, 21:11 Uhr',[
     'Urlaub „Fester Link“: ein Link für die WhatsApp-Gruppe, der immer den aktuellen Stand zeigt – nur ansehen, ändern kannst nur du',
     'Nach Änderungen speicherst du eine Datei und lädst sie auf GitHub in den Ordner „urlaub“ hoch; der Link bleibt gleich',
@@ -2872,41 +2877,76 @@ async function liveCheck(T){
   try { const r = await readLive(T.pub.id, T.pub.key); return r.ts ? 'ok:' + r.ts : 'ok:0'; }
   catch(e){ return e && e.message === 'missing' ? 'missing' : 'bad'; }
 }
+// GitHub-Repository aus der Seitenadresse ableiten (z. B. name.github.io/finanzen → name/finanzen)
+function ghRepo(){
+  const g = (S.settings && S.settings.gh) || {};
+  if (g.repo) return {repo: g.repo, branch: g.branch || 'main'};
+  const h = location.hostname, m = h.match(/^([\w-]+)\.github\.io$/i);
+  if (!m) return {repo: '', branch: g.branch || 'main'};
+  const seg = location.pathname.split('/').filter(Boolean)[0];
+  return {repo: m[1] + '/' + (seg && !/\.html?$/.test(seg) ? seg : m[1] + '.github.io'), branch: g.branch || 'main'};
+}
+function liveMark(T){ T.pub.last = Date.now(); T.pub.hash = liveSig(T); T.pub.made = true; save('finance'); }
 function tripLiveDialog(T){
-  const P = livePrep(T), dirty = liveDirty(T), url = liveUrl(P);
+  const P = livePrep(T), dirty = liveDirty(T), url = liveUrl(P), G = ghRepo(), path = LIVE_DIR + P.id + '.json';
+  const fmt = ts => new Date(ts).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'});
   const form = openDlg(`
     <h3>Fester Link für die Gruppe</h3>
-    <p class="hint" style="margin:0">Die Gruppe bekommt <b>einmal</b> einen Link. Er zeigt immer den Stand der Datei, die du auf GitHub hochgeladen hast – nur ansehen, ändern kannst nur du.</p>
-    <ol class="lv-steps">
-      <li><b>Datei speichern</b> – ${esc(P.id)}.json, z. B. „In Dateien sichern“.</li>
-      <li><b>Auf GitHub hochladen</b> in den Ordner <code>urlaub</code> deines Finanzen-Repositorys (beim ersten Mal anlegen). Eine ältere Datei mit gleichem Namen wird ersetzt.</li>
-      <li><b>Link einmal in die WhatsApp-Gruppe</b> schicken und anpinnen. Nach Änderungen nur noch Schritt 1 und 2.</li>
-    </ol>
+    <p class="hint" style="margin:0">Die Gruppe bekommt <b>einmal</b> einen Link. Er zeigt immer den Stand der Datei auf GitHub – nur ansehen, ändern kannst nur du.</p>
     <label class="bel-keep"><input type="checkbox" id="lv-paid" ${P.paid !== false ? 'checked' : ''}><span>Bezahlte und offene Beträge anzeigen</span></label>
     ${T.payInfo ? `<label class="bel-keep"><input type="checkbox" id="lv-pay" ${P.pay !== false ? 'checked' : ''}><span>Bezahldaten anzeigen</span></label>` : ''}
-    <div class="lv-stat ${P.last ? (dirty ? 'warn' : 'ok') : ''}" id="lv-stat">${P.last ? (dirty ? '⚠️ Seit der letzten Datei vom ' + new Date(P.last).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'}) + ' hat sich etwas geändert – Datei neu speichern und hochladen.' : '✓ Datei vom ' + new Date(P.last).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'}) + ' ist aktuell.') : 'Noch keine Datei gespeichert.'}</div>
-    <div class="lv-btns"><button type="button" class="btn primary" id="lv-file">1 · Datei speichern</button><button type="button" class="btn" id="lv-share">3 · Link teilen</button><button type="button" class="btn ghost" id="lv-copy">Link kopieren</button><button type="button" class="btn ghost" id="lv-test">Auf GitHub prüfen</button></div>
+    <div class="lv-stat ${P.last ? (dirty ? 'warn' : 'ok') : ''}">${P.last ? (dirty ? '⚠️ Seit ' + fmt(P.last) + ' hat sich etwas geändert – bitte auf GitHub aktualisieren.' : '✓ Stand vom ' + fmt(P.last) + ' ist übertragen.') : 'Noch nicht auf GitHub.'}</div>
+    <div class="lv-box">
+      <span class="label">${P.made ? 'Auf GitHub aktualisieren' : 'Auf GitHub anlegen (einmalig)'}</span>
+      ${G.repo ? `<p class="hint" style="margin:0">Repository <b>${esc(G.repo)}</b> · Zweig <b>${esc(G.branch)}</b> <button type="button" class="linkbtn" id="lv-repo">ändern</button></p>` : `<p class="hint" style="margin:0">Repository nicht erkannt. <button type="button" class="linkbtn" id="lv-repo">Eintragen</button></p>`}
+      ${P.made ? `<ol class="lv-steps"><li><b>Inhalt kopieren</b></li><li><b>Datei auf GitHub öffnen</b>, auf den Stift ✏️ tippen</li><li>Alles markieren, <b>einfügen</b>, dann <b>Commit changes</b></li></ol>
+        <div class="lv-btns"><button type="button" class="btn primary" id="lv-copyc" disabled>1 · Inhalt kopieren</button><a class="btn" id="lv-edit" target="_blank" rel="noopener" ${G.repo ? '' : 'hidden'}>2 · Datei öffnen</a></div>`
+      : `<ol class="lv-steps"><li><b>Auf GitHub anlegen</b> tippen – Name und Inhalt sind schon ausgefüllt</li><li>Bei GitHub nur noch <b>Commit changes</b> tippen</li></ol>
+        <div class="lv-btns"><a class="btn primary" id="lv-new" target="_blank" rel="noopener" ${G.repo ? '' : 'hidden'}>Auf GitHub anlegen</a><button type="button" class="btn" id="lv-copyc" disabled>Inhalt kopieren</button></div>
+        <p class="hint" style="margin:0">Ohne Vorausfüllen: „Add file › Create new file“, als Name <code>${esc(path)}</code> eintippen (der Schrägstrich legt den Ordner an), Inhalt einfügen, Commit.</p>`}
+      <details class="fx-v"><summary>Am PC: Datei hochladen</summary><div style="display:grid;gap:8px;margin-top:8px"><p class="hint" style="margin:0">Datei speichern und auf GitHub in den Ordner <code>urlaub</code> hochladen („Add file › Upload files“).</p><button type="button" class="btn sm" id="lv-file" style="justify-self:start">Datei speichern</button></div></details>
+    </div>
+    <div class="lv-btns"><button type="button" class="btn" id="lv-share">Link in die Gruppe</button><button type="button" class="btn ghost" id="lv-test">Auf GitHub prüfen</button></div>
     <p class="hint" style="margin:0" id="lv-res"></p>
-    <details class="fx-v"><summary>Sicherheit</summary><p class="hint" style="margin:6px 0 0">Die Datei auf GitHub ist verschlüsselt. Den Schlüssel enthält nur der Link (hinter dem #) – wer nur die Datei sieht, kann nichts lesen. Wer den Link hat, sieht den Urlaub. „Neuen Link erzeugen“ macht alte Links unbrauchbar.</p><button type="button" class="btn sm danger" id="lv-new" style="margin-top:8px">Neuen Link erzeugen</button></details>
+    <details class="fx-v"><summary>Sicherheit</summary><p class="hint" style="margin:6px 0 0">Die Datei auf GitHub ist verschlüsselt. Den Schlüssel enthält nur der Link (hinter dem #) – wer nur die Datei sieht, kann nichts lesen. Wer den Link hat, sieht den Urlaub. „Neuen Link erzeugen“ macht alte Links unbrauchbar.</p><button type="button" class="btn sm danger" id="lv-newkey" style="margin-top:8px">Neuen Link erzeugen</button></details>
     <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Schließen</button></div>`, () => false);
-  const opts = () => { const a = form.querySelector('#lv-paid'), b = form.querySelector('#lv-pay'); T.pub.paid = a.checked; if (b) T.pub.pay = b.checked; save('finance'); };
+  let txt = '';
+  const prep = async () => {
+    txt = (await liveFile(T)).text;
+    const gh = 'https://github.com/' + G.repo;
+    const nw = form.querySelector('#lv-new'); if (nw) nw.href = gh + '/new/' + encodeURIComponent(G.branch) + '?filename=' + encodeURIComponent(path) + '&value=' + encodeURIComponent(txt);
+    const ed = form.querySelector('#lv-edit'); if (ed) ed.href = gh + '/edit/' + encodeURIComponent(G.branch) + '/' + path;
+    form.querySelectorAll('#lv-copyc').forEach(b => { b.disabled = false; });
+  };
+  prep();
+  const opts = () => { const a = form.querySelector('#lv-paid'), b = form.querySelector('#lv-pay'); T.pub.paid = a.checked; if (b) T.pub.pay = b.checked; save('finance'); prep(); };
   form.querySelector('#lv-paid').addEventListener('change', opts); const pb = form.querySelector('#lv-pay'); if (pb) pb.addEventListener('change', opts);
-  form.querySelector('#lv-file').addEventListener('click', async () => { if (await liveSave(T)){ toast('Datei gespeichert – jetzt auf GitHub in „urlaub“ hochladen'); tripLiveDialog(T); } });
+  const cc = form.querySelector('#lv-copyc');
+  cc.addEventListener('click', () => {
+    const done = () => { liveMark(T); cc.textContent = 'Kopiert ✓'; toast(P.made ? 'Kopiert – jetzt Datei öffnen, ✏️, alles markieren und einfügen' : 'Kopiert'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, () => { form.querySelector('#lv-res').textContent = txt; done(); });
+    else { form.querySelector('#lv-res').textContent = txt; done(); }
+  });
+  const nw = form.querySelector('#lv-new'); if (nw) nw.addEventListener('click', () => { liveMark(T); setTimeout(() => tripLiveDialog(T), 400); });
+  form.querySelector('#lv-file').addEventListener('click', async () => { if (await liveSave(T)){ T.pub.made = true; save('finance'); toast('Datei gespeichert – jetzt auf GitHub in „urlaub“ hochladen'); tripLiveDialog(T); } });
+  form.querySelector('#lv-repo').addEventListener('click', () => {
+    const r = prompt('GitHub-Repository (Name/Repository), z. B. maxmuster/finanzen', G.repo); if (r === null) return;
+    const b = prompt('Zweig (meist main)', G.branch); S.settings.gh = {repo: r.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, ''), branch: (b || 'main').trim()}; save('settings'); tripLiveDialog(T);
+  });
   form.querySelector('#lv-share').addEventListener('click', async () => {
     const text = '🏖 ' + T.name + ' – Kosten, Raten und wer schon bezahlt hat (immer aktuell):';
     try { if (navigator.share){ await navigator.share({title: T.name, text, url}); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
     try { await navigator.clipboard.writeText(text + '\n' + url); toast('Link kopiert'); } catch(e){ form.querySelector('#lv-res').textContent = url; }
   });
-  form.querySelector('#lv-copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(url); toast('Link kopiert'); } catch(e){ form.querySelector('#lv-res').textContent = url; } });
   form.querySelector('#lv-test').addEventListener('click', async () => {
     const r = form.querySelector('#lv-res'); r.textContent = 'Prüfe …';
     const st = await liveCheck(T);
-    if (st === 'missing') r.textContent = 'Auf GitHub ist noch keine Datei ' + T.pub.id + '.json im Ordner „urlaub“ – oder GitHub braucht noch 1–2 Minuten.';
-    else if (st === 'bad') r.textContent = 'Die Datei auf GitHub passt nicht zu diesem Link. Bitte die zuletzt gespeicherte Datei hochladen.';
-    else { const ts = +st.slice(3); r.textContent = '✓ Gefunden: Stand ' + (ts ? new Date(ts).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'}) : '–') + (ts && T.pub.last && ts < T.pub.last - 1000 ? ' – älter als deine letzte Datei, GitHub aktualisiert evtl. noch.' : ''); }
+    if (st === 'missing') r.textContent = 'Auf der Seite ist noch keine Datei ' + path + ' – nach dem Commit braucht GitHub 1–2 Minuten.';
+    else if (st === 'bad') r.textContent = 'Die Datei auf GitHub passt nicht zu diesem Link. Bitte den zuletzt kopierten Inhalt einfügen.';
+    else { const ts = +st.slice(3); r.textContent = '✓ Online: Stand ' + (ts ? fmt(ts) : '–') + (ts && T.pub.last && ts < T.pub.last - 60000 ? ' – älter als deine letzte Übertragung, GitHub aktualisiert evtl. noch.' : ''); }
   });
-  const nb = form.querySelector('#lv-new');
-  nb.addEventListener('click', () => { if (!armed(nb, 'Alte Links ungültig machen?')) return; T.pub = null; livePrep(T); toast('Neuer Link erzeugt – Datei speichern, hochladen und neuen Link schicken'); tripLiveDialog(T); });
+  const nk = form.querySelector('#lv-newkey');
+  nk.addEventListener('click', () => { if (!armed(nk, 'Alte Links ungültig machen?')) return; T.pub = null; livePrep(T); toast('Neuer Link – auf GitHub anlegen und neuen Link schicken'); tripLiveDialog(T); });
 }
 
 function tripShareDialog(T){
