@@ -728,9 +728,12 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.8.1';
+const APP_VERSION = '1.9.0';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.9.0','11.11.2026, 21:30 Uhr',[
+    'Einstellungen: „Nach neuer Version suchen“ – zeigt, ob es ein Update gibt und was neu ist, mit „Jetzt aktualisieren“',
+    'Auch unter „Was ist neu?“ gibt es den Knopf zum Suchen']],
   ['1.8.1','11.11.2026, 21:23 Uhr',[
     'Fester Link am iPhone ohne Hochladen: „Auf GitHub anlegen“ öffnet GitHub mit fertig ausgefülltem Dateinamen und Inhalt – nur noch „Commit changes“',
     'Aktualisieren: Inhalt kopieren, Datei auf GitHub öffnen, ✏️, einfügen, Commit',
@@ -1286,6 +1289,25 @@ function checkForUpdate(){
     }
   }).catch(() => {});
 }
+// Manuell nach neuer Version suchen (Einstellungen)
+async function manualUpdateCheck(){
+  const show = (title, html, btn) => openDlg(`<h3>${title}</h3>${html}<div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>${btn ? 'Später' : 'OK'}</button>${btn ? '<button type="button" class="btn primary" id="upd-go">Jetzt aktualisieren</button>' : ''}</div>`, () => {});
+  if (!/^https?:$/.test(location.protocol)){ show('Nach neuer Version suchen', '<p class="hint" style="margin:0">Die App ist als Datei geöffnet. Updates gibt es nur, wenn sie über ihre Internetadresse (z. B. GitHub Pages) läuft.</p>'); return; }
+  show('Suche nach neuer Version …', '<p class="hint" style="margin:0">Einen Moment bitte.</p>');
+  let t = '';
+  try { const r = await fetch(location.href.split('#')[0].split('?')[0] + '?upd=' + Date.now(), {cache:'no-store'}); if (r.ok) t = await r.text(); } catch(e){}
+  lsSet('updChecked', String(Date.now()));
+  const m = t.match(/const APP_VERSION = '([\d.]+)'/);
+  if (!m){ show('Keine Verbindung', '<p class="hint" style="margin:0">Die Seite konnte nicht geladen werden. Bitte prüfe die Internetverbindung und versuch es noch einmal.</p>'); return; }
+  if (verCmp(m[1], APP_VERSION) <= 0){ show('Alles aktuell ✓', `<p class="hint" style="margin:0">Du nutzt die neueste Version <b>${APP_VERSION}</b>.</p>`); return; }
+  // Neuheiten der neuen Version(en) aus der geladenen Seite lesen
+  const news = []; const re = /\['([\d.]+)',\s*'([^']*)',\s*\[([\s\S]*?)\]\]/g; let x;
+  const cl = t.slice(t.indexOf('const CHANGELOG = ['), t.indexOf('const CHANGELOG = [') + 40000);
+  while ((x = re.exec(cl)) && news.length < 6){ if (verCmp(x[1], APP_VERSION) <= 0) break; news.push([x[1], x[2], (x[3].match(/'((?:[^'\\]|\\.)*)'/g) || []).map(q => q.slice(1, -1))]); }
+  const f = show(`Version ${m[1]} ist da`, `<p class="hint" style="margin:0">Du nutzt ${APP_VERSION}. Deine Daten bleiben erhalten, vorher wird automatisch ein Sicherungspunkt angelegt.</p>
+    ${news.length ? `<div class="wn-list">${news.map(([v, d, list]) => `<div class="wn"><b class="num">${esc(v)}</b> <span>${esc(d)}</span><ul>${list.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>`).join('')}</div>` : ''}`, true);
+  f.querySelector('#upd-go').addEventListener('click', () => { lsSet('updSkip', ''); doUpdate(); });
+}
 function doUpdate(){
   const reg = navigator.serviceWorker && navigator.serviceWorker.getRegistration ? navigator.serviceWorker.getRegistration() : Promise.resolve(null);
   reg.then(r => r && r.update()).catch(() => {}).finally(() => location.reload());
@@ -1467,6 +1489,7 @@ function settingsDialog(page){
         setRow({page:'pin', ic:'lock', c:'var(--neg)', t:'Eltern-PIN', s: pinSet() ? 'Aktiv' : 'Aus'}) +
         setRow({act:'log', ic:'list', c:'var(--muted)', t:'Protokoll', s:'Wer hat was geändert', v: newTag}));
     }
+    body += setGroup('App', setRow({act:'upd-check', ic:'repeat', c:'var(--accent)', t:'Nach neuer Version suchen', s:'Du nutzt Version ' + APP_VERSION + (lsGet('updChecked') ? ' · zuletzt geprüft ' + new Date(+lsGet('updChecked')).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'}) : '')}));
     body += `<button type="button" class="set-ver" data-page="version">${esc(appName())} · Version ${APP_VERSION} · Was ist neu?</button>`;
   }
 
@@ -1550,6 +1573,7 @@ function settingsDialog(page){
   if (page === 'version'){
     body += `<div class="set-grp"><div class="set-card set-pad">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><b>Version ${APP_VERSION}</b><span style="color:var(--muted);font-size:.85rem">${esc(CHANGELOG[0][1])}</span></div>
+      <button type="button" class="btn sm" data-do="upd-check" style="justify-self:start">Nach neuer Version suchen</button>
       <div class="set-changelog">${CHANGELOG.map(([v,d,items]) => `<div><b class="num">${v}</b> <span style="color:var(--muted)">${esc(d)}</span><ul>${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>`).join('')}</div>
     </div></div>`;
   }
@@ -1585,6 +1609,7 @@ function settingsDialog(page){
     else if (a === 'start') startDialog();
     else if (a === 'goto-fix'){ closeDlg(); ui.tab = 'fixkosten'; lsSet('tab','fixkosten'); if (!isVisible('fixkosten')){ S.settings.hidden = (S.settings.hidden||[]).filter(k => k !== 'fixkosten'); save('settings'); } render(); window.scrollTo(0,0); }
     else if (a === 'kid-reset') kidResetStart();
+    else if (a === 'upd-check') manualUpdateCheck();
     else if (a === 'recon') reconDialog();
     else if (a === 'bilanz') bilanzDialog();
     else if (a === 'acc-new') accDialog();
