@@ -389,6 +389,14 @@ dialog.bel-dlg::backdrop{background:rgba(0,0,0,.6)}
 .kx-tab td{padding:7px 4px;border-top:1px solid var(--line);text-align:right;font-family:var(--f-num)}.kx-tab td:first-child{font-family:inherit}
 .kx-sum{display:grid;gap:6px;padding:12px;border-radius:12px;background:var(--sunk)}.kx-sum div{display:flex;justify-content:space-between;gap:10px;font-size:.9rem}.kx-sum b{font-family:var(--f-num)}
 .kx-bars{display:flex;gap:8px;align-items:flex-end;height:96px;padding:4px 2px}.kx-bars div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}.kx-bars i{display:block;width:100%;max-width:38px;border-radius:6px 6px 2px 2px;background:color-mix(in srgb,var(--accent) 45%,var(--sunk))}
+.tp-list{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);overflow:hidden}
+.tp-r{display:grid;grid-template-columns:minmax(0,1fr) 62px 62px 74px;gap:8px;align-items:center;width:100%;padding:10px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:right;cursor:pointer}
+.tp-r>span{font-family:var(--f-num);font-size:.84rem;white-space:nowrap}.tp-r .tp-n{text-align:left;font-family:inherit;white-space:normal;min-width:0}
+.tp-n b{display:block;font-size:.93rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tp-n small{display:block;color:var(--muted);font-size:.74rem}
+.tp-o{font-weight:700;font-size:.92rem!important}.tp-r.done .tp-n b{color:var(--muted)}
+.tp-hd{border-top:0;cursor:default;padding:8px 12px 6px;background:var(--sunk)}.tp-hd span{font-family:inherit!important;font-size:.62rem!important;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}.tp-hd span:first-child{text-align:left}
+.tp-sum{cursor:default;background:var(--sunk)}.tp-sum span{font-weight:700;font-size:.8rem!important}
+@media (max-width:360px){.tp-r{grid-template-columns:minmax(0,1fr) 58px 58px 64px;padding:9px 10px;gap:4px}.tp-r>span{font-size:.78rem}}
 .tp-wrap{overflow-x:auto;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
 .tp-tab{border-collapse:collapse;font-size:.84rem;min-width:100%}.tp-tab th,.tp-tab td{padding:7px 10px;text-align:right;white-space:nowrap;border-top:1px solid var(--line);font-family:var(--f-num)}
 .tp-tab th{border-top:0;font-family:inherit;font-size:.78rem}.tp-tab th small{display:block;font-weight:400;color:var(--muted)}
@@ -668,9 +676,12 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.4.1';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.4.1','11.11.2026, 18:37 Uhr',[
+    'Urlaub: „Wer zahlt was?“ ist jetzt eine kompakte Tabelle mit einer Zeile pro Familie (Anteil, Bezahlt, Offen) und Gesamtzeile – kein seitliches Scrollen mehr, egal wie viele Familien',
+    'Was je Rate auf eine Familie entfällt, steht jetzt beim Antippen der Familie']],
   ['1.4.0','11.11.2026, 17:35 Uhr',[
     'Neuer Bereich „Urlaub“: gemeinsame Kosten (z. B. Ferienhaus und Kaution) auf mehrere Familien aufteilen – Personenzahl je Familie frei wählbar',
     'Raten mit Fälligkeit, auch als Restbetrag; die App rechnet pro Person und pro Familie',
@@ -2259,16 +2270,26 @@ function tripCalc(T){
   const fixed = (T.rates || []).filter(r => !r.rest).reduce((s, r) => s + (r.amount || 0), 0);
   const rates = (T.rates || []).map(r => ({...r, amt: r.rest ? Math.max(0, total - fixed) : (r.amount || 0)})).sort((a, b) => (a.due || '0000').localeCompare(b.due || '0000'));
   const share = (amt, n) => persons ? Math.round(amt * n / persons) : 0;
+  // Cent-genau aufteilen: Rundungsreste gehen an die größten Nachkommaanteile, Summe stimmt immer
+  const cache = {};
+  const shareP = (amt, id) => {
+    if (!persons) return 0;
+    if (!cache[amt]){ const ps = (T.parties || []).map(p => { const x = amt * Math.max(1, +p.persons || 1) / persons; return {id:p.id, v:Math.floor(x), r:x - Math.floor(x)}; });
+      let left = amt - ps.reduce((s, p) => s + p.v, 0); ps.slice().sort((a, b) => b.r - a.r).forEach(p => { if (left > 0){ p.v++; left--; } });
+      cache[amt] = Object.fromEntries(ps.map(p => [p.id, p.v])); }
+    return cache[amt][id] || 0;
+  };
   const t0 = today();
   const parties = (T.parties || []).map(p => {
     const n = Math.max(1, +p.persons || 1), pays = (T.pays || []).filter(x => x.party === p.id);
-    const paid = pays.reduce((s, x) => s + (x.amount || 0), 0), soll = share(total, n);
-    let dueNow = 0; rates.forEach(r => { if (!r.due || r.due <= t0) dueNow += share(r.amt, n); });
-    const refund = T.refund && T.refund.amount ? share(T.refund.amount, n) : 0;
+    const paid = pays.reduce((s, x) => s + (x.amount || 0), 0);
+    const rs = rates.map(r => shareP(r.amt, p.id)), soll = shareP(total, p.id);
+    let dueNow = 0; rates.forEach((r, i) => { if (!r.due || r.due <= t0) dueNow += rs[i]; }); if (!rates.length) dueNow = soll; dueNow = Math.min(dueNow, soll);
+    const refund = T.refund && T.refund.amount ? shareP(T.refund.amount, p.id) : 0;
     return {...p, n, pays, paid, soll, rest: soll - paid, late: Math.max(0, dueNow - paid), refund, refunded: !!(T.refund && (T.refund.done || []).includes(p.id))};
   });
   const paid = parties.reduce((s, p) => s + p.paid, 0);
-  return {total, deposit, persons, perPerson: persons ? total / persons : 0, rates, parties, paid, rest: total - paid, fixedOver: fixed > total, share};
+  return {total, deposit, persons, perPerson: persons ? total / persons : 0, rates, parties, paid, rest: total - paid, fixedOver: fixed > total, share, shareP};
 }
 const perP = (amt, C) => C.persons ? euro(Math.round(amt / C.persons)) : '–';
 function tripRange(T){
@@ -2295,8 +2316,12 @@ function renderTrip(T){
   const costs = (T.costs || []).map(c => `<button type="button" class="fx-row" data-act="trip-cost" data-id="${esc(c.id)}"><div><b>${esc(c.name)}</b><small>${c.deposit ? '<span class="fx-b alt">kommt zurück</span> · ' : ''}${perP(c.amount, C)} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></button>`).join('');
   const rates = C.rates.map(r => { const over = r.due && r.due < t0 && !r.paidAt;
     return `<button type="button" class="fx-row" data-act="trip-rate" data-id="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + fmtShort(r.due) + ' ' + r.due.slice(0,4) : 'sofort fällig'}${r.rest ? ' · Restbetrag' : ''} · ${perP(r.amt, C)} pro Person${r.paidAt ? ` · <span class="pos-t">an Vermieter bezahlt ${fmtShort(r.paidAt)}</span>` : over ? ' · <span class="neg-t">noch nicht an Vermieter bezahlt</span>' : ''}</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></button>`; }).join('');
-  const parties = C.parties.map(p => `<button type="button" class="fx-row tp-row" data-act="trip-party" data-id="${esc(p.id)}"><div><b>${esc(p.name)}${p.me ? ' <span class="fx-b">wir</span>' : ''}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Personen'} · Anteil ${euro(p.soll)} · bezahlt ${euro(p.paid)}</small>${p.late > 0 ? `<small class="neg-t">${euro(p.late)} schon fällig</small>` : ''}</div>
-      <div class="fx-amt"><b class="${p.rest > 0 ? (p.late > 0 ? 'neg-t' : '') : 'pos-t'}">${p.rest > 0 ? euro(p.rest) : p.rest < 0 ? '+' + euro(-p.rest) : '✓'}</b><small>${p.rest > 0 ? 'offen' : p.rest < 0 ? 'zu viel' : 'bezahlt'}</small></div></button>`).join('');
+  const nf = v => euro(v).replace(/\s*€/, '');
+  const parties = C.parties.map(p => `<button type="button" class="tp-r${p.rest <= 0 ? ' done' : ''}" data-act="trip-party" data-id="${esc(p.id)}">
+      <span class="tp-n"><b>${esc(p.name)}${p.me ? ' <span class="fx-b">wir</span>' : ''}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}${p.late > 0 ? ` · <span class="neg-t">${nf(p.late)} fällig</span>` : ''}</small></span>
+      <span>${nf(p.soll)}</span><span class="pos-t">${nf(p.paid)}</span>
+      <span class="tp-o ${p.rest > 0 ? (p.late > 0 ? 'neg-t' : '') : 'pos-t'}">${p.rest > 0 ? nf(p.rest) : p.rest < 0 ? '+' + nf(-p.rest) : '✓'}</span></button>`).join('');
+  const sumRow = C.parties.length > 1 ? `<div class="tp-r tp-sum"><span class="tp-n"><b>Gesamt</b><small>${C.persons} Personen</small></span><span>${nf(C.parties.reduce((s, p) => s + p.soll, 0))}</span><span class="pos-t">${nf(C.paid)}</span><span class="tp-o">${nf(C.parties.reduce((s, p) => s + Math.max(0, p.rest), 0))}</span></div>` : '';
   const R = T.refund || {};
   return `<div class="fx-page">
   <div class="sec-head" style="margin:0"><button type="button" class="btn ghost sm" data-act="trip-back">‹ Urlaube</button><span style="margin-right:auto"></span><button type="button" class="btn sm" data-act="trip-share">Teilen</button><button type="button" class="btn sm" data-act="trip-edit">Bearbeiten</button></div>
@@ -2310,12 +2335,7 @@ function renderTrip(T){
   <div class="fx-h"><span>Raten</span><span><button type="button" class="linkbtn" data-act="trip-rate-new">+ Rate</button></span></div>
   <div class="fx-list">${rates || '<div class="fx-row" style="cursor:default"><div><small>Ohne Raten ist alles sofort fällig. Leg z. B. „1. Rate sofort“ und „2. Rate“ als Restbetrag an.</small></div><div></div></div>'}</div>
   <div class="fx-h"><span>Wer zahlt was?</span><span><button type="button" class="linkbtn" data-act="trip-party-new">+ Teilnehmer</button></span></div>
-  <div class="fx-list">${parties || '<div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div>'}</div>
-  ${C.parties.length && C.rates.length ? `<div class="tp-wrap"><table class="tp-tab"><tr><th></th>${C.parties.map(p => `<th>${esc(p.name)}<small>${p.n} P.</small></th>`).join('')}</tr>
-    ${C.rates.map(r => `<tr><td>${esc(r.name)}</td>${C.parties.map(p => `<td>${amtInput(C.share(r.amt, p.n)) || '0,00'}</td>`).join('')}</tr>`).join('')}
-    <tr><td><b>Anteil</b></td>${C.parties.map(p => `<td><b>${amtInput(p.soll) || '0,00'}</b></td>`).join('')}</tr>
-    <tr><td>Bezahlt</td>${C.parties.map(p => `<td class="pos-t">${amtInput(p.paid) || '0,00'}</td>`).join('')}</tr>
-    <tr><td><b>Rest</b></td>${C.parties.map(p => `<td class="${p.rest > 0 ? 'neg-t' : ''}"><b>${amtInput(Math.max(0, p.rest)) || '0,00'}</b></td>`).join('')}</tr></table></div>` : ''}
+  ${parties ? `<p class="hint" style="margin:0 2px">Familie antippen: Zahlung eintragen, Personenzahl ändern, Raten ansehen.</p><div class="tp-list"><div class="tp-r tp-hd"><span>Familie</span><span>Anteil</span><span>Bezahlt</span><span>Offen</span></div>${parties}${sumRow}</div>` : '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div></div>'}
   <div class="fx-h"><span>Rückzahlung</span><span><button type="button" class="linkbtn" data-act="trip-refund">${R.amount ? 'Ändern' : 'Eintragen'}</button></span></div>
   <div class="fx-list">${R.amount ? `<div class="fx-row" style="cursor:default"><div><b>${esc(R.text || 'Rückzahlung')}</b><small>${R.date ? fmtShort(R.date) + ' ' + R.date.slice(0,4) + ' · ' : ''}${perP(R.amount, C)} pro Person</small></div><div class="fx-amt"><b class="pos-t">${euro(R.amount)}</b></div></div>
       ${C.parties.map(p => `<button type="button" class="fx-row${p.refunded ? ' off' : ''}" data-act="trip-refund-done" data-id="${esc(p.id)}"><div><b>${esc(p.name)}</b><small>${p.refunded ? 'ausgezahlt ✓ – antippen zum Zurücksetzen' : 'antippen, wenn ausgezahlt'}</small></div><div class="fx-amt"><b>${euro(p.refund)}</b></div></button>`).join('')}`
@@ -2420,6 +2440,7 @@ function tripPartyDialog(T, p0){
       <div class="field"><span>Personen</span><div class="fx-step"><button type="button" class="btn sm" data-q="-1" aria-label="Weniger">−</button><input name="persons" inputmode="numeric" value="${Math.max(1, +p.persons || 1)}" id="tp-persons" aria-label="Anzahl Personen"><button type="button" class="btn sm" data-q="1" aria-label="Mehr">+</button></div></div></div>
     <label class="bel-keep"><input type="checkbox" name="me" id="tp-me" ${p.me ? 'checked' : ''}><span>Das sind wir</span></label>
     <p class="hint" id="tp-hint" style="margin:0"></p>
+    ${pc && C.rates.length ? `<div class="kx-sum">${C.rates.map(r => `<div><span>${esc(r.name)} <small style="color:var(--muted)">${r.due ? (r.due <= today() ? 'fällig seit ' : 'bis ') + fmtShort(r.due) : 'sofort'}</small></span><b>${euro(C.shareP(r.amt, pc.id))}</b></div>`).join('')}<div style="border-top:1px solid var(--line);padding-top:6px"><span>Anteil gesamt</span><b>${euro(pc.soll)}</b></div><div><span>Bezahlt</span><b class="pos-t">${euro(pc.paid)}</b></div><div><span><b>${pc.rest < 0 ? 'Zu viel bezahlt' : 'Offen'}</b></span><b class="${pc.rest > 0 ? (pc.late > 0 ? 'neg-t' : '') : 'pos-t'}">${pc.rest === 0 ? '✓' : euro(Math.abs(pc.rest))}</b></div></div>` : ''}
     ${pc ? `<div class="box2"><span class="label">Zahlungen</span>
       ${pc.pays.length ? `<div class="fx-tl" style="background:var(--surface)">${pc.pays.slice().sort((a, b) => a.date.localeCompare(b.date)).map(x => `<div><span>${fmtShort(x.date)}</span><span>${esc(x.note || 'Zahlung')}</span><b>${euro(x.amount)} <button type="button" class="linkbtn" data-delpay="${esc(x.id)}" aria-label="Zahlung löschen">✕</button></b></div>`).join('')}</div>` : '<p class="hint" style="margin:0">Noch nichts bezahlt.</p>'}
       <div class="row2"><label class="field"><span>Neue Zahlung (€)</span><input class="amount-in" name="pay" inputmode="decimal" placeholder="${pc.rest > 0 ? amtInput(pc.late > 0 ? pc.late : pc.rest) : '0,00'}" id="tp-pay"></label><label class="field"><span>am</span><input type="date" name="paydate" value="${today()}" id="tp-paydate"></label></div>
@@ -2480,7 +2501,7 @@ function tripRefundDialog(T){
       save('finance'); toast('Rückzahlung eingetragen');
     });
   const upd = () => { const a = form.amount.value.trim() ? (parseAmt(form.amount.value) || 0) : C.deposit;
-    form.querySelector('#rf-list').innerHTML = C.parties.map(p => `<div><span>${esc(p.name)} (${p.n})</span><b>${euro(C.share(a, p.n))}</b></div>`).join('') || '<div><span>Noch keine Teilnehmer</span><b></b></div>'; };
+    form.querySelector('#rf-list').innerHTML = C.parties.map(p => `<div><span>${esc(p.name)} (${p.n})</span><b>${euro(C.shareP(a, p.id))}</b></div>`).join('') || '<div><span>Noch keine Teilnehmer</span><b></b></div>'; };
   form.addEventListener('input', upd); upd();
   const del = form.querySelector('#rf-del');
   if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich entfernen?')) return; T.refund = null; save('finance'); closeDlg(); toast('Entfernt'); });
