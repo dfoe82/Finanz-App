@@ -394,6 +394,36 @@ dialog.bel-dlg::backdrop{background:rgba(0,0,0,.6)}
 .tp-views button[aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .tp-r.tp-r3{grid-template-columns:minmax(0,1fr) 70px 90px;cursor:default}
 body.ro #settingsBtn,body.ro #backupBtn,body.ro nav.tabs,body.ro #bkBanner,body.ro #updBanner,body.ro #sync{display:none!important}
+.tp-main{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.tp-main button{padding:7px 4px}
+.tp-subs{display:flex;flex-wrap:wrap;gap:6px}.tp-subs button{padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:inherit;font-size:.8rem;font-weight:600;cursor:pointer}
+.tp-subs button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.vw-a{display:grid;gap:6px;align-items:center;width:100%;padding:9px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:left}
+button.vw-a,button.vw-b,button.vw-d{cursor:pointer}
+.vw-ah{border-top:0;background:var(--sunk);font-size:.64rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);align-items:end;padding:8px 12px}
+.vw-ah span{text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vw-ah span:first-child{text-align:left}.vw-ah span:last-child{text-align:right}
+.vw-ah b{display:block;font-family:var(--f-num);font-size:.66rem;color:var(--ink);letter-spacing:0;text-transform:none;font-weight:600}
+.vw-n{min-width:0}.vw-n b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vw-n small,.vw-b small,.vw-d small{color:var(--muted);font-size:.74rem}
+.vw-o{text-align:right;font-family:var(--f-num);font-weight:700;white-space:nowrap}.vw-o small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
+.st{justify-self:center;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;font-style:normal;font-size:.8rem;font-weight:800}
+.st.ok{background:color-mix(in srgb,var(--pos) 18%,transparent);color:var(--pos)}.st.late{background:color-mix(in srgb,var(--neg) 16%,transparent);color:var(--neg)}
+.st.part{background:conic-gradient(var(--pos) 0 var(--p),var(--sunk) var(--p) 100%)}.st.part>i{width:18px;height:18px;border-radius:50%;background:var(--surface)}
+.st.open{border:2px dashed var(--line)}
+.vw-foot{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--sunk);font-weight:700;font-size:.85rem}.vw-foot span:last-child{font-family:var(--f-num)}
+.vw-leg{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:.72rem;color:var(--muted);margin:-4px 2px 0}.vw-leg span{display:flex;align-items:center;gap:5px}.vw-leg .st{width:16px;height:16px;font-size:.6rem}.vw-leg .st.part>i{width:10px;height:10px}
+.vw-rates{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.vw-rates div{padding:9px 11px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}.vw-rates b{display:block;font-family:var(--f-num)}.vw-rates small{display:block;color:var(--muted);font-size:.74rem}
+.vw-g{font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:2px 2px -6px}
+.vw-b{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:left}.vw-b:first-child{border-top:0}.vw-b small{display:block}
+.vw-chips{display:flex;flex-wrap:wrap;gap:6px}.fx-list.vw-chips{padding:10px 12px}
+.cc{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.8rem;font-weight:600}
+button.cc{cursor:pointer}.cc b{font-family:var(--f-num);font-weight:600;font-size:.74rem}
+.cc.ok{background:color-mix(in srgb,var(--pos) 13%,transparent);border-color:transparent;color:var(--pos)}.cc.late{background:color-mix(in srgb,var(--neg) 12%,transparent);border-color:transparent;color:var(--neg)}
+.cc.part{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.vw-c{padding:11px 12px;border-top:1px solid var(--line)}.vw-c:first-child{border-top:0}.vw-ct{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.vw-ct small{color:var(--muted);font-size:.74rem}
+.vw-bar{height:6px;border-radius:99px;background:var(--sunk);overflow:hidden;margin:7px 0 8px}.vw-bar i{display:block;height:100%;background:var(--pos)}
+.vw-dl{padding:8px 12px;font-size:.74rem;color:var(--muted);border-bottom:1px solid var(--line)}
+.vw-d{display:grid;gap:6px;width:100%;padding:9px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:left}.vw-dl+.vw-d{border-top:0}
+.vw-dt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.vw-seg{display:flex;gap:3px;height:9px}.vw-seg>span{position:relative;border-radius:4px;background:var(--sunk);overflow:hidden}.vw-seg>span.late{background:color-mix(in srgb,var(--neg) 22%,transparent)}.vw-seg i{position:absolute;inset:0 auto 0 0;background:var(--pos)}
 .ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px}
 .ov-c{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;align-content:start;min-width:0;width:100%;overflow:hidden;padding:10px 11px;border-radius:14px;border:1px solid var(--line);border-top:4px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
 div.ov-c{cursor:default}.ov-c.done{border-top-color:var(--pos)}.ov-c.late{border-top-color:var(--neg)}
@@ -403,6 +433,7 @@ div.ov-c{cursor:default}.ov-c.done{border-top-color:var(--pos)}.ov-c.late{border
 .ov-t{border-top:1px solid var(--line);padding-top:4px;margin-top:2px}.ov-t b{font-weight:700}
 .ov-rest{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-top:3px;padding:6px 8px;border-radius:9px;background:var(--sunk);font-size:.78rem;font-weight:700}.ov-rest b{font-family:var(--f-num);font-size:.92rem;white-space:nowrap}
 .ov-pp{margin-top:6px;justify-content:center;text-decoration:none;color:var(--ink)}
+.pay-pp{display:grid;gap:6px;padding:9px 14px 12px;border-top:1px solid var(--line)}.pay-pp small{color:var(--muted);font-size:.72rem}.pay-pp .cc{text-decoration:none}
 .pay-box{padding:2px 0}.pay-l{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--line);font-size:.9rem}.pay-l:first-child{border-top:0}
 .pay-l span{min-width:0;overflow-wrap:anywhere}.pay-l small{display:block;color:var(--muted);font-size:.72rem}.pay-l .btn{flex:none;text-decoration:none;color:var(--ink)}
 .tp-list{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);overflow:hidden}
@@ -692,9 +723,16 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.6.0';
+const APP_VERSION = '1.7.0';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.7.0','11.11.2026, 20:31 Uhr',[
+    'Urlaub: sechs umschaltbare Ansichten – Matrix (Standard), Status, Je Rate, Balken, Karten und Tabelle',
+    'Matrix: Betrag pro Person einmal oben, je Familie nur Haken/teilweise/überfällig je Rate und der offene Rest',
+    'Status: sortiert nach überfällig, noch offen und alles bezahlt',
+    'Je Rate: Fortschritt je Rate mit farbigen Namen; Balken: eine Zeile pro Familie',
+    'Tabelle mit Unterauswahl Gesamt / je Rate; die gewählte Ansicht merkt sich die App',
+    'Geteilter Link zeigt dieselben Ansichten (ohne bezahlte Beträge nur Tabelle und Karten)']],
   ['1.6.0','11.11.2026, 20:04 Uhr',[
     'Urlaub „Überblick“: alles auf einen Blick – eine Karte je Familie mit allen Raten (✓ bezahlt, offen, fällig), Anteil, bezahlt und Rest; ohne seitliches Scrollen',
     'Neu „Bezahlen an“: Bankverbindung (IBAN mit Prüfung) und/oder PayPal hinterlegen',
@@ -797,6 +835,7 @@ if (!S.settings.devId){ S.settings.devId = newId() + newId(); lsSet('settings', 
 const now = new Date();
 const ui = {
   tab: (lsGet('tab') || 'finanzen'),
+  tripView: (lsGet('tripView') || 'a'),
   finView: (lsGet('finView') || 'me'),
   month: now.getFullYear()+'-'+pad(now.getMonth()+1),
   acct: 'all',
@@ -2349,7 +2388,7 @@ function renderTrip(T){
   const rates = C.rates.map(r => { const over = r.due && r.due < t0 && !r.paidAt;
     return `<button type="button" class="fx-row" data-act="trip-rate" data-id="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + fmtShort(r.due) + ' ' + r.due.slice(0,4) : 'sofort fällig'}${r.rest ? ' · Restbetrag' : ''} · ${perP(r.amt, C)} pro Person${r.paidAt ? ` · <span class="pos-t">an Vermieter bezahlt ${fmtShort(r.paidAt)}</span>` : over ? ' · <span class="neg-t">noch nicht an Vermieter bezahlt</span>' : ''}</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></button>`; }).join('');
   const nf = v => euro(v).replace(/\s*€/, '');
-  const view = ui.tripView === 'all' || C.rates.some(r => r.id === ui.tripView) ? ui.tripView : 'ov', vr = C.rates.find(r => r.id === view);
+  const view = TRIP_VIEWS.some(v => v[0] === ui.tripView) ? ui.tripView : 'a', sub = C.rates.some(r => r.id === ui.tripSub) ? ui.tripSub : 'all', vr = view === 'all' ? C.rates.find(r => r.id === sub) : null;
   const row = p => { const x = vr ? p.byRate[vr.id] : {soll:p.soll, paid:p.paid, open:p.rest}, lateR = vr ? (x.open > 0 && (!vr.due || vr.due <= t0)) : p.late > 0;
     return `<button type="button" class="tp-r${x.open <= 0 ? ' done' : ''}" data-act="trip-party" data-id="${esc(p.id)}">
       <span class="tp-n"><b>${esc(p.name)}${p.me ? ' <span class="fx-b">wir</span>' : ''}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}${!vr && p.late > 0 ? ` · <span class="neg-t">${nf(p.late)} fällig</span>` : ''}</small></span>
@@ -2358,7 +2397,7 @@ function renderTrip(T){
   const parties = C.parties.map(row).join('');
   const tot = k => C.parties.reduce((s, p) => s + (vr ? p.byRate[vr.id][k] : k === 'soll' ? p.soll : k === 'paid' ? p.paid : Math.max(0, p.rest)), 0);
   const sumRow = C.parties.length > 1 ? `<div class="tp-r tp-sum"><span class="tp-n"><b>Gesamt</b><small>${C.persons} Personen</small></span><span>${nf(tot('soll'))}</span><span class="pos-t">${nf(tot('paid'))}</span><span class="tp-o">${nf(tot('open'))}</span></div>` : '';
-  const views = C.parties.length ? `<div class="tp-views" role="tablist">${[['ov','Überblick'], ['all','Tabelle'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="trip-view" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
+  const views = viewSwitch(C, view, sub, 'trip', true);
   const vInfo = vr ? `<p class="hint" style="margin:0 2px">${esc(vr.name)}: ${euro(vr.amt)} · ${perP(vr.amt, C)} pro Person · ${vr.due ? (vr.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(vr.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'}. Zahlungen werden zuerst auf die frühere Rate angerechnet.</p>` : `<p class="hint" style="margin:0 2px">Familie antippen: Zahlung eintragen, Personenzahl ändern, Raten ansehen.</p>`;
   const R = T.refund || {};
   return `<div class="fx-page">
@@ -2373,7 +2412,7 @@ function renderTrip(T){
   <div class="fx-h"><span>Raten</span><span><button type="button" class="linkbtn" data-act="trip-rate-new">+ Rate</button></span></div>
   <div class="fx-list">${rates || '<div class="fx-row" style="cursor:default"><div><small>Ohne Raten ist alles sofort fällig. Leg z. B. „1. Rate sofort“ und „2. Rate“ als Restbetrag an.</small></div><div></div></div>'}</div>
   <div class="fx-h"><span>Wer zahlt was?</span><span><button type="button" class="linkbtn" data-act="trip-party-new">+ Teilnehmer</button></span></div>
-  ${parties ? `${views}${vInfo}${view === 'ov' ? ovCards(C, {withPaid:true, click:true}) : `<div class="tp-list"><div class="tp-r tp-hd"><span>Familie</span><span>${vr ? 'Rate' : 'Anteil'}</span><span>Bezahlt</span><span>Offen</span></div>${parties}${sumRow}</div>`}` : '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div></div>'}
+  ${parties ? `${views}${vInfo}${view === 'ov' ? ovCards(C, {withPaid:true, click:true}) : view !== 'all' ? statusView(C, view, {click:true}) : `<div class="tp-list"><div class="tp-r tp-hd"><span>Familie</span><span>${vr ? 'Rate' : 'Anteil'}</span><span>Bezahlt</span><span>Offen</span></div>${parties}${sumRow}</div>`}` : '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div></div>'}
   <div class="fx-h"><span>Bezahlen an</span><span><button type="button" class="linkbtn" data-act="trip-pay">${T.payInfo ? 'Ändern' : 'Eintragen'}</button></span></div>
   ${payBox(T, false) || '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Freiwillig: Bankverbindung und/oder PayPal hinterlegen – erscheint im geteilten Link, damit alle direkt bezahlen können.</small></div><div></div></div></div>'}
   <div class="fx-h"><span>Rückzahlung</span><span><button type="button" class="linkbtn" data-act="trip-refund">${R.amount ? 'Ändern' : 'Eintragen'}</button></span></div>
@@ -2558,6 +2597,66 @@ function tripShareText(T){
   if (P && (P.iban || pp)){ L.push(''); L.push('Bezahlen an:'); if (P.iban) L.push((P.holder ? P.holder + ', ' : '') + 'IBAN ' + ibanFmt(P.iban) + (P.bank ? ' (' + P.bank + ')' : '') + ', Verwendungszweck: ' + (P.ref || T.name) + ' + euer Name'); if (pp) L.push('PayPal: ' + (pp.me ? 'https://paypal.me/' + pp.me : pp.mail)); }
   return L.join('\n').replace(/ /g, ' ');
 }
+/* ---------- Urlaub: Ansichten A–D (Matrix, Status, je Rate, Balken) ---------- */
+const TRIP_VIEWS = [['a','Matrix'],['b','Status'],['c','Je Rate'],['d','Balken'],['ov','Karten'],['all','Tabelle']];
+function viewSwitch(C, view, sub, act, withPaid){
+  if (!C.parties.length) return '';
+  const list = withPaid ? TRIP_VIEWS : [['all','Tabelle'],['ov','Karten']];
+  const main = `<div class="tp-views tp-main" role="tablist">${list.map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="${act}-view" data-v="${k}">${l}</button>`).join('')}</div>`;
+  const subs = view === 'all' && C.rates.length ? `<div class="tp-subs">${[['all','Gesamt'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" aria-pressed="${k === sub}" data-act="${act}-sub" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
+  return main + subs;
+}
+function rateList(C){ return C.rates.length ? C.rates : [{id:'__all', name:'Betrag', amt:C.total, due:''}]; }
+function cellOf(p, r){
+  const x = p.byRate[r.id] || {soll:p.soll, paid:p.paid, open:p.rest}, due = !r.due || r.due <= today();
+  const st = x.open <= 0 ? 'ok' : x.paid > 0 ? 'part' : due ? 'late' : 'open';
+  return {...x, st, due, pct: x.soll ? Math.round(Math.min(1, x.paid / x.soll) * 100) : 0};
+}
+const pTag = (p, o) => o.click ? `button type="button" data-act="trip-party" data-id="${esc(p.id)}"` : 'div';
+const pEnd = o => o.click ? 'button' : 'div';
+const rDue = r => r.due ? (r.due <= today() ? 'seit ' : 'bis ') + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'}) : 'sofort';
+function statusView(C, view, o){
+  const nf = v => euro(v).replace(/\s*€/, ''), R = rateList(C);
+  const openAll = C.parties.reduce((s, p) => s + Math.max(0, p.rest), 0);
+  const foot = (l) => `<div class="vw-foot"><span>${l}</span><span>${nf(openAll)} €</span></div>`;
+  const restTxt = p => p.rest > 0 ? nf(p.rest) : p.rest < 0 ? '+' + nf(-p.rest) : '✓';
+  const restCls = p => p.rest > 0 ? (p.late > 0 ? 'neg-t' : '') : 'pos-t';
+  if (view === 'a'){
+    const cols = `grid-template-columns:minmax(0,1fr) repeat(${R.length},${R.length > 3 ? 42 : 54}px) 82px`;
+    const icon = c => c.st === 'ok' ? '<i class="st ok">✓</i>' : c.st === 'part' ? `<i class="st part" style="--p:${c.pct}%"><i></i></i>` : c.st === 'late' ? '<i class="st late">!</i>' : '<i class="st open"></i>';
+    return `<div class="fx-list">
+      <div class="vw-a vw-ah" style="${cols}"><span>Familie</span>${R.map(r => `<span>${esc(r.name)}<b>${C.persons ? nf(Math.round(r.amt / C.persons)) : '–'}/P</b></span>`).join('')}<span>Offen</span></div>
+      ${C.parties.map(p => `<${pTag(p, o)} class="vw-a" style="${cols}"><span class="vw-n"><b>${esc(p.name)}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}</small></span>${R.map(r => icon(cellOf(p, r))).join('')}<span class="vw-o ${restCls(p)}">${restTxt(p)}</span></${pEnd(o)}>`).join('')}
+      ${foot('Gesamt offen · ' + C.persons + ' Pers.')}</div>
+      <div class="vw-leg"><span><i class="st ok">✓</i>bezahlt</span><span><i class="st part" style="--p:40%"><i></i></i>teilweise</span><span><i class="st late">!</i>fällig, offen</span><span><i class="st open"></i>noch nicht fällig</span></div>`;
+  }
+  if (view === 'b'){
+    const late = C.parties.filter(p => p.late > 0), open = C.parties.filter(p => p.rest > 0 && !(p.late > 0)), done = C.parties.filter(p => p.rest <= 0);
+    const miss = p => R.filter(r => { const c = cellOf(p, r); return c.st === 'late' || (c.st === 'part' && c.due); }).map(r => esc(r.name)).join(', ');
+    const row = (p, cls, main, sub) => `<${pTag(p, o)} class="vw-b"><span><b>${esc(p.name)}</b><small>${sub}</small></span><span class="vw-o ${cls}">${main}</span></${pEnd(o)}>`;
+    return `${C.rates.length ? `<div class="vw-rates">${C.rates.map(r => `<div><small>${esc(r.name)} · ${rDue(r)}</small><b>${C.persons ? euro(Math.round(r.amt / C.persons)) : '–'}</b><small>pro Person</small></div>`).join('')}</div>` : ''}
+      ${late.length ? `<div class="vw-g neg-t">Überfällig</div><div class="fx-list">${late.map(p => row(p, 'neg-t', nf(p.late) + ' €<small>insg. ' + nf(p.rest) + '</small>', (miss(p) ? miss(p) + ' fehlt · ' : '') + p.n + ' Pers.')).join('')}</div>` : ''}
+      ${open.length ? `<div class="vw-g">Noch offen</div><div class="fx-list">${open.map(p => row(p, '', nf(p.rest) + ' €', p.n + ' Pers.' + (p.paid > 0 ? ' · ' + nf(p.paid) + ' angezahlt' : ''))).join('')}</div>` : ''}
+      ${done.length ? `<div class="vw-g pos-t">Alles bezahlt</div><div class="fx-list vw-chips">${done.map(p => `<${pTag(p, o)} class="cc ok">✓ ${esc(p.name)}${p.rest < 0 ? ' <b>+' + nf(-p.rest) + '</b>' : ''}</${pEnd(o)}>`).join('')}</div>` : ''}`;
+  }
+  if (view === 'c'){
+    const ord = {ok:0, part:1, late:2, open:3};
+    return `<div class="fx-list">${R.map(r => { const cs = C.parties.map(p => ({p, c: cellOf(p, r)})).sort((a, b) => ord[a.c.st] - ord[b.c.st]);
+        const paid = cs.reduce((s, x) => s + Math.min(x.c.paid, x.c.soll), 0), pct = r.amt ? Math.min(100, paid / r.amt * 100) : 0;
+        return `<div class="vw-c"><div class="vw-ct"><span><b>${esc(r.name)}</b> <small>${rDue(r)}</small></span><span><b class="num">${C.persons ? euro(Math.round(r.amt / C.persons)) : '–'}</b><small> p. P.</small></span></div>
+          <div class="vw-bar"><i style="width:${pct}%"></i></div>
+          <div class="vw-chips">${cs.map(({p, c}) => `<${pTag(p, o)} class="cc ${c.st}">${c.st === 'ok' ? '✓ ' + esc(p.name) : esc(p.name) + ' <b>' + nf(c.open) + '</b>'}</${pEnd(o)}>`).join('')}</div></div>`; }).join('')}
+      ${foot('Noch offen gesamt')}</div>
+      <div class="vw-leg"><span class="pos-t">grün = bezahlt</span><span style="color:var(--warn)">orange = angezahlt</span><span class="neg-t">rot = überfällig</span></div>`;
+  }
+  if (view === 'd'){
+    return `<div class="fx-list"><div class="vw-dl">${R.map(r => esc(r.name) + ' ' + (C.persons ? nf(Math.round(r.amt / C.persons)) : '–')).join(' + ')} € pro Person</div>
+      ${C.parties.map(p => `<${pTag(p, o)} class="vw-d"><span class="vw-dt"><span><b>${esc(p.name)}</b> <small>${p.n} Pers.${p.late > 0 ? ` · <span class="neg-t">${nf(p.late)} überfällig</span>` : ''}</small></span><span class="vw-o ${restCls(p)}">${restTxt(p)}</span></span>
+        <span class="vw-seg">${R.map(r => { const c = cellOf(p, r); return `<span class="${c.st === 'late' ? 'late' : ''}" style="flex:${Math.max(1, r.amt)}"><i style="width:${c.pct}%"></i></span>`; }).join('')}</span></${pEnd(o)}>`).join('')}
+      ${foot('Offen gesamt · ' + C.persons + ' Pers.')}</div>`;
+  }
+  return '';
+}
 /* ---------- Urlaub: Überblick-Karten und Bezahldaten ---------- */
 const ibanFmt = s => String(s || '').replace(/\s+/g, '').toUpperCase().replace(/(.{4})/g, '$1 ').trim();
 function ibanOk(s){
@@ -2589,7 +2688,7 @@ function ovCards(C, o){
       ${o.shared && pp && pp.me && open > 0 ? `<a class="btn sm ov-pp" href="${esc(ppLink(pp, open))}" target="_blank" rel="noopener">PayPal ${nf(open)} €</a>` : ''}
     </${tag}>`; }).join('')}</div>`;
 }
-function payBox(T, shared){
+function payBox(T, shared, amts){
   const P = T.payInfo || {}, pp = ppParse(P.paypal), iban = P.iban ? ibanFmt(P.iban) : '';
   if (!iban && !pp) return '';
   const ref = (P.ref || T.name) + ' – ' + (shared ? 'euer Name' : 'Name der Familie');
@@ -2599,6 +2698,7 @@ function payBox(T, shared){
       <div class="pay-l"><span><small>IBAN${P.bank ? ' · ' + esc(P.bank) : ''}</small><b class="num">${esc(iban)}</b></span>${cp(iban.replace(/\s/g, ''), 'IBAN')}</div>
       <div class="pay-l"><span><small>Verwendungszweck</small>${esc(ref)}</span>${cp((P.ref || T.name) + ' ', 'Verwendungszweck')}</div>` : ''}
     ${pp ? `<div class="pay-l"><span><small>PayPal${pp.me ? '' : ' (Freunde & Familie)'}</small>${esc(pp.me ? 'paypal.me/' + pp.me : pp.mail)}</span>${pp.me ? `<a class="btn sm ghost" href="${esc(ppLink(pp, 0))}" target="_blank" rel="noopener">Öffnen</a>` : cp(pp.mail, 'PayPal-Adresse')}</div>` : ''}
+    ${pp && pp.me && amts && amts.some(x => x[1] > 0) ? `<div class="pay-pp"><small>Mit PayPal euren offenen Betrag zahlen:</small><div class="vw-chips">${amts.filter(x => x[1] > 0).map(([n, a]) => `<a class="cc" href="${esc(ppLink(pp, a))}" target="_blank" rel="noopener">${esc(n)} <b>${euro(a).replace(/\s*€/, '')} €</b></a>`).join('')}</div></div>` : ''}
   </div>`;
 }
 function tripPayDialog(T){
@@ -2672,8 +2772,8 @@ var shared = null;
 function renderShared(){
   const {T, withPaid, stand} = shared, C = tripCalc(T), t0 = today();
   const nf = v => euro(v).replace(/\s*€/, '');
-  const view = ui.shareView === 'all' || C.rates.some(r => r.id === ui.shareView) ? ui.shareView : 'ov', vr = C.rates.find(r => r.id === view);
-  const views = C.parties.length ? `<div class="tp-views" role="tablist">${[['ov','Überblick'], ['all','Tabelle'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="sh-view" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
+  const view = (withPaid ? TRIP_VIEWS : [['all'],['ov']]).some(v => v[0] === ui.shareView) ? ui.shareView : (withPaid ? 'a' : 'all'), sub = C.rates.some(r => r.id === ui.shareSub) ? ui.shareSub : 'all', vr = view === 'all' ? C.rates.find(r => r.id === sub) : null;
+  const views = viewSwitch(C, view, sub, 'sh', withPaid);
   const vInfo = vr ? `<p class="hint" style="margin:0 2px">${esc(vr.name)}: ${euro(vr.amt)} · ${perP(vr.amt, C)} pro Person · ${vr.due ? (vr.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(vr.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'}</p>` : '';
   const cell = p => vr ? p.byRate[vr.id] : {soll:p.soll, paid:p.paid, open:p.rest};
   const rows = C.parties.map(p => { const x = cell(p), lateR = vr ? (x.open > 0 && (!vr.due || vr.due <= t0)) : p.late > 0;
@@ -2694,8 +2794,8 @@ function renderShared(){
   ${C.rates.length ? `<div class="fx-h"><span>Raten</span><span></span></div><div class="fx-list">${C.rates.map(r => `<div class="fx-row" style="cursor:default"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'} · ${perP(r.amt, C)} pro Person</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></div>`).join('')}</div>` : ''}
   <div class="fx-h"><span>${withPaid ? 'Wer zahlt was?' : 'Anteile'}</span><span></span></div>
   ${views}${vInfo}
-  ${view === 'ov' ? ovCards(C, {withPaid, shared:true, pay:T.payInfo}) : `<div class="tp-list">${head}${rows}${sum}</div>`}
-  ${T.payInfo ? `<div class="fx-h"><span>So bezahlt ihr</span><span></span></div>${payBox(T, true)}` : ''}
+  ${view === 'ov' ? ovCards(C, {withPaid, shared:true, pay:T.payInfo}) : view !== 'all' ? statusView(C, view, {}) : `<div class="tp-list">${head}${rows}${sum}</div>`}
+  ${T.payInfo ? `<div class="fx-h"><span>So bezahlt ihr</span><span></span></div>${payBox(T, true, C.parties.map(p => [p.name, withPaid ? p.rest : p.soll]))}` : ''}
   ${T.refund ? `<div class="fx-h"><span>${esc(T.refund.text)}</span><span></span></div><div class="tp-list">${C.parties.map(p => `<div class="tp-r tp-r3"><span class="tp-n"><b>${esc(p.name)}</b></span><span>${p.n}</span><span class="tp-o pos-t">${nf(p.refund)}</span></div>`).join('')}</div>` : ''}
   <p class="hint" style="margin:0">Stand: ${new Date(stand + 'T12:00:00').toLocaleDateString('de-DE')} · Nur zum Ansehen – Änderungen gibt es mit einem neuen Link.</p>
   <button type="button" class="btn ghost" data-act="sh-close" style="justify-self:start">Finanzen-App öffnen</button>
@@ -4913,9 +5013,10 @@ $('#main').addEventListener('click', e => {
   else if (a==='recon') reconDialog();
   else if (a==='bilanz') bilanzDialog();
   else if (a==='sh-view'){ ui.shareView = b.dataset.v; if (shared) showShared(); }
+  else if (a==='sh-sub'){ ui.shareSub = b.dataset.v; if (shared) showShared(); }
   else if (a==='sh-close') leaveShared();
   else if (a==='trip-new') tripDialog();
-  else if (a==='trip-open'){ ui.tripView = 'ov'; ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
+  else if (a==='trip-open'){ ui.tripSub = 'all'; ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
   else if (a==='trip-back'){ ui.trip = null; render(); window.scrollTo(0,0); }
   else if (a.startsWith('trip-')){
     const T = tripById(ui.trip); if (!T) return;
@@ -4929,7 +5030,8 @@ $('#main').addEventListener('click', e => {
     else if (a==='trip-party-new') tripPartyDialog(T);
     else if (a==='trip-party') tripPartyDialog(T, (T.parties||[]).find(x => x.id===id));
     else if (a==='trip-refund') tripRefundDialog(T);
-    else if (a==='trip-view'){ ui.tripView = b.dataset.v; render(); }
+    else if (a==='trip-view'){ ui.tripView = b.dataset.v; lsSet('tripView', b.dataset.v); render(); }
+    else if (a==='trip-sub'){ ui.tripSub = b.dataset.v; render(); }
     else if (a==='trip-pay') tripPayDialog(T);
     else if (a==='trip-refund-done'){ T.refund.done = T.refund.done || []; const k = T.refund.done.indexOf(id); if (k >= 0) T.refund.done.splice(k, 1); else T.refund.done.push(id); save('finance'); render(); }
   }
