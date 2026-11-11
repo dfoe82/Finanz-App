@@ -424,6 +424,10 @@ button.cc{cursor:pointer}.cc b{font-family:var(--f-num);font-weight:600;font-siz
 .vw-d{display:grid;gap:6px;width:100%;padding:9px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:left}.vw-dl+.vw-d{border-top:0}
 .vw-dt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .vw-seg{display:flex;gap:3px;height:9px}.vw-seg>span{position:relative;border-radius:4px;background:var(--sunk);overflow:hidden}.vw-seg>span.late{background:color-mix(in srgb,var(--neg) 22%,transparent)}.vw-seg i{position:absolute;inset:0 auto 0 0;background:var(--pos)}
+.lv-pick{display:grid;gap:3px;padding:12px 14px;border-radius:12px;border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--surface));color:var(--ink);font:inherit;text-align:left;cursor:pointer}.lv-pick small{color:var(--muted)}
+.lv-steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:.88rem}.lv-steps code{background:var(--sunk);padding:1px 5px;border-radius:5px}
+.lv-stat{padding:9px 12px;border-radius:10px;background:var(--sunk);font-size:.85rem}.lv-stat.ok{color:var(--pos)}.lv-stat.warn{background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.lv-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lv-btns .btn{justify-content:center}
 .ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px}
 .ov-c{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;align-content:start;min-width:0;width:100%;overflow:hidden;padding:10px 11px;border-radius:14px;border:1px solid var(--line);border-top:4px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
 div.ov-c{cursor:default}.ov-c.done{border-top-color:var(--pos)}.ov-c.late{border-top-color:var(--neg)}
@@ -723,9 +727,14 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.7.0';
+const APP_VERSION = '1.8.0';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.8.0','11.11.2026, 21:11 Uhr',[
+    'Urlaub „Fester Link“: ein Link für die WhatsApp-Gruppe, der immer den aktuellen Stand zeigt – nur ansehen, ändern kannst nur du',
+    'Nach Änderungen speicherst du eine Datei und lädst sie auf GitHub in den Ordner „urlaub“ hoch; der Link bleibt gleich',
+    'Die Datei ist verschlüsselt, den Schlüssel enthält nur der Link',
+    'Hinweis im Urlaub, wenn sich seit der letzten Datei etwas geändert hat; „Auf GitHub prüfen“ zeigt, welcher Stand online ist']],
   ['1.7.0','11.11.2026, 20:31 Uhr',[
     'Urlaub: sechs umschaltbare Ansichten – Matrix (Standard), Status, Je Rate, Balken, Karten und Tabelle',
     'Matrix: Betrag pro Person einmal oben, je Familie nur Haken/teilweise/überfällig je Rate und der offene Rest',
@@ -2406,6 +2415,7 @@ function renderTrip(T){
     <div class="fx-grid"><div><small>Pro Person</small><b>${C.persons ? euro(Math.round(C.perPerson)) : '–'}</b></div><div><small>Personen</small><b>${C.persons}</b></div>
       <div><small>Eingesammelt</small><b class="pos-t">${euro(C.paid)}</b></div><div><small>Noch offen</small><b class="${C.rest > 0 ? 'neg-t' : ''}">${euro(Math.max(0, C.rest))}</b></div></div>
     ${C.total ? `<span class="tg-goal" style="--c:var(--pos)"><span style="width:${Math.max(2, pct)}%"></span></span>` : ''}</section>
+  ${liveDirty(T) ? '<button type="button" class="pend-banner fix-due" data-act="trip-live"><b>Änderungen noch nicht auf GitHub</b><span>Datei für den festen Link neu speichern und hochladen ›</span></button>' : ''}
   ${C.fixedOver ? '<div class="fx-hint">⚠️<span>Die festen Raten sind zusammen höher als die Gesamtkosten. Bitte die Raten prüfen.</span></div>' : ''}
   <div class="fx-h"><span>Kosten</span><span><button type="button" class="linkbtn" data-act="trip-cost-new">+ Kosten</button></span></div>
   <div class="fx-list">${costs || '<div class="fx-row" style="cursor:default"><div><small>Noch keine Kosten – z. B. „Preis Haus“ und „Kaution“.</small></div><div></div></div>'}</div>
@@ -2744,7 +2754,7 @@ async function zip(bytes, dir){
   const st = new Blob([bytes]).stream().pipeThrough(dir ? new CompressionStream('deflate-raw') : new DecompressionStream('deflate-raw'));
   return new Uint8Array(await new Response(st).arrayBuffer());
 }
-async function tripLink(T, withPaid, withPay){
+function tripPayload(T, withPaid, withPay){
   const C = tripCalc(T);
   const d = {v:1, n:T.name, f:T.from || '', t:T.to || '', s:today(), w: withPaid ? 1 : 0,
     c:(T.costs || []).map(c => [c.name, c.amount, c.deposit ? 1 : 0]),
@@ -2752,21 +2762,26 @@ async function tripLink(T, withPaid, withPay){
     p:C.parties.map(p => withPaid ? [p.name, p.n, p.paid] : [p.name, p.n]),
     x: T.refund && T.refund.amount ? [T.refund.text || 'Rückzahlung', T.refund.amount] : 0};
   if (withPay && T.payInfo){ const P = T.payInfo; d.b = [P.holder || '', P.iban || '', P.bank || '', P.ref || '', P.paypal || '']; }
-  const raw = new TextEncoder().encode(JSON.stringify(d));
+  return d;
+}
+async function tripLink(T, withPaid, withPay){
+  const raw = new TextEncoder().encode(JSON.stringify(tripPayload(T, withPaid, withPay)));
   let code = 'j' + b64u(raw);
   if (typeof CompressionStream === 'function'){ try { code = 'z' + b64u(await zip(raw, true)); } catch(e){} }
   return location.origin + location.pathname + '#urlaub=' + code;
 }
 async function readTripLink(code){
   const bytes = unb64u(code.slice(1));
-  const d = JSON.parse(new TextDecoder().decode(code[0] === 'z' ? await zip(bytes, false) : bytes));
+  return tripFromPayload(JSON.parse(new TextDecoder().decode(code[0] === 'z' ? await zip(bytes, false) : bytes)));
+}
+function tripFromPayload(d){
   const T = {id:'shared', name:String(d.n || 'Urlaub'), from:d.f || '', to:d.t || '', costs:[], rates:[], parties:[], pays:[], refund:null};
   (d.c || []).forEach((c, i) => T.costs.push({id:'c'+i, name:String(c[0]), amount:+c[1] || 0, deposit:!!c[2]}));
   (d.r || []).forEach((r, i) => T.rates.push({id:'r'+i, name:String(r[0]), amount:+r[1] || 0, due:r[2] || ''}));
   (d.p || []).forEach((p, i) => { T.parties.push({id:'p'+i, name:String(p[0]), persons:+p[1] || 1}); if (d.w && +p[2] > 0) T.pays.push({id:'y'+i, party:'p'+i, amount:+p[2], date:d.s}); });
   if (d.x) T.refund = {text:String(d.x[0]), amount:+d.x[1] || 0, done:[]};
   if (Array.isArray(d.b)) T.payInfo = {holder:String(d.b[0] || ''), iban:String(d.b[1] || ''), bank:String(d.b[2] || ''), ref:String(d.b[3] || ''), paypal:String(d.b[4] || '')};
-  return {T, withPaid: !!d.w, stand: d.s};
+  return {T, withPaid: !!d.w, stand: d.s, ts: d.ts || 0};
 }
 var shared = null;
 function renderShared(){
@@ -2797,12 +2812,19 @@ function renderShared(){
   ${view === 'ov' ? ovCards(C, {withPaid, shared:true, pay:T.payInfo}) : view !== 'all' ? statusView(C, view, {}) : `<div class="tp-list">${head}${rows}${sum}</div>`}
   ${T.payInfo ? `<div class="fx-h"><span>So bezahlt ihr</span><span></span></div>${payBox(T, true, C.parties.map(p => [p.name, withPaid ? p.rest : p.soll]))}` : ''}
   ${T.refund ? `<div class="fx-h"><span>${esc(T.refund.text)}</span><span></span></div><div class="tp-list">${C.parties.map(p => `<div class="tp-r tp-r3"><span class="tp-n"><b>${esc(p.name)}</b></span><span>${p.n}</span><span class="tp-o pos-t">${nf(p.refund)}</span></div>`).join('')}</div>` : ''}
-  <p class="hint" style="margin:0">Stand: ${new Date(stand + 'T12:00:00').toLocaleDateString('de-DE')} · Nur zum Ansehen – Änderungen gibt es mit einem neuen Link.</p>
-  <button type="button" class="btn ghost" data-act="sh-close" style="justify-self:start">Finanzen-App öffnen</button>
+  <p class="hint" style="margin:0">Stand: ${shared.ts ? new Date(shared.ts).toLocaleString('de-DE', {dateStyle:'medium', timeStyle:'short'}) + ' Uhr' : new Date(stand + 'T12:00:00').toLocaleDateString('de-DE')} · Nur zum Ansehen${shared.live ? ' – der Link bleibt gleich, beim nächsten Öffnen siehst du den neuesten Stand.' : ' – Änderungen gibt es mit einem neuen Link.'}</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">${shared.live ? '<button type="button" class="btn" data-act="sh-reload">↻ Neu laden</button>' : ''}<button type="button" class="btn ghost" data-act="sh-close">Finanzen-App öffnen</button></div>
   </div>`;
 }
 function showShared(){ document.body.classList.add('ro'); $('#appTitle').textContent = 'Urlaub'; document.title = shared.T.name; $('#main').innerHTML = renderShared(); }
 async function sharedBoot(){
+  const lv = location.hash.match(/^#live=([a-z0-9]{6,20})\.([\w-]{16,64})$/);
+  if (lv){
+    document.body.classList.add('ro'); $('#main').innerHTML = '<div class="panel empty">Lädt …</div>';
+    try { shared = await readLive(lv[1], lv[2]); shared.live = true; showShared(); }
+    catch(e){ $('#main').innerHTML = `<div class="panel empty"><strong>${e && e.message === 'missing' ? 'Noch keine Daten' : 'Link nicht lesbar'}</strong>${e && e.message === 'missing' ? 'Die Urlaubsdatei ist noch nicht auf der Seite. Bitte später noch einmal öffnen.' : 'Der Link ist unvollständig, die Datei passt nicht dazu oder dieser Browser ist zu alt.'}<div class="row"><button class="btn" data-act="sh-close">Zur App</button></div></div>`; }
+    return true;
+  }
   const m = location.hash.match(/^#urlaub=([zj][\w-]+)$/); if (!m) return false;
   document.body.classList.add('ro'); $('#main').innerHTML = '<div class="panel empty">Lädt …</div>';
   try { shared = await readTripLink(m[1]); showShared(); }
@@ -2810,11 +2832,89 @@ async function sharedBoot(){
   return true;
 }
 function leaveShared(){ shared = null; history.replaceState(null, '', location.pathname + location.search); document.body.classList.remove('ro'); render(); }
-window.addEventListener('hashchange', () => { if (/^#urlaub=/.test(location.hash)) sharedBoot(); });
+window.addEventListener('hashchange', () => { if (/^#(urlaub|live)=/.test(location.hash)) sharedBoot(); });
+/* ---------- Fester Link: verschlüsselte Datei, die du selbst auf GitHub hochlädst ---------- */
+const LIVE_DIR = 'urlaub/';
+async function liveKey(raw, use){ return crypto.subtle.importKey('raw', raw, {name:'AES-GCM'}, false, [use]); }
+function livePrep(T){
+  if (!T.pub){ const k = crypto.getRandomValues(new Uint8Array(16)); T.pub = {id: (newId() + newId()).replace(/[^a-z0-9]/g, '').slice(0, 12), key: b64u(k), paid: true, pay: true, last: 0, hash: ''}; save('finance'); }
+  return T.pub;
+}
+const liveUrl = P => location.origin + location.pathname + '#live=' + P.id + '.' + P.key;
+function liveSig(T){ const P = T.pub || {}, d = tripPayload(T, P.paid !== false, P.pay !== false); delete d.s; return JSON.stringify(d); }
+const liveDirty = T => !!(T.pub && T.pub.last && T.pub.hash !== liveSig(T));
+async function liveFile(T){
+  const P = livePrep(T), d = tripPayload(T, P.paid !== false, P.pay !== false); d.ts = Date.now();
+  let raw = new TextEncoder().encode(JSON.stringify(d)), z = 0;
+  if (typeof CompressionStream === 'function'){ try { raw = await zip(raw, true); z = 1; } catch(e){} }
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, await liveKey(unb64u(P.key), 'encrypt'), raw));
+  return {name: P.id + '.json', text: JSON.stringify({v:1, z, iv: b64u(iv), ct: b64u(ct)})};
+}
+async function readLive(id, key){
+  const res = await fetch(new URL(LIVE_DIR + id + '.json?t=' + Date.now(), location.href), {cache:'no-store'});
+  if (!res.ok) throw new Error('missing');
+  const o = await res.json();
+  let raw = new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv: unb64u(o.iv)}, await liveKey(unb64u(key), 'decrypt'), unb64u(o.ct)));
+  if (o.z) raw = await zip(raw, false);
+  return tripFromPayload(JSON.parse(new TextDecoder().decode(raw)));
+}
+async function liveSave(T){
+  const f = await liveFile(T), file = new File([f.text], f.name, {type:'application/json'});
+  try {
+    if (navigator.canShare && navigator.canShare({files:[file]})) await navigator.share({files:[file], title: f.name});
+    else { const url = URL.createObjectURL(file), a = document.createElement('a'); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); }
+  } catch(e){ if (e && e.name === 'AbortError') return false; toast('Die Datei konnte nicht gespeichert werden.'); return false; }
+  T.pub.last = Date.now(); T.pub.hash = liveSig(T); save('finance');
+  return true;
+}
+async function liveCheck(T){
+  try { const r = await readLive(T.pub.id, T.pub.key); return r.ts ? 'ok:' + r.ts : 'ok:0'; }
+  catch(e){ return e && e.message === 'missing' ? 'missing' : 'bad'; }
+}
+function tripLiveDialog(T){
+  const P = livePrep(T), dirty = liveDirty(T), url = liveUrl(P);
+  const form = openDlg(`
+    <h3>Fester Link für die Gruppe</h3>
+    <p class="hint" style="margin:0">Die Gruppe bekommt <b>einmal</b> einen Link. Er zeigt immer den Stand der Datei, die du auf GitHub hochgeladen hast – nur ansehen, ändern kannst nur du.</p>
+    <ol class="lv-steps">
+      <li><b>Datei speichern</b> – ${esc(P.id)}.json, z. B. „In Dateien sichern“.</li>
+      <li><b>Auf GitHub hochladen</b> in den Ordner <code>urlaub</code> deines Finanzen-Repositorys (beim ersten Mal anlegen). Eine ältere Datei mit gleichem Namen wird ersetzt.</li>
+      <li><b>Link einmal in die WhatsApp-Gruppe</b> schicken und anpinnen. Nach Änderungen nur noch Schritt 1 und 2.</li>
+    </ol>
+    <label class="bel-keep"><input type="checkbox" id="lv-paid" ${P.paid !== false ? 'checked' : ''}><span>Bezahlte und offene Beträge anzeigen</span></label>
+    ${T.payInfo ? `<label class="bel-keep"><input type="checkbox" id="lv-pay" ${P.pay !== false ? 'checked' : ''}><span>Bezahldaten anzeigen</span></label>` : ''}
+    <div class="lv-stat ${P.last ? (dirty ? 'warn' : 'ok') : ''}" id="lv-stat">${P.last ? (dirty ? '⚠️ Seit der letzten Datei vom ' + new Date(P.last).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'}) + ' hat sich etwas geändert – Datei neu speichern und hochladen.' : '✓ Datei vom ' + new Date(P.last).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'}) + ' ist aktuell.') : 'Noch keine Datei gespeichert.'}</div>
+    <div class="lv-btns"><button type="button" class="btn primary" id="lv-file">1 · Datei speichern</button><button type="button" class="btn" id="lv-share">3 · Link teilen</button><button type="button" class="btn ghost" id="lv-copy">Link kopieren</button><button type="button" class="btn ghost" id="lv-test">Auf GitHub prüfen</button></div>
+    <p class="hint" style="margin:0" id="lv-res"></p>
+    <details class="fx-v"><summary>Sicherheit</summary><p class="hint" style="margin:6px 0 0">Die Datei auf GitHub ist verschlüsselt. Den Schlüssel enthält nur der Link (hinter dem #) – wer nur die Datei sieht, kann nichts lesen. Wer den Link hat, sieht den Urlaub. „Neuen Link erzeugen“ macht alte Links unbrauchbar.</p><button type="button" class="btn sm danger" id="lv-new" style="margin-top:8px">Neuen Link erzeugen</button></details>
+    <div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-close>Schließen</button></div>`, () => false);
+  const opts = () => { const a = form.querySelector('#lv-paid'), b = form.querySelector('#lv-pay'); T.pub.paid = a.checked; if (b) T.pub.pay = b.checked; save('finance'); };
+  form.querySelector('#lv-paid').addEventListener('change', opts); const pb = form.querySelector('#lv-pay'); if (pb) pb.addEventListener('change', opts);
+  form.querySelector('#lv-file').addEventListener('click', async () => { if (await liveSave(T)){ toast('Datei gespeichert – jetzt auf GitHub in „urlaub“ hochladen'); tripLiveDialog(T); } });
+  form.querySelector('#lv-share').addEventListener('click', async () => {
+    const text = '🏖 ' + T.name + ' – Kosten, Raten und wer schon bezahlt hat (immer aktuell):';
+    try { if (navigator.share){ await navigator.share({title: T.name, text, url}); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text + '\n' + url); toast('Link kopiert'); } catch(e){ form.querySelector('#lv-res').textContent = url; }
+  });
+  form.querySelector('#lv-copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(url); toast('Link kopiert'); } catch(e){ form.querySelector('#lv-res').textContent = url; } });
+  form.querySelector('#lv-test').addEventListener('click', async () => {
+    const r = form.querySelector('#lv-res'); r.textContent = 'Prüfe …';
+    const st = await liveCheck(T);
+    if (st === 'missing') r.textContent = 'Auf GitHub ist noch keine Datei ' + T.pub.id + '.json im Ordner „urlaub“ – oder GitHub braucht noch 1–2 Minuten.';
+    else if (st === 'bad') r.textContent = 'Die Datei auf GitHub passt nicht zu diesem Link. Bitte die zuletzt gespeicherte Datei hochladen.';
+    else { const ts = +st.slice(3); r.textContent = '✓ Gefunden: Stand ' + (ts ? new Date(ts).toLocaleString('de-DE', {dateStyle:'short', timeStyle:'short'}) : '–') + (ts && T.pub.last && ts < T.pub.last - 1000 ? ' – älter als deine letzte Datei, GitHub aktualisiert evtl. noch.' : ''); }
+  });
+  const nb = form.querySelector('#lv-new');
+  nb.addEventListener('click', () => { if (!armed(nb, 'Alte Links ungültig machen?')) return; T.pub = null; livePrep(T); toast('Neuer Link erzeugt – Datei speichern, hochladen und neuen Link schicken'); tripLiveDialog(T); });
+}
+
 function tripShareDialog(T){
   const C = tripCalc(T);
   const form = openDlg(`
     <h3>Mit allen teilen</h3>
+    <button type="button" class="lv-pick" id="sh-live"><b>🔗 Fester Link</b><small>Ein Link für die Gruppe, der immer den aktuellen Stand zeigt – du lädst nach Änderungen eine Datei auf GitHub hoch.</small></button>
+    <span class="label">Oder: Link mit dem Stand von heute</span>
     <p class="hint" style="margin:0">Alle bekommen einen Link zur App. Damit sehen sie Kosten, Raten und ihre Anteile – ohne die App einzurichten und ohne etwas ändern zu können. Die Daten stecken im Link selbst und werden nirgends gespeichert.</p>
     <label class="bel-keep"><input type="checkbox" id="sh-paid" checked><span>Bezahlte und offene Beträge je Familie anzeigen</span></label>
     ${T.payInfo ? `<label class="bel-keep"><input type="checkbox" id="sh-pay" checked><span>Bezahldaten mitschicken (${[T.payInfo.iban ? 'IBAN' : '', T.payInfo.paypal ? 'PayPal' : ''].filter(Boolean).join(' und ')})</span></label>` : `<p class="hint" style="margin:0">Tipp: Unter „Bezahlen an“ kannst du Bankdaten oder PayPal hinterlegen, dann stehen sie mit im Link.</p>`}
@@ -2829,6 +2929,7 @@ function tripShareDialog(T){
       })();
     });
   form.querySelector('#sh-text').addEventListener('click', () => { closeDlg(); tripShare(T); });
+  form.querySelector('#sh-live').addEventListener('click', () => tripLiveDialog(T));
   form.querySelector('#sh-prev').addEventListener('click', async () => { const url = await tripLink(T, form.querySelector('#sh-paid').checked, !!(form.querySelector('#sh-pay') && form.querySelector('#sh-pay').checked)); dlg.close(); location.hash = url.split('#')[1]; });
 }
 async function tripShare(T){
@@ -5015,6 +5116,7 @@ $('#main').addEventListener('click', e => {
   else if (a==='sh-view'){ ui.shareView = b.dataset.v; if (shared) showShared(); }
   else if (a==='sh-sub'){ ui.shareSub = b.dataset.v; if (shared) showShared(); }
   else if (a==='sh-close') leaveShared();
+  else if (a==='sh-reload') sharedBoot();
   else if (a==='trip-new') tripDialog();
   else if (a==='trip-open'){ ui.tripSub = 'all'; ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
   else if (a==='trip-back'){ ui.trip = null; render(); window.scrollTo(0,0); }
@@ -5033,6 +5135,7 @@ $('#main').addEventListener('click', e => {
     else if (a==='trip-view'){ ui.tripView = b.dataset.v; lsSet('tripView', b.dataset.v); render(); }
     else if (a==='trip-sub'){ ui.tripSub = b.dataset.v; render(); }
     else if (a==='trip-pay') tripPayDialog(T);
+    else if (a==='trip-live') tripLiveDialog(T);
     else if (a==='trip-refund-done'){ T.refund.done = T.refund.done || []; const k = T.refund.done.indexOf(id); if (k >= 0) T.refund.done.splice(k, 1); else T.refund.done.push(id); save('finance'); render(); }
   }
   else if (a==='goto-tg'){ ui.tab = 'sparen'; lsSet('tab','sparen'); render(); window.scrollTo(0,0); }
