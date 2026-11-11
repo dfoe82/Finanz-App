@@ -392,6 +392,19 @@ dialog.bel-dlg::backdrop{background:rgba(0,0,0,.6)}
 .tp-views{display:flex;flex-wrap:wrap;gap:6px;padding:3px;border-radius:12px;background:var(--sunk)}
 .tp-views button{flex:1 1 auto;min-width:0;padding:7px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;white-space:nowrap}
 .tp-views button[aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tp-r.tp-r3{grid-template-columns:minmax(0,1fr) 70px 90px;cursor:default}
+body.ro #settingsBtn,body.ro #backupBtn,body.ro nav.tabs,body.ro #bkBanner,body.ro #updBanner,body.ro #sync{display:none!important}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px}
+.ov-c{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;align-content:start;min-width:0;width:100%;overflow:hidden;padding:10px 11px;border-radius:14px;border:1px solid var(--line);border-top:4px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+div.ov-c{cursor:default}.ov-c.done{border-top-color:var(--pos)}.ov-c.late{border-top-color:var(--neg)}
+.ov-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:3px}.ov-h b{font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ov-h small{color:var(--muted);font-size:.72rem;white-space:nowrap}
+.ov-l{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;font-size:.8rem}.ov-l span{min-width:0}.ov-l small{display:block;color:var(--muted);font-size:.68rem;line-height:1.2}
+.ov-l b{font-family:var(--f-num);font-weight:600;white-space:nowrap;font-size:.8rem}.ov-l.ok b,.ov-l.ok small{color:var(--pos)}.ov-l.late b,.ov-l.late small{color:var(--neg)}
+.ov-t{border-top:1px solid var(--line);padding-top:4px;margin-top:2px}.ov-t b{font-weight:700}
+.ov-rest{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-top:3px;padding:6px 8px;border-radius:9px;background:var(--sunk);font-size:.78rem;font-weight:700}.ov-rest b{font-family:var(--f-num);font-size:.92rem;white-space:nowrap}
+.ov-pp{margin-top:6px;justify-content:center;text-decoration:none;color:var(--ink)}
+.pay-box{padding:2px 0}.pay-l{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--line);font-size:.9rem}.pay-l:first-child{border-top:0}
+.pay-l span{min-width:0;overflow-wrap:anywhere}.pay-l small{display:block;color:var(--muted);font-size:.72rem}.pay-l .btn{flex:none;text-decoration:none;color:var(--ink)}
 .tp-list{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);overflow:hidden}
 .tp-r{display:grid;grid-template-columns:minmax(0,1fr) 62px 62px 74px;gap:8px;align-items:center;width:100%;padding:10px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:right;cursor:pointer}
 .tp-r>span{font-family:var(--f-num);font-size:.84rem;white-space:nowrap}.tp-r .tp-n{text-align:left;font-family:inherit;white-space:normal;min-width:0}
@@ -679,9 +692,19 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.4.2';
+const APP_VERSION = '1.6.0';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.6.0','11.11.2026, 20:04 Uhr',[
+    'Urlaub „Überblick“: alles auf einen Blick – eine Karte je Familie mit allen Raten (✓ bezahlt, offen, fällig), Anteil, bezahlt und Rest; ohne seitliches Scrollen',
+    'Neu „Bezahlen an“: Bankverbindung (IBAN mit Prüfung) und/oder PayPal hinterlegen',
+    'Im geteilten Link wahlweise mit Bezahldaten: IBAN und Verwendungszweck zum Kopieren, PayPal-Knopf je Familie mit ihrem offenen Betrag',
+    'Die bisherige Ansicht „Gesamt“ heißt jetzt „Tabelle“']],
+  ['1.5.0','11.11.2026, 19:44 Uhr',[
+    'Urlaub „Teilen“: Link für alle Mitreisenden – sie öffnen die Seite und sehen Kosten, Raten und Anteile je Familie, auch je Rate, ohne etwas ändern zu können',
+    'Wahlweise mit oder ohne bezahlte und offene Beträge',
+    'Die Daten stecken nur im Link und werden nirgends gespeichert; nach Zahlungen einfach einen neuen Link schicken',
+    'Vorschau zeigt vorher, was die anderen sehen; „Als Text teilen“ gibt es weiterhin']],
   ['1.4.2','11.11.2026, 19:39 Uhr',[
     'Urlaub: Über der Tabelle „Wer zahlt was?“ lässt sich zwischen „Gesamt“ und jeder einzelnen Rate umschalten – je Familie Anteil der Rate, bezahlt und offen',
     'Zahlungen werden dabei zuerst auf die frühere Rate angerechnet; offene, schon fällige Raten sind rot',
@@ -1549,6 +1572,7 @@ function settingsDialog(page){
 
 
 function render(){
+  if (document.body.classList.contains('ro')){ if (shared) showShared(); return; }
   const made = runRecurring();
   if (made){ save('finance'); toast(made===1 ? '1 regelmäßige Buchung eingetragen' : made+' regelmäßige Buchungen eingetragen'); }
   applyName();
@@ -2325,7 +2349,7 @@ function renderTrip(T){
   const rates = C.rates.map(r => { const over = r.due && r.due < t0 && !r.paidAt;
     return `<button type="button" class="fx-row" data-act="trip-rate" data-id="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + fmtShort(r.due) + ' ' + r.due.slice(0,4) : 'sofort fällig'}${r.rest ? ' · Restbetrag' : ''} · ${perP(r.amt, C)} pro Person${r.paidAt ? ` · <span class="pos-t">an Vermieter bezahlt ${fmtShort(r.paidAt)}</span>` : over ? ' · <span class="neg-t">noch nicht an Vermieter bezahlt</span>' : ''}</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></button>`; }).join('');
   const nf = v => euro(v).replace(/\s*€/, '');
-  const view = C.rates.some(r => r.id === ui.tripView) ? ui.tripView : 'all', vr = C.rates.find(r => r.id === view);
+  const view = ui.tripView === 'all' || C.rates.some(r => r.id === ui.tripView) ? ui.tripView : 'ov', vr = C.rates.find(r => r.id === view);
   const row = p => { const x = vr ? p.byRate[vr.id] : {soll:p.soll, paid:p.paid, open:p.rest}, lateR = vr ? (x.open > 0 && (!vr.due || vr.due <= t0)) : p.late > 0;
     return `<button type="button" class="tp-r${x.open <= 0 ? ' done' : ''}" data-act="trip-party" data-id="${esc(p.id)}">
       <span class="tp-n"><b>${esc(p.name)}${p.me ? ' <span class="fx-b">wir</span>' : ''}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}${!vr && p.late > 0 ? ` · <span class="neg-t">${nf(p.late)} fällig</span>` : ''}</small></span>
@@ -2334,7 +2358,7 @@ function renderTrip(T){
   const parties = C.parties.map(row).join('');
   const tot = k => C.parties.reduce((s, p) => s + (vr ? p.byRate[vr.id][k] : k === 'soll' ? p.soll : k === 'paid' ? p.paid : Math.max(0, p.rest)), 0);
   const sumRow = C.parties.length > 1 ? `<div class="tp-r tp-sum"><span class="tp-n"><b>Gesamt</b><small>${C.persons} Personen</small></span><span>${nf(tot('soll'))}</span><span class="pos-t">${nf(tot('paid'))}</span><span class="tp-o">${nf(tot('open'))}</span></div>` : '';
-  const views = C.rates.length && C.parties.length ? `<div class="tp-views" role="tablist">${[['all','Gesamt'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="trip-view" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
+  const views = C.parties.length ? `<div class="tp-views" role="tablist">${[['ov','Überblick'], ['all','Tabelle'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="trip-view" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
   const vInfo = vr ? `<p class="hint" style="margin:0 2px">${esc(vr.name)}: ${euro(vr.amt)} · ${perP(vr.amt, C)} pro Person · ${vr.due ? (vr.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(vr.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'}. Zahlungen werden zuerst auf die frühere Rate angerechnet.</p>` : `<p class="hint" style="margin:0 2px">Familie antippen: Zahlung eintragen, Personenzahl ändern, Raten ansehen.</p>`;
   const R = T.refund || {};
   return `<div class="fx-page">
@@ -2349,7 +2373,9 @@ function renderTrip(T){
   <div class="fx-h"><span>Raten</span><span><button type="button" class="linkbtn" data-act="trip-rate-new">+ Rate</button></span></div>
   <div class="fx-list">${rates || '<div class="fx-row" style="cursor:default"><div><small>Ohne Raten ist alles sofort fällig. Leg z. B. „1. Rate sofort“ und „2. Rate“ als Restbetrag an.</small></div><div></div></div>'}</div>
   <div class="fx-h"><span>Wer zahlt was?</span><span><button type="button" class="linkbtn" data-act="trip-party-new">+ Teilnehmer</button></span></div>
-  ${parties ? `${views}${vInfo}<div class="tp-list"><div class="tp-r tp-hd"><span>Familie</span><span>${vr ? 'Rate' : 'Anteil'}</span><span>Bezahlt</span><span>Offen</span></div>${parties}${sumRow}</div>` : '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div></div>'}
+  ${parties ? `${views}${vInfo}${view === 'ov' ? ovCards(C, {withPaid:true, click:true}) : `<div class="tp-list"><div class="tp-r tp-hd"><span>Familie</span><span>${vr ? 'Rate' : 'Anteil'}</span><span>Bezahlt</span><span>Offen</span></div>${parties}${sumRow}</div>`}` : '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div></div>'}
+  <div class="fx-h"><span>Bezahlen an</span><span><button type="button" class="linkbtn" data-act="trip-pay">${T.payInfo ? 'Ändern' : 'Eintragen'}</button></span></div>
+  ${payBox(T, false) || '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Freiwillig: Bankverbindung und/oder PayPal hinterlegen – erscheint im geteilten Link, damit alle direkt bezahlen können.</small></div><div></div></div></div>'}
   <div class="fx-h"><span>Rückzahlung</span><span><button type="button" class="linkbtn" data-act="trip-refund">${R.amount ? 'Ändern' : 'Eintragen'}</button></span></div>
   <div class="fx-list">${R.amount ? `<div class="fx-row" style="cursor:default"><div><b>${esc(R.text || 'Rückzahlung')}</b><small>${R.date ? fmtShort(R.date) + ' ' + R.date.slice(0,4) + ' · ' : ''}${perP(R.amount, C)} pro Person</small></div><div class="fx-amt"><b class="pos-t">${euro(R.amount)}</b></div></div>
       ${C.parties.map(p => `<button type="button" class="fx-row${p.refunded ? ' off' : ''}" data-act="trip-refund-done" data-id="${esc(p.id)}"><div><b>${esc(p.name)}</b><small>${p.refunded ? 'ausgezahlt ✓ – antippen zum Zurücksetzen' : 'antippen, wenn ausgezahlt'}</small></div><div class="fx-amt"><b>${euro(p.refund)}</b></div></button>`).join('')}`
@@ -2528,7 +2554,182 @@ function tripShareText(T){
   if (C.rates.length){ L.push(''); C.rates.forEach(r => L.push(r.name + (r.due ? ' bis ' + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : ' sofort') + ': ' + euro(r.amt) + (C.persons ? ' (' + euro(Math.round(r.amt / C.persons)) + ' pro Person)' : ''))); }
   if (C.parties.length){ L.push(''); C.parties.forEach(p => L.push(`${p.name} (${p.n} P.): Anteil ${euro(p.soll)}, bezahlt ${euro(p.paid)}, ${p.rest > 0 ? 'offen ' + euro(p.rest) + (p.late > 0 ? ' – davon ' + euro(p.late) + ' schon fällig' : '') : p.rest < 0 ? euro(-p.rest) + ' zu viel' : 'alles bezahlt ✓'}`)); }
   if (T.refund && T.refund.amount){ L.push(''); L.push(T.refund.text + ': ' + euro(T.refund.amount) + ' → ' + C.parties.map(p => p.name + ' ' + euro(p.refund)).join(', ')); }
+  const P = T.payInfo, pp = P && ppParse(P.paypal);
+  if (P && (P.iban || pp)){ L.push(''); L.push('Bezahlen an:'); if (P.iban) L.push((P.holder ? P.holder + ', ' : '') + 'IBAN ' + ibanFmt(P.iban) + (P.bank ? ' (' + P.bank + ')' : '') + ', Verwendungszweck: ' + (P.ref || T.name) + ' + euer Name'); if (pp) L.push('PayPal: ' + (pp.me ? 'https://paypal.me/' + pp.me : pp.mail)); }
   return L.join('\n').replace(/ /g, ' ');
+}
+/* ---------- Urlaub: Überblick-Karten und Bezahldaten ---------- */
+const ibanFmt = s => String(s || '').replace(/\s+/g, '').toUpperCase().replace(/(.{4})/g, '$1 ').trim();
+function ibanOk(s){
+  const v = String(s || '').replace(/\s+/g, '').toUpperCase(); if (!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(v)) return false;
+  const r = (v.slice(4) + v.slice(0, 4)).replace(/[A-Z]/g, c => c.charCodeAt(0) - 55);
+  let m = 0; for (const ch of r) m = (m * 10 + +ch) % 97; return m === 1;
+}
+function ppParse(s){
+  s = String(s || '').trim(); if (!s) return null;
+  if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)) return {mail: s};
+  const m = s.match(/paypal\.(?:me|com\/paypalme)\/([A-Za-z0-9._-]+)/i) || s.match(/^@?([A-Za-z0-9._-]{2,40})$/);
+  return m ? {me: m[1]} : null;
+}
+const ppLink = (pp, amt) => 'https://paypal.me/' + encodeURIComponent(pp.me) + (amt > 0 ? '/' + (amt / 100).toFixed(2) + 'EUR' : '');
+function ovCards(C, o){
+  const nf = v => euro(v).replace(/\s*€/, ''), t0 = today(), pp = o.pay && ppParse(o.pay.paypal);
+  return `<div class="ov-grid">${C.parties.map(p => {
+    const open = o.withPaid ? p.rest : p.soll, tag = o.click ? 'button' : 'div';
+    const lines = C.rates.map(r => { const x = p.byRate[r.id], due = !r.due || r.due <= t0;
+      if (!o.withPaid) return `<div class="ov-l"><span>${esc(r.name)}<small>${r.due ? (due ? 'seit ' : 'bis ') + fmtShort(r.due) : 'sofort'}</small></span><b>${nf(x.soll)}</b></div>`;
+      const st = x.open <= 0 ? 'ok' : due ? 'late' : '';
+      return `<div class="ov-l ${st}"><span>${esc(r.name)}<small>${x.open <= 0 ? 'bezahlt' : x.paid > 0 ? 'noch ' + nf(x.open) : (r.due ? (due ? 'fällig seit ' : 'bis ') + fmtShort(r.due) : 'sofort fällig')}</small></span><b>${x.open <= 0 ? '✓ ' : ''}${nf(x.soll)}</b></div>`; }).join('');
+    return `<${tag} ${o.click ? `type="button" data-act="trip-party" data-id="${esc(p.id)}"` : ''} class="ov-c${o.withPaid && p.rest <= 0 ? ' done' : ''}${o.withPaid && p.late > 0 ? ' late' : ''}">
+      <div class="ov-h"><b>${esc(p.name)}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Personen'}</small></div>
+      ${lines}
+      <div class="ov-l ov-t"><span>Anteil</span><b>${nf(p.soll)}</b></div>
+      ${o.withPaid ? `<div class="ov-l"><span>Bezahlt</span><b class="pos-t">${nf(p.paid)}</b></div>
+      <div class="ov-rest ${p.rest > 0 ? (p.late > 0 ? 'neg-t' : '') : 'pos-t'}"><span>${p.rest < 0 ? 'Zu viel' : 'Offen'}</span><b>${p.rest === 0 ? '✓' : nf(Math.abs(p.rest)) + ' €'}</b></div>` : ''}
+      ${o.shared && pp && pp.me && open > 0 ? `<a class="btn sm ov-pp" href="${esc(ppLink(pp, open))}" target="_blank" rel="noopener">PayPal ${nf(open)} €</a>` : ''}
+    </${tag}>`; }).join('')}</div>`;
+}
+function payBox(T, shared){
+  const P = T.payInfo || {}, pp = ppParse(P.paypal), iban = P.iban ? ibanFmt(P.iban) : '';
+  if (!iban && !pp) return '';
+  const ref = (P.ref || T.name) + ' – ' + (shared ? 'euer Name' : 'Name der Familie');
+  const cp = (v, l) => `<button type="button" class="btn sm ghost" data-copy="${esc(v)}" aria-label="${esc(l)} kopieren">Kopieren</button>`;
+  return `<div class="fx-list pay-box">
+    ${iban ? `${P.holder ? `<div class="pay-l"><span><small>Kontoinhaber</small>${esc(P.holder)}</span>${cp(P.holder, 'Kontoinhaber')}</div>` : ''}
+      <div class="pay-l"><span><small>IBAN${P.bank ? ' · ' + esc(P.bank) : ''}</small><b class="num">${esc(iban)}</b></span>${cp(iban.replace(/\s/g, ''), 'IBAN')}</div>
+      <div class="pay-l"><span><small>Verwendungszweck</small>${esc(ref)}</span>${cp((P.ref || T.name) + ' ', 'Verwendungszweck')}</div>` : ''}
+    ${pp ? `<div class="pay-l"><span><small>PayPal${pp.me ? '' : ' (Freunde & Familie)'}</small>${esc(pp.me ? 'paypal.me/' + pp.me : pp.mail)}</span>${pp.me ? `<a class="btn sm ghost" href="${esc(ppLink(pp, 0))}" target="_blank" rel="noopener">Öffnen</a>` : cp(pp.mail, 'PayPal-Adresse')}</div>` : ''}
+  </div>`;
+}
+function tripPayDialog(T){
+  const P = T.payInfo || {};
+  const form = openDlg(`
+    <h3>Bezahldaten</h3>
+    <p class="hint" style="margin:0">Freiwillig – erscheinen in deiner Übersicht und, wenn du willst, im geteilten Link. Dann können alle die IBAN kopieren oder direkt per PayPal ihren offenen Betrag zahlen.</p>
+    <span class="label">Bank</span>
+    <label class="field"><span>Kontoinhaber</span><input name="holder" value="${esc(P.holder || '')}" autocomplete="name" id="pi-holder"></label>
+    <label class="field"><span>IBAN</span><input name="iban" value="${esc(ibanFmt(P.iban))}" placeholder="DE00 0000 0000 0000 0000 00" autocapitalize="characters" spellcheck="false" id="pi-iban"><small class="hint" id="pi-ibanhint" style="margin:0"></small></label>
+    <div class="row2"><label class="field"><span>Bank (freiwillig)</span><input name="bank" value="${esc(P.bank || '')}" id="pi-bank"></label>
+      <label class="field"><span>Verwendungszweck</span><input name="ref" value="${esc(P.ref || T.name)}" id="pi-ref"></label></div>
+    <span class="label">PayPal</span>
+    <label class="field"><span>paypal.me-Name oder PayPal-E-Mail</span><input name="paypal" value="${esc(P.paypal || '')}" placeholder="z. B. paypal.me/MaxMuster" autocapitalize="none" spellcheck="false" id="pi-pp"><small class="hint" id="pi-pphint" style="margin:0"></small></label>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${P.iban || P.paypal ? '<button type="button" class="btn danger" id="pi-del">Entfernen</button>' : ''}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const iban = f.iban.value.replace(/\s+/g, '').toUpperCase(), pp = f.paypal.value.trim(), err = f.querySelector('#f-err');
+      if (iban && !/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(iban)){ err.textContent = 'Die IBAN sieht nicht richtig aus.'; f.iban.focus(); return false; }
+      if (pp && !ppParse(pp)){ err.textContent = 'Bitte einen paypal.me-Namen oder eine E-Mail-Adresse eingeben.'; f.paypal.focus(); return false; }
+      T.payInfo = (iban || pp) ? {holder: f.holder.value.trim(), iban, bank: f.bank.value.trim(), ref: f.ref.value.trim(), paypal: pp} : null;
+      save('finance'); toast('Bezahldaten gespeichert');
+    });
+  const upd = () => {
+    const v = form.iban.value.replace(/\s+/g, ''), h = form.querySelector('#pi-ibanhint');
+    h.textContent = !v ? '' : ibanOk(v) ? '✓ IBAN gültig' : 'IBAN ist noch nicht vollständig oder hat einen Tippfehler'; h.className = 'hint ' + (v && ibanOk(v) ? 'pos-t' : '');
+    const pp = ppParse(form.paypal.value), ph = form.querySelector('#pi-pphint');
+    ph.textContent = !form.paypal.value.trim() ? '' : !pp ? 'Nicht erkannt' : pp.me ? `Link: paypal.me/${pp.me} – im geteilten Link mit dem offenen Betrag jeder Familie` : 'Wird zum Kopieren angezeigt (Zahlung an Freunde & Familie)';
+  };
+  form.addEventListener('input', upd); upd();
+  form.iban.addEventListener('blur', () => { form.iban.value = ibanFmt(form.iban.value); });
+  const del = form.querySelector('#pi-del');
+  if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich entfernen?')) return; T.payInfo = null; save('finance'); closeDlg(); toast('Entfernt'); });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  e.preventDefault(); const v = b.dataset.copy;
+  (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(() => { const o = b.textContent; b.textContent = 'Kopiert ✓'; setTimeout(() => { b.textContent = o; }, 1500); }, () => toast(v));
+});
+/* ---------- Urlaub: Link zum Ansehen für alle (Daten stecken im Link, nur lesen) ---------- */
+const b64u = bytes => b64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const unb64u = s => unb64(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4));
+async function zip(bytes, dir){
+  const st = new Blob([bytes]).stream().pipeThrough(dir ? new CompressionStream('deflate-raw') : new DecompressionStream('deflate-raw'));
+  return new Uint8Array(await new Response(st).arrayBuffer());
+}
+async function tripLink(T, withPaid, withPay){
+  const C = tripCalc(T);
+  const d = {v:1, n:T.name, f:T.from || '', t:T.to || '', s:today(), w: withPaid ? 1 : 0,
+    c:(T.costs || []).map(c => [c.name, c.amount, c.deposit ? 1 : 0]),
+    r:C.rates.map(r => [r.name, r.amt, r.due || '']),
+    p:C.parties.map(p => withPaid ? [p.name, p.n, p.paid] : [p.name, p.n]),
+    x: T.refund && T.refund.amount ? [T.refund.text || 'Rückzahlung', T.refund.amount] : 0};
+  if (withPay && T.payInfo){ const P = T.payInfo; d.b = [P.holder || '', P.iban || '', P.bank || '', P.ref || '', P.paypal || '']; }
+  const raw = new TextEncoder().encode(JSON.stringify(d));
+  let code = 'j' + b64u(raw);
+  if (typeof CompressionStream === 'function'){ try { code = 'z' + b64u(await zip(raw, true)); } catch(e){} }
+  return location.origin + location.pathname + '#urlaub=' + code;
+}
+async function readTripLink(code){
+  const bytes = unb64u(code.slice(1));
+  const d = JSON.parse(new TextDecoder().decode(code[0] === 'z' ? await zip(bytes, false) : bytes));
+  const T = {id:'shared', name:String(d.n || 'Urlaub'), from:d.f || '', to:d.t || '', costs:[], rates:[], parties:[], pays:[], refund:null};
+  (d.c || []).forEach((c, i) => T.costs.push({id:'c'+i, name:String(c[0]), amount:+c[1] || 0, deposit:!!c[2]}));
+  (d.r || []).forEach((r, i) => T.rates.push({id:'r'+i, name:String(r[0]), amount:+r[1] || 0, due:r[2] || ''}));
+  (d.p || []).forEach((p, i) => { T.parties.push({id:'p'+i, name:String(p[0]), persons:+p[1] || 1}); if (d.w && +p[2] > 0) T.pays.push({id:'y'+i, party:'p'+i, amount:+p[2], date:d.s}); });
+  if (d.x) T.refund = {text:String(d.x[0]), amount:+d.x[1] || 0, done:[]};
+  if (Array.isArray(d.b)) T.payInfo = {holder:String(d.b[0] || ''), iban:String(d.b[1] || ''), bank:String(d.b[2] || ''), ref:String(d.b[3] || ''), paypal:String(d.b[4] || '')};
+  return {T, withPaid: !!d.w, stand: d.s};
+}
+var shared = null;
+function renderShared(){
+  const {T, withPaid, stand} = shared, C = tripCalc(T), t0 = today();
+  const nf = v => euro(v).replace(/\s*€/, '');
+  const view = ui.shareView === 'all' || C.rates.some(r => r.id === ui.shareView) ? ui.shareView : 'ov', vr = C.rates.find(r => r.id === view);
+  const views = C.parties.length ? `<div class="tp-views" role="tablist">${[['ov','Überblick'], ['all','Tabelle'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="sh-view" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
+  const vInfo = vr ? `<p class="hint" style="margin:0 2px">${esc(vr.name)}: ${euro(vr.amt)} · ${perP(vr.amt, C)} pro Person · ${vr.due ? (vr.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(vr.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'}</p>` : '';
+  const cell = p => vr ? p.byRate[vr.id] : {soll:p.soll, paid:p.paid, open:p.rest};
+  const rows = C.parties.map(p => { const x = cell(p), lateR = vr ? (x.open > 0 && (!vr.due || vr.due <= t0)) : p.late > 0;
+    return withPaid
+      ? `<div class="tp-r${x.open <= 0 ? ' done' : ''}"><span class="tp-n"><b>${esc(p.name)}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}</small></span><span>${nf(x.soll)}</span><span class="pos-t">${nf(x.paid)}</span><span class="tp-o ${x.open > 0 ? (lateR ? 'neg-t' : '') : 'pos-t'}">${x.open > 0 ? nf(x.open) : x.open < 0 ? '+' + nf(-x.open) : '✓'}</span></div>`
+      : `<div class="tp-r tp-r3"><span class="tp-n"><b>${esc(p.name)}</b></span><span>${p.n}</span><span class="tp-o">${nf(x.soll)}</span></div>`; }).join('');
+  const tot = k => C.parties.reduce((s, p) => s + (k === 'open' ? Math.max(0, cell(p).open) : cell(p)[k]), 0);
+  const sum = C.parties.length > 1 ? (withPaid
+      ? `<div class="tp-r tp-sum"><span class="tp-n"><b>Gesamt</b><small>${C.persons} Personen</small></span><span>${nf(tot('soll'))}</span><span class="pos-t">${nf(tot('paid'))}</span><span class="tp-o">${nf(tot('open'))}</span></div>`
+      : `<div class="tp-r tp-r3 tp-sum"><span class="tp-n"><b>Gesamt</b></span><span>${C.persons}</span><span class="tp-o">${nf(tot('soll'))}</span></div>`) : '';
+  const head = withPaid ? `<div class="tp-r tp-hd"><span>Familie</span><span>${vr ? 'Rate' : 'Anteil'}</span><span>Bezahlt</span><span>Offen</span></div>` : `<div class="tp-r tp-r3 tp-hd"><span>Familie</span><span>Personen</span><span>${vr ? 'Rate' : 'Anteil'} €</span></div>`;
+  return `<div class="fx-page">
+  <section class="fx-hero"><span class="label">${esc(T.name)}${tripRange(T) ? ' · ' + tripRange(T) : ''}</span><span class="big">${euro(C.total)}</span>
+    <div class="fx-grid"><div><small>Pro Person</small><b>${C.persons ? euro(Math.round(C.perPerson)) : '–'}</b></div><div><small>Personen</small><b>${C.persons}</b></div>
+    ${withPaid ? `<div><small>Eingesammelt</small><b class="pos-t">${euro(C.paid)}</b></div><div><small>Noch offen</small><b class="${C.rest > 0 ? 'neg-t' : ''}">${euro(Math.max(0, C.rest))}</b></div>` : ''}</div></section>
+  <div class="fx-h"><span>Kosten</span><span></span></div>
+  <div class="fx-list">${(T.costs || []).map(c => `<div class="fx-row" style="cursor:default"><div><b>${esc(c.name)}</b><small>${c.deposit ? '<span class="fx-b alt">kommt zurück</span> · ' : ''}${perP(c.amount, C)} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></div>`).join('')}</div>
+  ${C.rates.length ? `<div class="fx-h"><span>Raten</span><span></span></div><div class="fx-list">${C.rates.map(r => `<div class="fx-row" style="cursor:default"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'} · ${perP(r.amt, C)} pro Person</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></div>`).join('')}</div>` : ''}
+  <div class="fx-h"><span>${withPaid ? 'Wer zahlt was?' : 'Anteile'}</span><span></span></div>
+  ${views}${vInfo}
+  ${view === 'ov' ? ovCards(C, {withPaid, shared:true, pay:T.payInfo}) : `<div class="tp-list">${head}${rows}${sum}</div>`}
+  ${T.payInfo ? `<div class="fx-h"><span>So bezahlt ihr</span><span></span></div>${payBox(T, true)}` : ''}
+  ${T.refund ? `<div class="fx-h"><span>${esc(T.refund.text)}</span><span></span></div><div class="tp-list">${C.parties.map(p => `<div class="tp-r tp-r3"><span class="tp-n"><b>${esc(p.name)}</b></span><span>${p.n}</span><span class="tp-o pos-t">${nf(p.refund)}</span></div>`).join('')}</div>` : ''}
+  <p class="hint" style="margin:0">Stand: ${new Date(stand + 'T12:00:00').toLocaleDateString('de-DE')} · Nur zum Ansehen – Änderungen gibt es mit einem neuen Link.</p>
+  <button type="button" class="btn ghost" data-act="sh-close" style="justify-self:start">Finanzen-App öffnen</button>
+  </div>`;
+}
+function showShared(){ document.body.classList.add('ro'); $('#appTitle').textContent = 'Urlaub'; document.title = shared.T.name; $('#main').innerHTML = renderShared(); }
+async function sharedBoot(){
+  const m = location.hash.match(/^#urlaub=([zj][\w-]+)$/); if (!m) return false;
+  document.body.classList.add('ro'); $('#main').innerHTML = '<div class="panel empty">Lädt …</div>';
+  try { shared = await readTripLink(m[1]); showShared(); }
+  catch(e){ $('#main').innerHTML = '<div class="panel empty"><strong>Link nicht lesbar</strong>Der Link ist unvollständig oder dieser Browser ist zu alt. Bitte den ganzen Link noch einmal öffnen.<div class="row"><button class="btn" data-act="sh-close">Zur App</button></div></div>'; }
+  return true;
+}
+function leaveShared(){ shared = null; history.replaceState(null, '', location.pathname + location.search); document.body.classList.remove('ro'); render(); }
+window.addEventListener('hashchange', () => { if (/^#urlaub=/.test(location.hash)) sharedBoot(); });
+function tripShareDialog(T){
+  const C = tripCalc(T);
+  const form = openDlg(`
+    <h3>Mit allen teilen</h3>
+    <p class="hint" style="margin:0">Alle bekommen einen Link zur App. Damit sehen sie Kosten, Raten und ihre Anteile – ohne die App einzurichten und ohne etwas ändern zu können. Die Daten stecken im Link selbst und werden nirgends gespeichert.</p>
+    <label class="bel-keep"><input type="checkbox" id="sh-paid" checked><span>Bezahlte und offene Beträge je Familie anzeigen</span></label>
+    ${T.payInfo ? `<label class="bel-keep"><input type="checkbox" id="sh-pay" checked><span>Bezahldaten mitschicken (${[T.payInfo.iban ? 'IBAN' : '', T.payInfo.paypal ? 'PayPal' : ''].filter(Boolean).join(' und ')})</span></label>` : `<p class="hint" style="margin:0">Tipp: Unter „Bezahlen an“ kannst du Bankdaten oder PayPal hinterlegen, dann stehen sie mit im Link.</p>`}
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions" style="flex-wrap:wrap"><button type="button" class="btn ghost" id="sh-text">Als Text teilen</button><span class="spacer"></span><button type="button" class="btn" id="sh-prev">Vorschau</button><button class="btn primary" type="submit">Link teilen</button></div>`, f => {
+      (async () => {
+        const url = await tripLink(T, f.querySelector('#sh-paid').checked, !!(f.querySelector('#sh-pay') && f.querySelector('#sh-pay').checked));
+        const text = '🏖 ' + T.name + ' – Kosten und Anteile:';
+        try { if (navigator.share){ await navigator.share({title: T.name, text, url}); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
+        try { await navigator.clipboard.writeText(text + '\n' + url); toast('Link kopiert – jetzt z. B. in WhatsApp einfügen'); }
+        catch(e){ openDlg(`<h3>Link</h3><textarea readonly rows="6" style="width:100%;font:inherit;font-size:.8rem">${esc(url)}</textarea><div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn primary" data-close>Fertig</button></div>`, () => {}); }
+      })();
+    });
+  form.querySelector('#sh-text').addEventListener('click', () => { closeDlg(); tripShare(T); });
+  form.querySelector('#sh-prev').addEventListener('click', async () => { const url = await tripLink(T, form.querySelector('#sh-paid').checked, !!(form.querySelector('#sh-pay') && form.querySelector('#sh-pay').checked)); dlg.close(); location.hash = url.split('#')[1]; });
 }
 async function tripShare(T){
   const text = tripShareText(T);
@@ -4711,14 +4912,16 @@ $('#main').addEventListener('click', e => {
   else if (a==='ueb-edit'){ const r = S.finance.recurring.find(x=>x.id===b.dataset.id); if (r) requirePin('Das Ändern von Umbuchungen', () => r.type==='umbuchung' ? uebRecDialog(r) : recDialog(r)); }
   else if (a==='recon') reconDialog();
   else if (a==='bilanz') bilanzDialog();
+  else if (a==='sh-view'){ ui.shareView = b.dataset.v; if (shared) showShared(); }
+  else if (a==='sh-close') leaveShared();
   else if (a==='trip-new') tripDialog();
-  else if (a==='trip-open'){ ui.tripView = 'all'; ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
+  else if (a==='trip-open'){ ui.tripView = 'ov'; ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
   else if (a==='trip-back'){ ui.trip = null; render(); window.scrollTo(0,0); }
   else if (a.startsWith('trip-')){
     const T = tripById(ui.trip); if (!T) return;
     const id = b.dataset.id;
     if (a==='trip-edit') tripDialog(T);
-    else if (a==='trip-share') tripShare(T);
+    else if (a==='trip-share') tripShareDialog(T);
     else if (a==='trip-cost-new') tripCostDialog(T);
     else if (a==='trip-cost') tripCostDialog(T, (T.costs||[]).find(x => x.id===id));
     else if (a==='trip-rate-new') tripRateDialog(T);
@@ -4727,6 +4930,7 @@ $('#main').addEventListener('click', e => {
     else if (a==='trip-party') tripPartyDialog(T, (T.parties||[]).find(x => x.id===id));
     else if (a==='trip-refund') tripRefundDialog(T);
     else if (a==='trip-view'){ ui.tripView = b.dataset.v; render(); }
+    else if (a==='trip-pay') tripPayDialog(T);
     else if (a==='trip-refund-done'){ T.refund.done = T.refund.done || []; const k = T.refund.done.indexOf(id); if (k >= 0) T.refund.done.splice(k, 1); else T.refund.done.push(id); save('finance'); render(); }
   }
   else if (a==='goto-tg'){ ui.tab = 'sparen'; lsSet('tab','sparen'); render(); window.scrollTo(0,0); }
@@ -4761,7 +4965,7 @@ $('#main').addEventListener('submit', e => {
   render(); const q = $('#q-title'); if (q) q.focus();
 });
 
-render();
+sharedBoot().then(isShared => { if (!isShared) render(); });
 initLocal();
 document.getElementById('backupBtn').addEventListener('click', backupDialog);
 document.getElementById('bkNow').addEventListener('click', exportBackup);
