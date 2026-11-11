@@ -389,6 +389,11 @@ dialog.bel-dlg::backdrop{background:rgba(0,0,0,.6)}
 .kx-tab td{padding:7px 4px;border-top:1px solid var(--line);text-align:right;font-family:var(--f-num)}.kx-tab td:first-child{font-family:inherit}
 .kx-sum{display:grid;gap:6px;padding:12px;border-radius:12px;background:var(--sunk)}.kx-sum div{display:flex;justify-content:space-between;gap:10px;font-size:.9rem}.kx-sum b{font-family:var(--f-num)}
 .kx-bars{display:flex;gap:8px;align-items:flex-end;height:96px;padding:4px 2px}.kx-bars div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}.kx-bars i{display:block;width:100%;max-width:38px;border-radius:6px 6px 2px 2px;background:color-mix(in srgb,var(--accent) 45%,var(--sunk))}
+.tp-wrap{overflow-x:auto;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
+.tp-tab{border-collapse:collapse;font-size:.84rem;min-width:100%}.tp-tab th,.tp-tab td{padding:7px 10px;text-align:right;white-space:nowrap;border-top:1px solid var(--line);font-family:var(--f-num)}
+.tp-tab th{border-top:0;font-family:inherit;font-size:.78rem}.tp-tab th small{display:block;font-weight:400;color:var(--muted)}
+.tp-tab td:first-child,.tp-tab th:first-child{text-align:left;font-family:inherit;position:sticky;left:0;background:var(--surface)}
+.tp-quick{display:flex;flex-wrap:wrap;gap:6px}.tp-quick:empty{display:none}
 .fx-hero{display:grid;gap:10px;padding:16px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
 .fx-hero .big{font:600 2rem/1.1 var(--f-num)}
 .fx-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -414,6 +419,10 @@ dialog.bel-dlg::backdrop{background:rgba(0,0,0,.6)}
 .ivl{display:grid;grid-template-columns:auto 64px 1fr;gap:8px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--sunk);font-size:.9rem}
 .ivl input,.ivl select,.fx-frist input,.fx-frist select{font:inherit;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
 .fx-frist{display:grid;grid-template-columns:64px 1fr;gap:6px}
+.fx-multi{display:grid;gap:10px;padding:12px;border-radius:12px;background:var(--sunk)}
+.fx-qty{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:8px 10px;align-items:center}.fx-qty #fx-tot{grid-column:1/-1;text-align:right;font-size:1rem}.fx-qty #fx-tot:empty{display:none}
+.fx-qty input,.fx-step input{font:inherit;font-size:16px;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
+.fx-step{display:grid;grid-template-columns:38px 52px 38px;gap:4px}.fx-step input{text-align:center;padding:8px 2px}.fx-step .btn{justify-content:center;padding:0;font-size:1.1rem}
 details.fx-v{border:1px solid var(--line);border-radius:12px}details.fx-v summary{padding:10px 12px;font-weight:600;font-size:.9rem;cursor:pointer}
 .fx-vb{display:grid;gap:10px;padding:0 12px 12px}
 .fx-acts{display:flex;flex-wrap:wrap;gap:6px}
@@ -612,6 +621,7 @@ form.dlg > .scan-btn{justify-content:center;border-style:dashed}
       <button role="tab" data-tab="finanzen" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg>Finanzen</button>
       <button role="tab" data-tab="fixkosten" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8.5 15l2 2 4-4"/></svg>Fixkosten</button>
       <button role="tab" data-tab="sparen" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/></svg>Tagesgeld</button>
+      <button role="tab" data-tab="urlaub" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9z"/><path d="M12 12v8"/><path d="M8 21h8"/></svg>Urlaub</button>
     </nav>
   </header>
   <div class="upd-banner" id="updBanner" hidden role="status">
@@ -658,9 +668,17 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.3.0';
-const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld']];
+const APP_VERSION = '1.4.0';
+const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.4.0','11.11.2026, 17:35 Uhr',[
+    'Neuer Bereich „Urlaub“: gemeinsame Kosten (z. B. Ferienhaus und Kaution) auf mehrere Familien aufteilen – Personenzahl je Familie frei wählbar',
+    'Raten mit Fälligkeit, auch als Restbetrag; die App rechnet pro Person und pro Familie',
+    'Zahlungen je Familie erfassen: bezahlt, offen und was schon fällig ist auf einen Blick, dazu eine Tabelle wie in der Tabellenkalkulation',
+    'Rückzahlung (z. B. Kaution) nach Personen verteilen und abhaken, wer sein Geld zurück hat',
+    'Übersicht per WhatsApp & Co. teilen',
+    'Auf Wunsch Zahlungen auch im Girokonto buchen (Kategorie „Urlaub“)']],
+  ['1.3.1', '29.10.2026, 21:08 Uhr', ['Fixkosten „Mehrfach“: gleicher Betrag mehrmals, z. B. Kindergeld 3 × 255 € oder Kindertagespflege pro Kind – Anzahl mit + und − ändern', 'Ändert sich die Anzahl (ein Kind kommt dazu oder geht), gilt sie ab einem Datum – bisherige Buchungen bleiben', 'Neue Schnellauswahl „Kindertagespflege“; Kindergeld ist jetzt pro Kind', 'In der Liste und bei den Buchungen steht, wie sich der Betrag zusammensetzt (z. B. 3 × 255,00 €)']],
   ['1.3.0', '29.10.2026, 19:45 Uhr', ['„Sparen“ heißt jetzt „Tagesgeld“: beliebig viele Tagesgeld-Konten und Töpfe (z. B. Fixkosten, Weihnachten, Geburtstage, Urlaub) – mehrere Töpfe können zu einem echten Konto gehören', 'Umbuchungen zwischen allen Konten, einmalig oder regelmäßig – z. B. am Monatsende die Fixkosten fürs nächste Monat aufs Tagesgeld und am 20. ein fester Betrag zurück aufs Girokonto', 'Kontoabgleich: echte Kontostände eintragen, Differenzen werden als „Nicht erfasst“ (beim Tagesgeld auf Wunsch als Zinsen) gebucht, danach rechnet die App mit den echten Ständen weiter', 'Bilanz zum vorherigen Abgleich: Veränderung je Konto, erfasste Einnahmen und Ausgaben, nicht erfasste Beträge, Zinsen, Entwicklung des Gesamtvermögens', 'Fester Abgleich-Tag (Monatsende, fester Tag oder ohne) mit Hinweis, wenn der Abgleich fällig ist – einstellbar unter Einstellungen › Konten & Abgleich', 'Fixkosten: Vorschlag für die Fixkosten-Rücklage des nächsten Monats mit Rückbuchung am 20.', 'Bisheriges Sparen wird automatisch als Tagesgeld-Konto „Sparen“ übernommen']],
   ['1.2.0', '29.10.2026, 19:18 Uhr', ['Neuer Bereich „Fixkosten“: monatlich, vierteljährlich, halbjährlich, jährlich, wöchentlich, alle 2 Wochen oder eigenes Intervall', 'Übersicht: Fixkosten pro Monat umgerechnet, feste Einnahmen, was übrig bleibt, Fälligkeiten der nächsten 30 Tage, Kategorien', 'Rücklage-Hinweis für seltene Kosten, auf Wunsch als Sparplan', 'Schnellauswahl (Miete, Strom, Versicherung …), „Erst bestätigen“ für schwankende Beträge', 'Vertragsangaben mit Kündigungserinnerung, Betrag ab Datum ändern, pausieren, überspringen, Beleg anhängen', 'Die App ist jetzt nur für Erwachsene – der Kindermodus ist im Organizer']],
   ['1.1.0', '24.10.2026, 18:51 Uhr', ['Geliehen & verliehen: neues Feld „Wofür?“ – steht in der Übersicht, in der Monatsliste und im Verlauf', 'Geliehen & verliehen gibt es jetzt auch im Erwachsenenmodus (Bankkonto oder Bargeld)']],
@@ -684,7 +702,7 @@ const DEF = {
 function normalize(key, v){
   const d = clone(DEF[key]);
   if (!v || typeof v !== 'object') return d;
-  if (key==='finance'){ d.start = {bank:+(v.start?.bank)||0, cash:+(v.start?.cash)||0, save:+(v.start?.save)||0}; if (v.start) for (const k in v.start) if (!(k in d.start)) d.start[k] = +v.start[k] || 0; d.accounts = Array.isArray(v.accounts) ? v.accounts.filter(a => a && a.id && a.name).map(a => ({id:String(a.id), name:String(a.name).slice(0,40), bank:String(a.bank||'').slice(0,40), goal: +a.goal > 0 ? Math.round(+a.goal) : 0})) : null; d.checks = Array.isArray(v.checks) ? v.checks.filter(c => c && c.date && c.rows) : []; d.accNames = (v.accNames && typeof v.accNames === 'object') ? {bank: String(v.accNames.bank||'').slice(0,40), cash: String(v.accNames.cash||'').slice(0,40)} : {}; d.tx = Array.isArray(v.tx)?v.tx:[]; d.recurring = Array.isArray(v.recurring)?v.recurring:[]; d.goal = (v.goal && +v.goal.amount > 0) ? {name: String(v.goal.name||'').slice(0,60), amount: Math.round(+v.goal.amount)} : null;
+  if (key==='finance'){ d.start = {bank:+(v.start?.bank)||0, cash:+(v.start?.cash)||0, save:+(v.start?.save)||0}; if (v.start) for (const k in v.start) if (!(k in d.start)) d.start[k] = +v.start[k] || 0; d.accounts = Array.isArray(v.accounts) ? v.accounts.filter(a => a && a.id && a.name).map(a => ({id:String(a.id), name:String(a.name).slice(0,40), bank:String(a.bank||'').slice(0,40), goal: +a.goal > 0 ? Math.round(+a.goal) : 0})) : null; d.checks = Array.isArray(v.checks) ? v.checks.filter(c => c && c.date && c.rows) : []; d.accNames = (v.accNames && typeof v.accNames === 'object') ? {bank: String(v.accNames.bank||'').slice(0,40), cash: String(v.accNames.cash||'').slice(0,40)} : {}; d.trips = Array.isArray(v.trips) ? v.trips.filter(x => x && x.id && x.name) : []; d.tx = Array.isArray(v.tx)?v.tx:[]; d.recurring = Array.isArray(v.recurring)?v.recurring:[]; d.goal = (v.goal && +v.goal.amount > 0) ? {name: String(v.goal.name||'').slice(0,60), amount: Math.round(+v.goal.amount)} : null;
     if (ADULT_ONLY && !d.accounts){ d.accounts = []; if (d.start.save || d.goal || d.tx.some(t => t.type==='sparen'||t.type==='entsparen') || d.recurring.some(r => r.type==='sparen')) d.accounts.push({id:'save', name: (d.goal && d.goal.name) || 'Sparen', bank:'', goal: d.goal ? d.goal.amount : 0}); }
     if (!d.accounts) d.accounts = []; }
   if (key==='schedule'){ d.plans = Array.isArray(v.plans)?v.plans:[]; d.active = v.active ?? d.plans[0]?.id ?? null; }
@@ -1234,7 +1252,7 @@ function armed(btn, label){
 }
 
 /* ---------- Navigation ---------- */
-document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => { ui.tab = b.dataset.tab; lsSet('tab', ui.tab); render(); window.scrollTo(0,0); }));
+document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => { ui.trip = null; ui.tab = b.dataset.tab; lsSet('tab', ui.tab); render(); window.scrollTo(0,0); }));
 /* ---------- Einstellungen: Name & Version ---------- */
 const appName = () => (S.settings && S.settings.appName) || DEFAULT_NAME;
 const isKid = () => !!(S.settings && S.settings.kid);
@@ -1525,6 +1543,7 @@ function render(){
   else if (ui.tab==='hausaufgaben') m.innerHTML = renderHomework();
   else if (ui.tab==='sparen') m.innerHTML = ADULT_ONLY ? renderTagesgeld() : renderSavings();
   else if (ui.tab==='fixkosten') m.innerHTML = renderFixkosten();
+  else if (ui.tab==='urlaub') m.innerHTML = renderUrlaub();
   else m.innerHTML = renderTasks();
 }
 
@@ -1545,7 +1564,7 @@ const TYPES = {
   umbuchung: {label:'Umbuchung', sym:'⇄', cls:'sparen'}
 };
 const ACCT = {bank:'Bankkonto', cash:'Bargeld', save:'Sparen'};
-const DEFAULT_CATS = ['Lebensmittel','Haushalt','Wohnen','Auto & Tanken','Kinder','Freizeit','Gesundheit','Versicherungen','Kommunikation','Abos','Kleidung','Geschenke','Gehalt','Kindergeld','Sonstiges'];
+const DEFAULT_CATS = ['Lebensmittel','Haushalt','Wohnen','Auto & Tanken','Kinder','Freizeit','Gesundheit','Versicherungen','Kommunikation','Abos','Kleidung','Geschenke','Urlaub','Gehalt','Kindergeld','Sonstiges'];
 
 function effMap(t){
   if (t.pending) return {};
@@ -1903,6 +1922,13 @@ function occAfter(r, after){
 }
 const nextDue = occAfter;
 // Betrag zu einem Datum (Betragsänderungen „ab Datum“ berücksichtigen)
+function qtyAt(r, date){
+  let q = Math.max(1, +r.qty || 1);
+  (r.changes || []).forEach(c => { if ((!date || c.from <= date) && c.qty) q = Math.max(1, +c.qty); });
+  return q;
+}
+const perPl = p => /kind$/i.test(p) ? p + 'er' : p;
+const qtyTxt = (r, date) => { const q = qtyAt(r, date); return q > 1 ? q + ' × ' + euro(Math.round(amountAt(r, date) / q)) : ''; };
 function amountAt(r, date){
   let a = r.amount;
   (r.changes || []).forEach(c => { if (!date || c.from <= date) a = c.amount; });
@@ -1913,6 +1939,7 @@ function recTx(r, date, amount, k){
   const t = {id:newId(), created:Date.now()+(k||0), type:r.type, amount, date, text:r.text, cat:r.cat||'', account:r.account||'bank', rec:r.id};
   if (r.type === 'umbuchung'){ t.from = r.from || 'bank'; t.to = r.to || 'save'; t.account = t.from; t.cat = ''; }
   if (r.type === 'sparen' && r.to) t.to = r.to;
+  const q = qtyAt(r, date); if (q > 1){ t.qty = q; t.text = (r.text || '') + ' (' + q + ' × ' + euro(Math.round(amount / q)) + ')'; }
   return t;
 }
 function runRecurring(){
@@ -2220,6 +2247,260 @@ function bilanzDialog(date){
   const p = form.querySelector('#bz-prev'); if (p) p.addEventListener('click', () => bilanzDialog(checks[i-1].date));
   const n = form.querySelector('#bz-next'); if (n) n.addEventListener('click', () => bilanzDialog(checks[i+1].date));
 }
+/* =========================================================
+   URLAUB – gemeinsame Kosten mit mehreren Parteien (nur App „Finanzen“)
+   ========================================================= */
+const trips = () => (S.finance.trips = S.finance.trips || []);
+const tripById = id => trips().find(x => x.id === id);
+function tripCalc(T){
+  const total = (T.costs || []).reduce((s, c) => s + (c.amount || 0), 0);
+  const deposit = (T.costs || []).filter(c => c.deposit).reduce((s, c) => s + (c.amount || 0), 0);
+  const persons = (T.parties || []).reduce((s, p) => s + Math.max(1, +p.persons || 1), 0);
+  const fixed = (T.rates || []).filter(r => !r.rest).reduce((s, r) => s + (r.amount || 0), 0);
+  const rates = (T.rates || []).map(r => ({...r, amt: r.rest ? Math.max(0, total - fixed) : (r.amount || 0)})).sort((a, b) => (a.due || '0000').localeCompare(b.due || '0000'));
+  const share = (amt, n) => persons ? Math.round(amt * n / persons) : 0;
+  const t0 = today();
+  const parties = (T.parties || []).map(p => {
+    const n = Math.max(1, +p.persons || 1), pays = (T.pays || []).filter(x => x.party === p.id);
+    const paid = pays.reduce((s, x) => s + (x.amount || 0), 0), soll = share(total, n);
+    let dueNow = 0; rates.forEach(r => { if (!r.due || r.due <= t0) dueNow += share(r.amt, n); });
+    const refund = T.refund && T.refund.amount ? share(T.refund.amount, n) : 0;
+    return {...p, n, pays, paid, soll, rest: soll - paid, late: Math.max(0, dueNow - paid), refund, refunded: !!(T.refund && (T.refund.done || []).includes(p.id))};
+  });
+  const paid = parties.reduce((s, p) => s + p.paid, 0);
+  return {total, deposit, persons, perPerson: persons ? total / persons : 0, rates, parties, paid, rest: total - paid, fixedOver: fixed > total, share};
+}
+const perP = (amt, C) => C.persons ? euro(Math.round(amt / C.persons)) : '–';
+function tripRange(T){
+  if (!T.from) return '';
+  const f = d => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', {day:'numeric', month:'short', year:'numeric'});
+  return T.to && T.to !== T.from ? f(T.from).replace(/ \d{4}$/, T.from.slice(0,4) === T.to.slice(0,4) ? '' : ' ' + T.from.slice(0,4)) + ' – ' + f(T.to) : f(T.from);
+}
+function renderUrlaub(){
+  const T = ui.trip && tripById(ui.trip);
+  if (T) return renderTrip(T);
+  const list = trips().slice().sort((a, b) => (b.from || '').localeCompare(a.from || '')), act = list.filter(x => !x.archived), arc = list.filter(x => x.archived);
+  const card = x => { const C = tripCalc(x), pct = C.total ? Math.min(100, C.paid / C.total * 100) : 0, late = C.parties.some(p => p.late > 0);
+    return `<button type="button" class="fx-row" data-act="trip-open" data-id="${esc(x.id)}"><div><b>${esc(x.name)}</b><small>${[tripRange(x), C.persons ? C.persons + (C.persons === 1 ? ' Person' : ' Personen') + ' · ' + C.parties.length + (C.parties.length === 1 ? ' Partei' : ' Parteien') : 'noch keine Teilnehmer'].filter(Boolean).join(' · ')}</small>
+      <span class="tg-goal" style="--c:var(--pos);margin-top:6px"><span style="width:${Math.max(2, pct)}%"></span></span></div>
+      <div class="fx-amt"><b>${euro(C.total)}</b><small class="${C.rest > 0 ? (late ? 'neg-t' : '') : 'pos-t'}">${C.total ? (C.rest > 0 ? 'offen ' + euro(C.rest) : 'alles bezahlt ✓') : ''}</small></div></button>`; };
+  return `<div class="fx-page">
+  <div class="sec-head" style="margin:0"><h2>Urlaub</h2><span style="margin-right:auto"></span><button class="btn primary" data-act="trip-new">+ Urlaub</button></div>
+  ${act.length ? `<div class="fx-list">${act.map(card).join('')}</div>` : `<div class="panel empty"><strong>Gemeinsame Urlaubskosten</strong>Ferienhaus, Kaution und Raten auf mehrere Familien aufteilen – die App rechnet pro Person, zeigt, wer schon wie viel bezahlt hat, und teilt die Übersicht per WhatsApp.<div class="row"><button class="btn primary" data-act="trip-new">+ Ersten Urlaub anlegen</button></div></div>`}
+  ${arc.length ? `<details class="fx-v"><summary>Abgeschlossen (${arc.length})</summary><div class="fx-list" style="margin-top:8px">${arc.map(card).join('')}</div></details>` : ''}
+  </div>`;
+}
+function renderTrip(T){
+  const C = tripCalc(T), t0 = today(), pct = C.total ? Math.min(100, C.paid / C.total * 100) : 0;
+  const costs = (T.costs || []).map(c => `<button type="button" class="fx-row" data-act="trip-cost" data-id="${esc(c.id)}"><div><b>${esc(c.name)}</b><small>${c.deposit ? '<span class="fx-b alt">kommt zurück</span> · ' : ''}${perP(c.amount, C)} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></button>`).join('');
+  const rates = C.rates.map(r => { const over = r.due && r.due < t0 && !r.paidAt;
+    return `<button type="button" class="fx-row" data-act="trip-rate" data-id="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + fmtShort(r.due) + ' ' + r.due.slice(0,4) : 'sofort fällig'}${r.rest ? ' · Restbetrag' : ''} · ${perP(r.amt, C)} pro Person${r.paidAt ? ` · <span class="pos-t">an Vermieter bezahlt ${fmtShort(r.paidAt)}</span>` : over ? ' · <span class="neg-t">noch nicht an Vermieter bezahlt</span>' : ''}</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></button>`; }).join('');
+  const parties = C.parties.map(p => `<button type="button" class="fx-row tp-row" data-act="trip-party" data-id="${esc(p.id)}"><div><b>${esc(p.name)}${p.me ? ' <span class="fx-b">wir</span>' : ''}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Personen'} · Anteil ${euro(p.soll)} · bezahlt ${euro(p.paid)}</small>${p.late > 0 ? `<small class="neg-t">${euro(p.late)} schon fällig</small>` : ''}</div>
+      <div class="fx-amt"><b class="${p.rest > 0 ? (p.late > 0 ? 'neg-t' : '') : 'pos-t'}">${p.rest > 0 ? euro(p.rest) : p.rest < 0 ? '+' + euro(-p.rest) : '✓'}</b><small>${p.rest > 0 ? 'offen' : p.rest < 0 ? 'zu viel' : 'bezahlt'}</small></div></button>`).join('');
+  const R = T.refund || {};
+  return `<div class="fx-page">
+  <div class="sec-head" style="margin:0"><button type="button" class="btn ghost sm" data-act="trip-back">‹ Urlaube</button><span style="margin-right:auto"></span><button type="button" class="btn sm" data-act="trip-share">Teilen</button><button type="button" class="btn sm" data-act="trip-edit">Bearbeiten</button></div>
+  <section class="fx-hero"><span class="label">${esc(T.name)}${tripRange(T) ? ' · ' + tripRange(T) : ''}</span><span class="big">${euro(C.total)}</span>
+    <div class="fx-grid"><div><small>Pro Person</small><b>${C.persons ? euro(Math.round(C.perPerson)) : '–'}</b></div><div><small>Personen</small><b>${C.persons}</b></div>
+      <div><small>Eingesammelt</small><b class="pos-t">${euro(C.paid)}</b></div><div><small>Noch offen</small><b class="${C.rest > 0 ? 'neg-t' : ''}">${euro(Math.max(0, C.rest))}</b></div></div>
+    ${C.total ? `<span class="tg-goal" style="--c:var(--pos)"><span style="width:${Math.max(2, pct)}%"></span></span>` : ''}</section>
+  ${C.fixedOver ? '<div class="fx-hint">⚠️<span>Die festen Raten sind zusammen höher als die Gesamtkosten. Bitte die Raten prüfen.</span></div>' : ''}
+  <div class="fx-h"><span>Kosten</span><span><button type="button" class="linkbtn" data-act="trip-cost-new">+ Kosten</button></span></div>
+  <div class="fx-list">${costs || '<div class="fx-row" style="cursor:default"><div><small>Noch keine Kosten – z. B. „Preis Haus“ und „Kaution“.</small></div><div></div></div>'}</div>
+  <div class="fx-h"><span>Raten</span><span><button type="button" class="linkbtn" data-act="trip-rate-new">+ Rate</button></span></div>
+  <div class="fx-list">${rates || '<div class="fx-row" style="cursor:default"><div><small>Ohne Raten ist alles sofort fällig. Leg z. B. „1. Rate sofort“ und „2. Rate“ als Restbetrag an.</small></div><div></div></div>'}</div>
+  <div class="fx-h"><span>Wer zahlt was?</span><span><button type="button" class="linkbtn" data-act="trip-party-new">+ Teilnehmer</button></span></div>
+  <div class="fx-list">${parties || '<div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div>'}</div>
+  ${C.parties.length && C.rates.length ? `<div class="tp-wrap"><table class="tp-tab"><tr><th></th>${C.parties.map(p => `<th>${esc(p.name)}<small>${p.n} P.</small></th>`).join('')}</tr>
+    ${C.rates.map(r => `<tr><td>${esc(r.name)}</td>${C.parties.map(p => `<td>${amtInput(C.share(r.amt, p.n)) || '0,00'}</td>`).join('')}</tr>`).join('')}
+    <tr><td><b>Anteil</b></td>${C.parties.map(p => `<td><b>${amtInput(p.soll) || '0,00'}</b></td>`).join('')}</tr>
+    <tr><td>Bezahlt</td>${C.parties.map(p => `<td class="pos-t">${amtInput(p.paid) || '0,00'}</td>`).join('')}</tr>
+    <tr><td><b>Rest</b></td>${C.parties.map(p => `<td class="${p.rest > 0 ? 'neg-t' : ''}"><b>${amtInput(Math.max(0, p.rest)) || '0,00'}</b></td>`).join('')}</tr></table></div>` : ''}
+  <div class="fx-h"><span>Rückzahlung</span><span><button type="button" class="linkbtn" data-act="trip-refund">${R.amount ? 'Ändern' : 'Eintragen'}</button></span></div>
+  <div class="fx-list">${R.amount ? `<div class="fx-row" style="cursor:default"><div><b>${esc(R.text || 'Rückzahlung')}</b><small>${R.date ? fmtShort(R.date) + ' ' + R.date.slice(0,4) + ' · ' : ''}${perP(R.amount, C)} pro Person</small></div><div class="fx-amt"><b class="pos-t">${euro(R.amount)}</b></div></div>
+      ${C.parties.map(p => `<button type="button" class="fx-row${p.refunded ? ' off' : ''}" data-act="trip-refund-done" data-id="${esc(p.id)}"><div><b>${esc(p.name)}</b><small>${p.refunded ? 'ausgezahlt ✓ – antippen zum Zurücksetzen' : 'antippen, wenn ausgezahlt'}</small></div><div class="fx-amt"><b>${euro(p.refund)}</b></div></button>`).join('')}`
+    : `<div class="fx-row" style="cursor:default"><div><small>${C.deposit ? `Nach dem Urlaub: Kaution von ${euro(C.deposit)} zurück? Die App verteilt den Betrag auf alle Personen.` : 'Z. B. Kaution oder Erstattung nach dem Urlaub – wird nach Personen aufgeteilt.'}</small></div><div></div></div>`}</div>
+  </div>`;
+}
+/* ---------- Dialoge ---------- */
+function tripDialog(T0){
+  const isNew = !T0, T = T0 || {name:'', from:'', to:''};
+  const form = openDlg(`
+    <h3>${isNew ? 'Neuer Urlaub' : 'Urlaub bearbeiten'}</h3>
+    <label class="field"><span>Name</span><input name="name" value="${esc(T.name)}" placeholder="z. B. Ferienhaus Dänemark 2027" autofocus id="tr-name"></label>
+    <div class="row2"><label class="field"><span>Von</span><input type="date" name="from" value="${esc(T.from || '')}" id="tr-from"></label><label class="field"><span>Bis</span><input type="date" name="to" value="${esc(T.to || '')}" id="tr-to"></label></div>
+    ${isNew ? `<div class="box2"><span class="label">Schnellstart (freiwillig)</span>
+      <div class="row2"><label class="field"><span>Preis Unterkunft (€)</span><input class="amount-in" name="price" inputmode="decimal" placeholder="z. B. 1598,00" id="tr-price"></label><label class="field"><span>Kaution (€)</span><input class="amount-in" name="deposit" inputmode="decimal" placeholder="z. B. 540,00" id="tr-dep"></label></div>
+      <div class="row2"><label class="field"><span>1. Rate sofort (€)</span><input class="amount-in" name="rate1" inputmode="decimal" placeholder="z. B. 329,50" id="tr-r1"></label><label class="field"><span>Rest fällig bis</span><input type="date" name="rate2" id="tr-r2"></label></div>
+      <p class="hint" style="margin:0">Teilnehmer legst du danach an – mit beliebiger Personenzahl je Familie.</p></div>` : ''}
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : `<button type="button" class="btn danger" id="tr-del">Löschen</button><button type="button" class="btn sm" id="tr-arc">${T.archived ? 'Wieder aktiv' : 'Abschließen'}</button>`}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const name = f.name.value.trim(), err = f.querySelector('#f-err');
+      if (!name){ err.textContent = 'Bitte einen Namen eingeben.'; f.name.focus(); return false; }
+      if (f.from.value && f.to.value && f.to.value < f.from.value){ err.textContent = 'Das Ende liegt vor dem Anfang.'; return false; }
+      if (isNew){
+        const n = {id:newId(), created:Date.now(), name, from:f.from.value, to:f.to.value, costs:[], rates:[], parties:[], pays:[], refund:null};
+        const pr = parseAmt(f.price.value), dp = parseAmt(f.deposit.value), r1 = parseAmt(f.rate1.value);
+        if (pr > 0) n.costs.push({id:newId(), name:'Preis Unterkunft', amount:pr});
+        if (dp > 0) n.costs.push({id:newId(), name:'Kaution', amount:dp, deposit:true});
+        if (r1 > 0) n.rates.push({id:newId(), name:'1. Rate', amount:r1, due:today()});
+        if (r1 > 0 || f.rate2.value) n.rates.push({id:newId(), name: r1 > 0 ? '2. Rate' : 'Restzahlung', rest:true, due:f.rate2.value || ''});
+        trips().push(n); ui.trip = n.id;
+      } else { T0.name = name; T0.from = f.from.value; T0.to = f.to.value; }
+      save('finance'); toast(isNew ? 'Urlaub angelegt' : 'Gespeichert');
+    });
+  const del = form.querySelector('#tr-del');
+  if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich löschen?')) return; S.finance.trips = trips().filter(x => x.id !== T0.id); ui.trip = null; save('finance'); closeDlg(); toast('Gelöscht'); });
+  const arc = form.querySelector('#tr-arc');
+  if (arc) arc.addEventListener('click', () => { T0.archived = !T0.archived; if (T0.archived) ui.trip = null; save('finance'); closeDlg(); toast(T0.archived ? 'Abgeschlossen' : 'Wieder aktiv'); });
+}
+function tripCostDialog(T, c0){
+  const isNew = !c0, c = c0 || {name:'', amount:0, deposit:false};
+  const form = openDlg(`
+    <h3>${isNew ? 'Kosten hinzufügen' : 'Kosten ändern'}</h3>
+    <label class="field"><span>Bezeichnung</span><input name="name" list="tc-list" value="${esc(c.name)}" placeholder="z. B. Preis Haus" autofocus id="tc-name"><datalist id="tc-list">${['Preis Haus','Ferienwohnung','Kaution','Endreinigung','Bettwäsche & Handtücher','Kurtaxe','Strom & Nebenkosten','Fähre','Maut'].map(x => `<option value="${x}">`).join('')}</datalist></label>
+    <label class="field"><span>Betrag gesamt (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(c.amount)}" id="tc-amount"></label>
+    <label class="bel-keep"><input type="checkbox" name="deposit" id="tc-dep" ${c.deposit ? 'checked' : ''}><span>Kaution – kommt nach dem Urlaub zurück</span></label>
+    <p class="hint" id="tc-hint" style="margin:0"></p>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : '<button type="button" class="btn danger" id="tc-del">Löschen</button>'}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const name = f.name.value.trim(), amount = parseAmt(f.amount.value), err = f.querySelector('#f-err');
+      if (!name){ err.textContent = 'Bitte eine Bezeichnung eingeben.'; return false; }
+      if (!(amount > 0)){ err.textContent = 'Bitte einen Betrag eingeben.'; f.amount.focus(); return false; }
+      const rec = {id: c.id || newId(), name, amount, deposit: f.deposit.checked};
+      T.costs = T.costs || []; const i = T.costs.findIndex(x => x.id === rec.id); if (i >= 0) T.costs[i] = rec; else T.costs.push(rec);
+      save('finance'); toast('Gespeichert');
+    });
+  const upd = () => { if (/kaution/i.test(form.name.value) && isNew) form.deposit.checked = true; const C = tripCalc(T), a = parseAmt(form.amount.value) || 0; form.querySelector('#tc-hint').textContent = C.persons && a > 0 ? `${euro(Math.round(a / C.persons))} pro Person bei ${C.persons} Personen` : ''; };
+  form.addEventListener('input', upd); upd();
+  const del = form.querySelector('#tc-del');
+  if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich löschen?')) return; T.costs = T.costs.filter(x => x.id !== c0.id); save('finance'); closeDlg(); toast('Gelöscht'); });
+}
+function tripRateDialog(T, r0){
+  const isNew = !r0, hasRest = (T.rates || []).some(x => x.rest && x.id !== (r0 && r0.id));
+  const r = r0 || {name: ((T.rates || []).length + 1) + '. Rate', amount:0, due:'', rest: !hasRest && (T.rates || []).length > 0};
+  const form = openDlg(`
+    <h3>${isNew ? 'Rate hinzufügen' : esc(r.name)}</h3>
+    <label class="field"><span>Bezeichnung</span><input name="name" value="${esc(r.name)}" id="tra-name"></label>
+    <div class="seg"><label><input type="radio" name="kind" value="fix" ${r.rest ? '' : 'checked'}><span>Fester Betrag</span></label><label><input type="radio" name="kind" value="rest" ${r.rest ? 'checked' : ''} ${hasRest ? 'disabled' : ''}><span>Restbetrag</span></label></div>
+    <label class="field" id="tra-amtf"><span>Betrag gesamt (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(r.amount)}" id="tra-amount"></label>
+    <div class="row2"><label class="field"><span>Fällig bis</span><input type="date" name="due" value="${esc(r.due || '')}" id="tra-due"></label>
+      <label class="field"><span>An Vermieter bezahlt am</span><input type="date" name="paidAt" value="${esc(r.paidAt || '')}" id="tra-paid"></label></div>
+    <label class="bel-keep" id="tra-bookf" ${r.paidAt ? 'hidden' : ''}><input type="checkbox" id="tra-book"><span>Zahlung an den Vermieter auch im Girokonto als Ausgabe buchen</span></label>
+    <p class="hint" id="tra-hint" style="margin:0"></p>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : '<button type="button" class="btn danger" id="tra-del">Löschen</button>'}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const rest = f.querySelector('input[name=kind]:checked').value === 'rest', amount = parseAmt(f.amount.value), err = f.querySelector('#f-err');
+      if (!rest && !(amount > 0)){ err.textContent = 'Bitte einen Betrag eingeben.'; f.amount.focus(); return false; }
+      const rec = {id: r.id || newId(), name: f.name.value.trim() || 'Rate', rest, amount: rest ? 0 : amount, due: f.due.value, paidAt: f.paidAt.value};
+      T.rates = T.rates || []; const i = T.rates.findIndex(x => x.id === rec.id); if (i >= 0) T.rates[i] = {...T.rates[i], ...rec}; else T.rates.push(rec);
+      if (rec.paidAt && !(r0 && r0.paidAt) && f.querySelector('#tra-book').checked){
+        const amt = tripCalc(T).rates.find(x => x.id === rec.id).amt;
+        S.finance.tx.push({id:newId(), created:Date.now(), type:'ausgabe', amount:amt, date:rec.paidAt, text: T.name + ' – ' + rec.name, cat:'Urlaub', account:'bank', trip:T.id});
+      }
+      save('finance'); toast('Gespeichert');
+    });
+  const upd = () => {
+    const rest = form.querySelector('input[name=kind]:checked').value === 'rest'; form.querySelector('#tra-amtf').hidden = rest;
+    form.querySelector('#tra-bookf').hidden = !form.paidAt.value || !!(r0 && r0.paidAt);
+    const C = tripCalc(T), others = (T.rates || []).filter(x => !x.rest && x.id !== r.id).reduce((s, x) => s + x.amount, 0);
+    const a = rest ? Math.max(0, C.total - others) : (parseAmt(form.amount.value) || 0);
+    form.querySelector('#tra-hint').textContent = a > 0 ? `${rest ? 'Restbetrag ' : ''}${euro(a)}${C.persons ? ' · ' + euro(Math.round(a / C.persons)) + ' pro Person' : ''}` : '';
+  };
+  form.addEventListener('input', upd); form.addEventListener('change', upd); upd();
+  const del = form.querySelector('#tra-del');
+  if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich löschen?')) return; T.rates = T.rates.filter(x => x.id !== r0.id); save('finance'); closeDlg(); toast('Gelöscht'); });
+}
+function tripPartyDialog(T, p0){
+  const isNew = !p0, p = p0 || {name:'', persons:2, me:false};
+  const C = tripCalc(T), pc = p0 ? C.parties.find(x => x.id === p0.id) : null;
+  const form = openDlg(`
+    <h3>${isNew ? 'Teilnehmer hinzufügen' : esc(p.name)}</h3>
+    <div class="row2"><label class="field"><span>Name / Familie</span><input name="name" value="${esc(p.name)}" placeholder="z. B. Familie Hepp" ${isNew ? 'autofocus' : ''} id="tp-name"></label>
+      <div class="field"><span>Personen</span><div class="fx-step"><button type="button" class="btn sm" data-q="-1" aria-label="Weniger">−</button><input name="persons" inputmode="numeric" value="${Math.max(1, +p.persons || 1)}" id="tp-persons" aria-label="Anzahl Personen"><button type="button" class="btn sm" data-q="1" aria-label="Mehr">+</button></div></div></div>
+    <label class="bel-keep"><input type="checkbox" name="me" id="tp-me" ${p.me ? 'checked' : ''}><span>Das sind wir</span></label>
+    <p class="hint" id="tp-hint" style="margin:0"></p>
+    ${pc ? `<div class="box2"><span class="label">Zahlungen</span>
+      ${pc.pays.length ? `<div class="fx-tl" style="background:var(--surface)">${pc.pays.slice().sort((a, b) => a.date.localeCompare(b.date)).map(x => `<div><span>${fmtShort(x.date)}</span><span>${esc(x.note || 'Zahlung')}</span><b>${euro(x.amount)} <button type="button" class="linkbtn" data-delpay="${esc(x.id)}" aria-label="Zahlung löschen">✕</button></b></div>`).join('')}</div>` : '<p class="hint" style="margin:0">Noch nichts bezahlt.</p>'}
+      <div class="row2"><label class="field"><span>Neue Zahlung (€)</span><input class="amount-in" name="pay" inputmode="decimal" placeholder="${pc.rest > 0 ? amtInput(pc.late > 0 ? pc.late : pc.rest) : '0,00'}" id="tp-pay"></label><label class="field"><span>am</span><input type="date" name="paydate" value="${today()}" id="tp-paydate"></label></div>
+      <div class="tp-quick">${pc.late > 0 && pc.late !== pc.rest ? `<button type="button" class="btn sm" data-fill="${pc.late}">Fälliges ${euro(pc.late)}</button>` : ''}${pc.rest > 0 ? `<button type="button" class="btn sm" data-fill="${pc.rest}">Alles offene ${euro(pc.rest)}</button>` : ''}</div>
+      ${p.me ? '' : '<label class="bel-keep"><input type="checkbox" id="tp-book"><span>Geld kam auf unser Girokonto – dort als Einnahme buchen</span></label>'}
+    </div>` : ''}
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${isNew ? '' : '<button type="button" class="btn danger" id="tp-del">Entfernen</button>'}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">${pc ? 'Speichern' : 'Hinzufügen'}</button></div>`, f => {
+      const name = f.name.value.trim(), err = f.querySelector('#f-err');
+      if (!name){ err.textContent = 'Bitte einen Namen eingeben.'; f.name.focus(); return false; }
+      const persons = Math.max(1, Math.min(99, parseInt(f.persons.value, 10) || 1));
+      T.parties = T.parties || [];
+      if (f.me.checked) T.parties.forEach(x => { x.me = false; });
+      const rec = {id: p.id || newId(), name, persons, me: f.me.checked};
+      const i = T.parties.findIndex(x => x.id === rec.id); if (i >= 0) T.parties[i] = rec; else T.parties.push(rec);
+      let msg = isNew ? name + ' hinzugefügt' : 'Gespeichert';
+      if (pc && f.pay.value.trim()){
+        const a = parseAmt(f.pay.value);
+        if (!(a > 0)){ err.textContent = 'Bitte einen gültigen Betrag eingeben.'; return false; }
+        const pay = {id:newId(), party:rec.id, amount:a, date: f.paydate.value || today()};
+        const bk = f.querySelector('#tp-book');
+        if (bk && bk.checked){ const tx = {id:newId(), created:Date.now(), type:'einnahme', amount:a, date:pay.date, text: T.name + ' – Anteil ' + name, cat:'Urlaub', account:'bank', trip:T.id}; S.finance.tx.push(tx); pay.tx = tx.id; }
+        T.pays = T.pays || []; T.pays.push(pay); msg = euro(a) + ' von ' + name + ' eingetragen';
+      }
+      save('finance'); toast(msg);
+    });
+  const upd = () => { const n = Math.max(1, parseInt(form.persons.value, 10) || 1), others = C.persons - (pc ? pc.n : 0), tot = others + n;
+    form.querySelector('#tp-hint').textContent = C.total ? `Anteil: ${euro(Math.round(C.total * n / tot))} (${n} von ${tot} Personen, ${euro(Math.round(C.total / tot))} pro Person)` : ''; };
+  form.querySelectorAll('[data-q]').forEach(bt => bt.addEventListener('click', () => { form.persons.value = Math.max(1, Math.min(99, (parseInt(form.persons.value, 10) || 1) + +bt.dataset.q)); upd(); }));
+  form.querySelectorAll('[data-fill]').forEach(bt => bt.addEventListener('click', () => { form.pay.value = amtInput(+bt.dataset.fill); }));
+  form.querySelectorAll('[data-delpay]').forEach(bt => bt.addEventListener('click', () => {
+    if (!armed(bt, 'löschen?')) return;
+    const x = T.pays.find(y => y.id === bt.dataset.delpay); T.pays = T.pays.filter(y => y.id !== bt.dataset.delpay);
+    if (x && x.tx) S.finance.tx = S.finance.tx.filter(t => t.id !== x.tx);
+    save('finance'); toast('Zahlung gelöscht'); tripPartyDialog(T, T.parties.find(y => y.id === p0.id));
+  }));
+  form.addEventListener('input', upd); upd();
+  const del = form.querySelector('#tp-del');
+  if (del) del.addEventListener('click', () => {
+    if (pc.pays.length){ form.querySelector('#f-err').textContent = 'Es gibt schon Zahlungen. Lösch zuerst die Zahlungen, dann kannst du den Teilnehmer entfernen.'; return; }
+    if (!armed(del, 'Wirklich entfernen?')) return; T.parties = T.parties.filter(x => x.id !== p0.id); save('finance'); closeDlg(); toast('Entfernt');
+  });
+}
+function tripRefundDialog(T){
+  const C = tripCalc(T), R = T.refund || {};
+  const form = openDlg(`
+    <h3>Rückzahlung</h3>
+    <p class="hint" style="margin:0">Z. B. die Kaution nach dem Urlaub – ggf. abzüglich Schäden oder Nebenkosten. Die App verteilt den Betrag nach Personen.</p>
+    <label class="field"><span>Bezeichnung</span><input name="text" value="${esc(R.text || (C.deposit ? 'Kaution zurück' : 'Rückzahlung'))}" id="rf-text"></label>
+    <div class="row2"><label class="field"><span>Betrag gesamt (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="${amtInput(C.deposit) || '0,00'}" value="${R.amount ? amtInput(R.amount) : ''}" autofocus id="rf-amount"></label>
+      <label class="field"><span>Erhalten am</span><input type="date" name="date" value="${esc(R.date || today())}" id="rf-date"></label></div>
+    <div id="rf-list" class="kx-sum"></div>
+    <div class="err" id="f-err"></div>
+    <div class="dlg-actions">${R.amount ? '<button type="button" class="btn danger" id="rf-del">Entfernen</button>' : ''}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
+      const a = f.amount.value.trim() ? parseAmt(f.amount.value) : C.deposit;
+      if (!(a > 0)){ f.querySelector('#f-err').textContent = 'Bitte einen Betrag eingeben.'; return false; }
+      T.refund = {text: f.text.value.trim() || 'Rückzahlung', amount: a, date: f.date.value, done: R.done || []};
+      save('finance'); toast('Rückzahlung eingetragen');
+    });
+  const upd = () => { const a = form.amount.value.trim() ? (parseAmt(form.amount.value) || 0) : C.deposit;
+    form.querySelector('#rf-list').innerHTML = C.parties.map(p => `<div><span>${esc(p.name)} (${p.n})</span><b>${euro(C.share(a, p.n))}</b></div>`).join('') || '<div><span>Noch keine Teilnehmer</span><b></b></div>'; };
+  form.addEventListener('input', upd); upd();
+  const del = form.querySelector('#rf-del');
+  if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich entfernen?')) return; T.refund = null; save('finance'); closeDlg(); toast('Entfernt'); });
+}
+function tripShareText(T){
+  const C = tripCalc(T), L = [];
+  L.push('🏖 ' + T.name + (tripRange(T) ? ' (' + tripRange(T) + ')' : ''));
+  (T.costs || []).forEach(c => L.push(c.name + ': ' + euro(c.amount) + (c.deposit ? ' (kommt zurück)' : '')));
+  L.push('Gesamt: ' + euro(C.total) + (C.persons ? ' · ' + C.persons + ' Personen · ' + euro(Math.round(C.perPerson)) + ' pro Person' : ''));
+  if (C.rates.length){ L.push(''); C.rates.forEach(r => L.push(r.name + (r.due ? ' bis ' + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : ' sofort') + ': ' + euro(r.amt) + (C.persons ? ' (' + euro(Math.round(r.amt / C.persons)) + ' pro Person)' : ''))); }
+  if (C.parties.length){ L.push(''); C.parties.forEach(p => L.push(`${p.name} (${p.n} P.): Anteil ${euro(p.soll)}, bezahlt ${euro(p.paid)}, ${p.rest > 0 ? 'offen ' + euro(p.rest) + (p.late > 0 ? ' – davon ' + euro(p.late) + ' schon fällig' : '') : p.rest < 0 ? euro(-p.rest) + ' zu viel' : 'alles bezahlt ✓'}`)); }
+  if (T.refund && T.refund.amount){ L.push(''); L.push(T.refund.text + ': ' + euro(T.refund.amount) + ' → ' + C.parties.map(p => p.name + ' ' + euro(p.refund)).join(', ')); }
+  return L.join('\n').replace(/ /g, ' ');
+}
+async function tripShare(T){
+  const text = tripShareText(T);
+  try { if (navigator.share){ await navigator.share({title: T.name, text}); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(text); toast('Übersicht kopiert – jetzt z. B. in WhatsApp einfügen'); }
+  catch(e){ openDlg(`<h3>Übersicht</h3><textarea readonly rows="14" style="width:100%;font:inherit;font-size:.85rem">${esc(text)}</textarea><div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn primary" data-close>Fertig</button></div>`, () => {}); }
+}
 // Kacheln der Tagesgeld-Konten auf der Finanzseite
 function tgStrip(){
   const accs = tgList(), checks = S.finance.checks || [];
@@ -2243,7 +2524,8 @@ const FIX_PRESETS = [
   {t:'Streaming', type:'ausgabe', cat:'Abos', rhythm:'monthly'},
   {t:'Hausrat & Haftpflicht', type:'ausgabe', cat:'Versicherungen', rhythm:'yearly'},
   {t:'Gehalt', type:'einnahme', cat:'Gehalt', rhythm:'monthly'},
-  {t:'Kindergeld', type:'einnahme', cat:'Kindergeld', rhythm:'monthly', amount:25500}
+  {t:'Kindergeld', type:'einnahme', cat:'Kindergeld', rhythm:'monthly', amount:25500, per:'Kind'},
+  {t:'Kindertagespflege', type:'einnahme', cat:'Kindertagespflege', rhythm:'monthly', per:'Kind'}
 ];
 const occPerYear = r => { const n = Math.max(1, +r.every || 1); return ({weekly:52, biweekly:26, monthly:12, quarterly:4, halfyearly:2, yearly:1})[r.rhythm] || (r.rhythm === 'custom' ? ({d:365/n, w:52/n, m:12/n, y:1/n})[r.unit || 'm'] : 12); };
 const fixNext = r => r.paused ? null : nextDue(r, r.last || null);
@@ -2281,7 +2563,7 @@ function fixDueDialog(){
     <h3>${due.some(x => !isFix(x.r)) ? 'Fällige Buchungen bestätigen' : 'Fällige Fixkosten bestätigen'}</h3>
     <p class="hint" style="margin:0">Diese Buchungen werden nicht automatisch gebucht. Trag den echten Betrag ein und tippe auf „Buchen“.</p>
     <div class="fx-due">${due.map(({r, date, more}) => `<div class="fx-due-row" data-id="${esc(r.id)}" data-date="${date}">
-      <div><b>${esc(r.text)}</b><small>fällig ${fmtShort(date)}${date.slice(0,4) !== today().slice(0,4) ? ' ' + date.slice(0,4) : ''}${more ? ' · danach noch ' + more + ' weitere' : ''}</small></div>
+      <div><b>${esc(r.text)}</b><small>${qtyTxt(r, date) ? qtyTxt(r, date) + ' · ' : ''}fällig ${fmtShort(date)}${date.slice(0,4) !== today().slice(0,4) ? ' ' + date.slice(0,4) : ''}${more ? ' · danach noch ' + more + ' weitere' : ''}</small></div>
       <input class="amount-in" inputmode="decimal" value="${amtInput(amountAt(r, date))}" aria-label="Betrag für ${esc(r.text)}">
       <div class="fx-due-b"><button type="button" class="btn sm ghost" data-fx="skip">Überspringen</button><button type="button" class="btn sm primary" data-fx="book">Buchen</button></div>
     </div>`).join('')}</div>
@@ -2325,9 +2607,9 @@ function renderFixkosten(){
   const badge = r => `<span class="fx-b${r.rhythm === 'monthly' ? '' : ' alt'}">${esc(rhyLabel(r))}</span>`;
   const row = r => {
     const nx = fixNext(r), pm = perMonth(r), one = isCombined(), inc = r.type === 'einnahme';
-    const sub = [badge(r), r.paused ? 'pausiert' : nx ? 'nächste ' + fmtShort(nx) + (nx.slice(0,4) !== t0.slice(0,4) ? ' ' + nx.slice(0,4) : '') : 'beendet', r.confirm ? 'bestätigen' : '', one ? '' : (r.account === 'cash' ? 'Bargeld' : 'Bank'), r.beleg ? '📎' : ''].filter(Boolean).join(' · ');
+    const sub = [badge(r), qtyAt(r, nx || t0) > 1 ? esc(qtyAt(r, nx || t0) + ' ' + perPl(r.per || 'Kind')) : '', r.paused ? 'pausiert' : nx ? 'nächste ' + fmtShort(nx) + (nx.slice(0,4) !== t0.slice(0,4) ? ' ' + nx.slice(0,4) : '') : 'beendet', r.confirm ? 'bestätigen' : '', one ? '' : (r.account === 'cash' ? 'Bargeld' : 'Bank'), r.beleg ? '📎' : ''].filter(Boolean).join(' · ');
     return `<button type="button" class="fx-row${r.paused || !nx ? ' off' : ''}" data-act="fix-edit" data-id="${esc(r.id)}"><div><b>${esc(r.text)}</b><small>${sub}</small></div>
-      <div class="fx-amt"><b class="${inc ? 'pos-t' : 'neg-t'}">${inc ? '+' : '−'}${euro(amountAt(r, nx || t0))}</b>${occPerYear(r) !== 12 && nx ? `<small>≈ ${euro(Math.round(pm))} / Monat</small>` : ''}</div></button>`;
+      <div class="fx-amt"><b class="${inc ? 'pos-t' : 'neg-t'}">${inc ? '+' : '−'}${euro(amountAt(r, nx || t0))}</b>${qtyAt(r, nx || t0) > 1 ? `<small>${qtyTxt(r, nx || t0)}</small>` : ''}${occPerYear(r) !== 12 && nx ? `<small>≈ ${euro(Math.round(pm))} / Monat</small>` : ''}</div></button>`;
   };
   const sortPM = (a, b) => perMonth(b) - perMonth(a);
   const ended = list.filter(r => !fixActive(r));
@@ -2357,19 +2639,28 @@ function fixDialog(r0, preset){
   const nextFirst = (() => { const d = new Date(); return iso(new Date(d.getFullYear(), d.getMonth()+1, 1)); })();
   const r = r0 ? clone(r0) : Object.assign({type:'ausgabe', account:'bank', amount:0, text:'', cat:'', rhythm:'monthly', every:2, unit:'m', start:nextFirst, end:'', paused:false, confirm:false}, preset || {});
   const nx = isNew ? null : fixNext(r);
-  const curAmt = isNew ? r.amount : amountAt(r, nx || today());
+  const curTot = isNew ? r.amount : amountAt(r, nx || today()), curQty = isNew ? Math.max(1, +r.qty || 1) : qtyAt(r, nx || today()), curAmt = Math.round(curTot / curQty);
+  const multi = curQty > 1 || !!r.per;
   const cats = [...new Set([...S.finance.tx.map(x => x.cat).filter(Boolean), ...(S.finance.recurring || []).map(x => x.cat).filter(Boolean), ...DEFAULT_CATS])];
   const V = r.vertrag || {};
-  const hist = (r.changes || []).length ? [{from: r.start, amount: r.amount}, ...r.changes].map(c => `${euro(c.amount)} ab ${fmtShort(c.from)} ${c.from.slice(0,4)}`).join(' → ') : '';
+  const hist = (r.changes || []).length ? [{from: r.start, amount: r.amount, qty: r.qty}, ...r.changes].map(c => `${c.qty > 1 ? c.qty + ' × ' : ''}${euro(c.qty > 1 ? Math.round(c.amount / c.qty) : c.amount)} ab ${fmtShort(c.from)} ${c.from.slice(0,4)}`).join(' → ') : '';
   const form = openDlg(`
     <h3>${isNew ? 'Neue Fixkosten' : esc(r.text)}</h3>
     <div class="seg"><label><input type="radio" name="type" value="einnahme" ${r.type==='einnahme'?'checked':''}><span>Einnahme</span></label><label><input type="radio" name="type" value="ausgabe" ${r.type!=='einnahme'?'checked':''}><span>Ausgabe</span></label></div>
     ${isNew ? `<div class="field"><span>Schnell wählen</span><div class="mini-chips fx-pre">${FIX_PRESETS.map((p, i) => `<label><input type="radio" name="pre" value="${i}"><span>${esc(p.t)}</span></label>`).join('')}</div></div>` : ''}
     <div class="row2">
       <label class="field"><span>Bezeichnung</span><input name="text" value="${esc(r.text)}" placeholder="z. B. Miete" id="fx-text" ${isNew ? '' : ''}></label>
-      <label class="field"><span>Betrag (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(curAmt)}" id="fx-amount"></label>
+      <label class="field"><span id="fx-amtl">Betrag (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(curAmt)}" id="fx-amount"></label>
     </div>
-    ${isNew ? '' : `<div class="field fx-from" id="fx-fromf" hidden><span>Neuer Betrag gilt ab</span><input type="date" name="from" value="${esc(nx || today())}" id="fx-from"><small class="hint" style="margin:0">Bisherige Buchungen bleiben unverändert.</small></div>`}
+    <div class="fx-multi">
+      <label class="bel-keep"><input type="checkbox" id="fx-multi" ${multi ? 'checked' : ''}><span>Mehrfach – gleicher Betrag mehrmals <small>z. B. Kindergeld pro Kind</small></span></label>
+      <div class="fx-qty" id="fx-qtyf" ${multi ? '' : 'hidden'}>
+        <div class="fx-step"><button type="button" class="btn sm" data-q="-1" aria-label="Weniger">−</button><input name="qty" inputmode="numeric" value="${curQty}" id="fx-qty" aria-label="Anzahl"><button type="button" class="btn sm" data-q="1" aria-label="Mehr">+</button></div>
+        <span>×</span><input name="per" value="${esc(r.per || 'Kind')}" placeholder="Kind" maxlength="20" id="fx-per" aria-label="Einheit, z. B. Kind">
+        <b id="fx-tot" class="num"></b>
+      </div>
+    </div>
+    ${isNew ? '' : `<div class="field fx-from" id="fx-fromf" hidden><span>Neuer Betrag / neue Anzahl gilt ab</span><input type="date" name="from" value="${esc(nx || today())}" id="fx-from"><small class="hint" style="margin:0">Bisherige Buchungen bleiben unverändert.</small></div>`}
     ${hist ? `<p class="hint" style="margin:0">Verlauf: ${esc(hist)}</p>` : ''}
     <div class="field"><span>Rhythmus</span><div class="mini-chips fx-rhy">${FIX_RHY.map(([k, l]) => `<label><input type="radio" name="rhythm" value="${k}" ${r.rhythm===k?'checked':''}><span>${l}</span></label>`).join('')}</div></div>
     <div class="ivl" id="fx-ivl" ${r.rhythm==='custom' ? '' : 'hidden'}><span>Alle</span><input name="every" inputmode="numeric" value="${esc(String(r.every || 2))}" id="fx-every"><select name="unit" id="fx-unit">${Object.entries(FIX_UNITS).map(([k, [, pl]]) => `<option value="${k}" ${(r.unit||'m')===k?'selected':''}>${pl}</option>`).join('')}</select></div>
@@ -2398,7 +2689,8 @@ function fixDialog(r0, preset){
     <div class="err" id="f-err"></div>
     <div class="dlg-actions">${isNew ? '' : (nx ? '<button type="button" class="btn danger" id="fx-endbtn">Beenden</button>' : '<button type="button" class="btn danger" id="fx-del">Löschen</button>')}<span class="spacer"></span>
       <button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
-      const err = f.querySelector('#f-err'), amount = parseAmt(f.amount.value), text = f.text.value.trim();
+      const err = f.querySelector('#f-err'), unitAmt = parseAmt(f.amount.value), text = f.text.value.trim();
+      const isMulti = f.querySelector('#fx-multi').checked, qty = isMulti ? Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)) : 1, amount = unitAmt * qty;
       if (!text){ err.textContent = 'Bitte eine Bezeichnung eingeben, z. B. Miete.'; f.text.focus(); return false; }
       if (!(amount > 0)){ err.textContent = 'Bitte einen Betrag größer als 0 eingeben.'; f.amount.focus(); return false; }
       if (!f.start.value){ err.textContent = 'Bitte das Datum der ersten Fälligkeit wählen.'; return false; }
@@ -2408,13 +2700,15 @@ function fixDialog(r0, preset){
       const rec = {...(r0 || {}), id: r.id || newId(), type: f.querySelector('input[name=type]:checked').value, account: one ? (r.account || 'bank') : f.querySelector('input[name=account]:checked').value,
         text, cat: f.cat.value.trim(), rhythm, start: f.start.value, day: parseIso(f.start.value).getDate(), end: f.end.value, paused: !!r.paused, confirm: f.querySelector('input[name=confirm]:checked').value === '1', last: r.last || null};
       if (rhythm === 'custom'){ rec.every = every; rec.unit = f.unit.value; } else { delete rec.every; delete rec.unit; }
-      // Betrag: neu = Grundbetrag; geändert = ab Datum
-      if (isNew || !r0) rec.amount = amount;
-      else if (amount !== curAmt){
+      if (isMulti){ rec.per = f.per.value.trim() || 'Kind'; } else { delete rec.per; }
+      // Betrag: neu = Grundbetrag; geändert = ab Datum (auch neue Anzahl)
+      if (isNew || !r0){ rec.amount = amount; rec.qty = qty; }
+      else if (amount !== curTot || qty !== curQty){
         const from = (f.from && f.from.value) || today();
-        if (from <= rec.start){ rec.amount = amount; rec.changes = []; }
-        else { rec.changes = [...(r0.changes || []).filter(c => c.from < from), {from, amount}]; }
+        if (from <= rec.start){ rec.amount = amount; rec.qty = qty; rec.changes = []; }
+        else { rec.changes = [...(r0.changes || []).filter(c => c.from < from), {from, amount, qty}]; }
       }
+      if (rec.qty === 1) delete rec.qty;
       const v = {anbieter: f.anbieter.value.trim(), nr: f.vnr.value.trim(), bis: f.bis.value, fristN: f.fristN.value.trim() === '' ? '' : Math.max(0, parseInt(f.fristN.value, 10) || 0), fristU: f.fristU.value};
       if (v.anbieter || v.nr || v.bis) rec.vertrag = v; else delete rec.vertrag;
       belegApply(f, r, belSt, rec); delete rec.garantie;
@@ -2427,14 +2721,18 @@ function fixDialog(r0, preset){
     const rhythm = form.querySelector('input[name=rhythm]:checked').value;
     form.querySelector('#fx-ivl').hidden = rhythm !== 'custom';
     const pr = {rhythm, every: parseInt(form.every.value, 10) || 1, unit: form.unit.value, start: form.start.value, day: form.start.value ? parseIso(form.start.value).getDate() : 1, end: form.end.value, last: isNew ? null : r.last};
-    const a = parseAmt(form.amount.value) || 0, el = form.querySelector('#fx-sum');
+    const mOn = form.querySelector('#fx-multi').checked, q = mOn ? Math.max(1, parseInt(form.qty.value, 10) || 1) : 1, per = form.per.value.trim() || 'Kind';
+    form.querySelector('#fx-qtyf').hidden = !mOn;
+    form.querySelector('#fx-amtl').textContent = mOn ? 'Betrag je ' + per + ' (€)' : 'Betrag (€)';
+    const a = (parseAmt(form.amount.value) || 0) * q, el = form.querySelector('#fx-sum');
+    form.querySelector('#fx-tot').textContent = mOn && a > 0 ? '= ' + euro(a) : '';
     if (!pr.start){ el.textContent = ''; return; }
     const n1 = nextDue(pr, pr.last || null);
     let t = recSummary(pr) + (n1 ? ' · nächste Buchung ' + fmtShort(n1) + ' ' + n1.slice(0,4) : ' · keine weitere Buchung');
     if (a > 0 && occPerYear(pr) !== 12) t += ' · entspricht ' + euro(Math.round(a * occPerYear(pr) / 12)) + ' pro Monat';
     if (isNew && pr.start <= today()){ let n = 0, d = nextDue(pr, null); while (d && d <= today() && n < 400){ n++; d = nextDue(pr, d); } if (n) t += ` · beim Speichern ${n === 1 ? 'wird 1 fällige Buchung' : 'werden ' + n + ' fällige Buchungen'} eingetragen`; }
     el.textContent = t;
-    const fv = form.querySelector('#fx-fromf'); if (fv) fv.hidden = Math.abs((parseAmt(form.amount.value) || 0) - curAmt) < 1;
+    const fv = form.querySelector('#fx-fromf'); if (fv) fv.hidden = Math.abs(a - curTot) < 1 && q === curQty;
   };
   const notice = () => {
     const v = {bis: form.bis.value, fristN: form.fristN.value, fristU: form.fristU.value}, el = form.querySelector('#fx-notice');
@@ -2449,14 +2747,16 @@ function fixDialog(r0, preset){
     form.querySelector(`input[name=type][value=${p.type}]`).checked = true;
     form.querySelector(`input[name=rhythm][value=${p.rhythm}]`).checked = true;
     if (p.amount) form.amount.value = amtInput(p.amount);
+    form.querySelector('#fx-multi').checked = !!p.per; if (p.per) form.per.value = p.per;
     if (p.day){ const s0 = parseIso(form.start.value || nextFirst); s0.setDate(p.day); form.start.value = iso(s0); }
     sum(); form.amount.focus();
   }));
+  form.querySelectorAll('[data-q]').forEach(bt => bt.addEventListener('click', () => { form.qty.value = Math.max(1, Math.min(99, (parseInt(form.qty.value, 10) || 1) + +bt.dataset.q)); sum(); }));
   sum(); notice();
   const g = id => form.querySelector(id);
   if (g('#fx-pause')) g('#fx-pause').addEventListener('click', () => { r0.paused = !r0.paused; save('finance'); closeDlg(); toast(r0.paused ? 'Pausiert – es wird nichts gebucht' : 'Läuft wieder'); });
   if (g('#fx-skip')) g('#fx-skip').addEventListener('click', () => { r0.last = nx; save('finance'); closeDlg(); toast(fmtShort(nx) + ' übersprungen'); });
-  if (g('#fx-now')) g('#fx-now').addEventListener('click', () => { const a = amountAt(r0, nx); S.finance.tx.push({id:newId(), created:Date.now(), type:r0.type, amount:a, date:nx, text:r0.text, cat:r0.cat||'', account:r0.account||'bank', rec:r0.id}); r0.last = nx; save('finance'); closeDlg(); toast(euro(a) + ' gebucht'); });
+  if (g('#fx-now')) g('#fx-now').addEventListener('click', () => { const a = amountAt(r0, nx); S.finance.tx.push(recTx(r0, nx, a, 0)); r0.last = nx; save('finance'); closeDlg(); toast(euro(a) + ' gebucht'); });
   if (g('#fx-endbtn')) g('#fx-endbtn').addEventListener('click', () => { const b = g('#fx-endbtn'); if (!armed(b, 'Wirklich beenden?')) return; r0.end = today(); save('finance'); closeDlg(); toast('Beendet – bisherige Buchungen bleiben'); });
   if (g('#fx-del')) g('#fx-del').addEventListener('click', () => { const b = g('#fx-del'); if (!armed(b, 'Wirklich löschen?')) return; S.finance.recurring = S.finance.recurring.filter(x => x.id !== r0.id); if (r0.beleg) belegMaybeDelete(r0.beleg); save('finance'); closeDlg(); toast('Gelöscht – bisherige Buchungen bleiben'); });
 }
@@ -4376,6 +4676,23 @@ $('#main').addEventListener('click', e => {
   else if (a==='ueb-edit'){ const r = S.finance.recurring.find(x=>x.id===b.dataset.id); if (r) requirePin('Das Ändern von Umbuchungen', () => r.type==='umbuchung' ? uebRecDialog(r) : recDialog(r)); }
   else if (a==='recon') reconDialog();
   else if (a==='bilanz') bilanzDialog();
+  else if (a==='trip-new') tripDialog();
+  else if (a==='trip-open'){ ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
+  else if (a==='trip-back'){ ui.trip = null; render(); window.scrollTo(0,0); }
+  else if (a.startsWith('trip-')){
+    const T = tripById(ui.trip); if (!T) return;
+    const id = b.dataset.id;
+    if (a==='trip-edit') tripDialog(T);
+    else if (a==='trip-share') tripShare(T);
+    else if (a==='trip-cost-new') tripCostDialog(T);
+    else if (a==='trip-cost') tripCostDialog(T, (T.costs||[]).find(x => x.id===id));
+    else if (a==='trip-rate-new') tripRateDialog(T);
+    else if (a==='trip-rate') tripRateDialog(T, (T.rates||[]).find(x => x.id===id));
+    else if (a==='trip-party-new') tripPartyDialog(T);
+    else if (a==='trip-party') tripPartyDialog(T, (T.parties||[]).find(x => x.id===id));
+    else if (a==='trip-refund') tripRefundDialog(T);
+    else if (a==='trip-refund-done'){ T.refund.done = T.refund.done || []; const k = T.refund.done.indexOf(id); if (k >= 0) T.refund.done.splice(k, 1); else T.refund.done.push(id); save('finance'); render(); }
+  }
   else if (a==='goto-tg'){ ui.tab = 'sparen'; lsSet('tab','sparen'); render(); window.scrollTo(0,0); }
   else if (a==='rec-new-save') requirePin('Das Anlegen von Sparplänen', () => recDialog(null, 'save'));
   else if (a==='save-out') saveDialog(null, 'entsparen');
