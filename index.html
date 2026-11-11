@@ -389,6 +389,9 @@ dialog.bel-dlg::backdrop{background:rgba(0,0,0,.6)}
 .kx-tab td{padding:7px 4px;border-top:1px solid var(--line);text-align:right;font-family:var(--f-num)}.kx-tab td:first-child{font-family:inherit}
 .kx-sum{display:grid;gap:6px;padding:12px;border-radius:12px;background:var(--sunk)}.kx-sum div{display:flex;justify-content:space-between;gap:10px;font-size:.9rem}.kx-sum b{font-family:var(--f-num)}
 .kx-bars{display:flex;gap:8px;align-items:flex-end;height:96px;padding:4px 2px}.kx-bars div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}.kx-bars i{display:block;width:100%;max-width:38px;border-radius:6px 6px 2px 2px;background:color-mix(in srgb,var(--accent) 45%,var(--sunk))}
+.tp-views{display:flex;flex-wrap:wrap;gap:6px;padding:3px;border-radius:12px;background:var(--sunk)}
+.tp-views button{flex:1 1 auto;min-width:0;padding:7px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.tp-views button[aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .tp-list{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);overflow:hidden}
 .tp-r{display:grid;grid-template-columns:minmax(0,1fr) 62px 62px 74px;gap:8px;align-items:center;width:100%;padding:10px 12px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;text-align:right;cursor:pointer}
 .tp-r>span{font-family:var(--f-num);font-size:.84rem;white-space:nowrap}.tp-r .tp-n{text-align:left;font-family:inherit;white-space:normal;min-width:0}
@@ -676,9 +679,13 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.4.1';
+const APP_VERSION = '1.4.2';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.4.2','11.11.2026, 19:39 Uhr',[
+    'Urlaub: Über der Tabelle „Wer zahlt was?“ lässt sich zwischen „Gesamt“ und jeder einzelnen Rate umschalten – je Familie Anteil der Rate, bezahlt und offen',
+    'Zahlungen werden dabei zuerst auf die frühere Rate angerechnet; offene, schon fällige Raten sind rot',
+    'Beim Antippen einer Familie steht bei jeder Rate, ob sie bezahlt ist oder wie viel noch fehlt']],
   ['1.4.1','11.11.2026, 18:37 Uhr',[
     'Urlaub: „Wer zahlt was?“ ist jetzt eine kompakte Tabelle mit einer Zeile pro Familie (Anteil, Bezahlt, Offen) und Gesamtzeile – kein seitliches Scrollen mehr, egal wie viele Familien',
     'Was je Rate auf eine Familie entfällt, steht jetzt beim Antippen der Familie']],
@@ -2286,7 +2293,8 @@ function tripCalc(T){
     const rs = rates.map(r => shareP(r.amt, p.id)), soll = shareP(total, p.id);
     let dueNow = 0; rates.forEach((r, i) => { if (!r.due || r.due <= t0) dueNow += rs[i]; }); if (!rates.length) dueNow = soll; dueNow = Math.min(dueNow, soll);
     const refund = T.refund && T.refund.amount ? shareP(T.refund.amount, p.id) : 0;
-    return {...p, n, pays, paid, soll, rest: soll - paid, late: Math.max(0, dueNow - paid), refund, refunded: !!(T.refund && (T.refund.done || []).includes(p.id))};
+    let pool = paid; const byRate = {}; rates.forEach((r, i) => { const got = Math.max(0, Math.min(rs[i], pool)); pool -= got; byRate[r.id] = {soll: rs[i], paid: got, open: rs[i] - got, due: r.due}; });
+    return {...p, n, pays, paid, soll, byRate, rest: soll - paid, late: Math.max(0, dueNow - paid), refund, refunded: !!(T.refund && (T.refund.done || []).includes(p.id))};
   });
   const paid = parties.reduce((s, p) => s + p.paid, 0);
   return {total, deposit, persons, perPerson: persons ? total / persons : 0, rates, parties, paid, rest: total - paid, fixedOver: fixed > total, share, shareP};
@@ -2317,11 +2325,17 @@ function renderTrip(T){
   const rates = C.rates.map(r => { const over = r.due && r.due < t0 && !r.paidAt;
     return `<button type="button" class="fx-row" data-act="trip-rate" data-id="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + fmtShort(r.due) + ' ' + r.due.slice(0,4) : 'sofort fällig'}${r.rest ? ' · Restbetrag' : ''} · ${perP(r.amt, C)} pro Person${r.paidAt ? ` · <span class="pos-t">an Vermieter bezahlt ${fmtShort(r.paidAt)}</span>` : over ? ' · <span class="neg-t">noch nicht an Vermieter bezahlt</span>' : ''}</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></button>`; }).join('');
   const nf = v => euro(v).replace(/\s*€/, '');
-  const parties = C.parties.map(p => `<button type="button" class="tp-r${p.rest <= 0 ? ' done' : ''}" data-act="trip-party" data-id="${esc(p.id)}">
-      <span class="tp-n"><b>${esc(p.name)}${p.me ? ' <span class="fx-b">wir</span>' : ''}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}${p.late > 0 ? ` · <span class="neg-t">${nf(p.late)} fällig</span>` : ''}</small></span>
-      <span>${nf(p.soll)}</span><span class="pos-t">${nf(p.paid)}</span>
-      <span class="tp-o ${p.rest > 0 ? (p.late > 0 ? 'neg-t' : '') : 'pos-t'}">${p.rest > 0 ? nf(p.rest) : p.rest < 0 ? '+' + nf(-p.rest) : '✓'}</span></button>`).join('');
-  const sumRow = C.parties.length > 1 ? `<div class="tp-r tp-sum"><span class="tp-n"><b>Gesamt</b><small>${C.persons} Personen</small></span><span>${nf(C.parties.reduce((s, p) => s + p.soll, 0))}</span><span class="pos-t">${nf(C.paid)}</span><span class="tp-o">${nf(C.parties.reduce((s, p) => s + Math.max(0, p.rest), 0))}</span></div>` : '';
+  const view = C.rates.some(r => r.id === ui.tripView) ? ui.tripView : 'all', vr = C.rates.find(r => r.id === view);
+  const row = p => { const x = vr ? p.byRate[vr.id] : {soll:p.soll, paid:p.paid, open:p.rest}, lateR = vr ? (x.open > 0 && (!vr.due || vr.due <= t0)) : p.late > 0;
+    return `<button type="button" class="tp-r${x.open <= 0 ? ' done' : ''}" data-act="trip-party" data-id="${esc(p.id)}">
+      <span class="tp-n"><b>${esc(p.name)}${p.me ? ' <span class="fx-b">wir</span>' : ''}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}${!vr && p.late > 0 ? ` · <span class="neg-t">${nf(p.late)} fällig</span>` : ''}</small></span>
+      <span>${nf(x.soll)}</span><span class="pos-t">${nf(x.paid)}</span>
+      <span class="tp-o ${x.open > 0 ? (lateR ? 'neg-t' : '') : 'pos-t'}">${x.open > 0 ? nf(x.open) : x.open < 0 ? '+' + nf(-x.open) : '✓'}</span></button>`; };
+  const parties = C.parties.map(row).join('');
+  const tot = k => C.parties.reduce((s, p) => s + (vr ? p.byRate[vr.id][k] : k === 'soll' ? p.soll : k === 'paid' ? p.paid : Math.max(0, p.rest)), 0);
+  const sumRow = C.parties.length > 1 ? `<div class="tp-r tp-sum"><span class="tp-n"><b>Gesamt</b><small>${C.persons} Personen</small></span><span>${nf(tot('soll'))}</span><span class="pos-t">${nf(tot('paid'))}</span><span class="tp-o">${nf(tot('open'))}</span></div>` : '';
+  const views = C.rates.length && C.parties.length ? `<div class="tp-views" role="tablist">${[['all','Gesamt'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="trip-view" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
+  const vInfo = vr ? `<p class="hint" style="margin:0 2px">${esc(vr.name)}: ${euro(vr.amt)} · ${perP(vr.amt, C)} pro Person · ${vr.due ? (vr.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(vr.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'}. Zahlungen werden zuerst auf die frühere Rate angerechnet.</p>` : `<p class="hint" style="margin:0 2px">Familie antippen: Zahlung eintragen, Personenzahl ändern, Raten ansehen.</p>`;
   const R = T.refund || {};
   return `<div class="fx-page">
   <div class="sec-head" style="margin:0"><button type="button" class="btn ghost sm" data-act="trip-back">‹ Urlaube</button><span style="margin-right:auto"></span><button type="button" class="btn sm" data-act="trip-share">Teilen</button><button type="button" class="btn sm" data-act="trip-edit">Bearbeiten</button></div>
@@ -2335,7 +2349,7 @@ function renderTrip(T){
   <div class="fx-h"><span>Raten</span><span><button type="button" class="linkbtn" data-act="trip-rate-new">+ Rate</button></span></div>
   <div class="fx-list">${rates || '<div class="fx-row" style="cursor:default"><div><small>Ohne Raten ist alles sofort fällig. Leg z. B. „1. Rate sofort“ und „2. Rate“ als Restbetrag an.</small></div><div></div></div>'}</div>
   <div class="fx-h"><span>Wer zahlt was?</span><span><button type="button" class="linkbtn" data-act="trip-party-new">+ Teilnehmer</button></span></div>
-  ${parties ? `<p class="hint" style="margin:0 2px">Familie antippen: Zahlung eintragen, Personenzahl ändern, Raten ansehen.</p><div class="tp-list"><div class="tp-r tp-hd"><span>Familie</span><span>Anteil</span><span>Bezahlt</span><span>Offen</span></div>${parties}${sumRow}</div>` : '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div></div>'}
+  ${parties ? `${views}${vInfo}<div class="tp-list"><div class="tp-r tp-hd"><span>Familie</span><span>${vr ? 'Rate' : 'Anteil'}</span><span>Bezahlt</span><span>Offen</span></div>${parties}${sumRow}</div>` : '<div class="fx-list"><div class="fx-row" style="cursor:default"><div><small>Noch keine Teilnehmer. Leg jede Familie oder Person mit ihrer Personenzahl an.</small></div><div></div></div></div>'}
   <div class="fx-h"><span>Rückzahlung</span><span><button type="button" class="linkbtn" data-act="trip-refund">${R.amount ? 'Ändern' : 'Eintragen'}</button></span></div>
   <div class="fx-list">${R.amount ? `<div class="fx-row" style="cursor:default"><div><b>${esc(R.text || 'Rückzahlung')}</b><small>${R.date ? fmtShort(R.date) + ' ' + R.date.slice(0,4) + ' · ' : ''}${perP(R.amount, C)} pro Person</small></div><div class="fx-amt"><b class="pos-t">${euro(R.amount)}</b></div></div>
       ${C.parties.map(p => `<button type="button" class="fx-row${p.refunded ? ' off' : ''}" data-act="trip-refund-done" data-id="${esc(p.id)}"><div><b>${esc(p.name)}</b><small>${p.refunded ? 'ausgezahlt ✓ – antippen zum Zurücksetzen' : 'antippen, wenn ausgezahlt'}</small></div><div class="fx-amt"><b>${euro(p.refund)}</b></div></button>`).join('')}`
@@ -2440,7 +2454,7 @@ function tripPartyDialog(T, p0){
       <div class="field"><span>Personen</span><div class="fx-step"><button type="button" class="btn sm" data-q="-1" aria-label="Weniger">−</button><input name="persons" inputmode="numeric" value="${Math.max(1, +p.persons || 1)}" id="tp-persons" aria-label="Anzahl Personen"><button type="button" class="btn sm" data-q="1" aria-label="Mehr">+</button></div></div></div>
     <label class="bel-keep"><input type="checkbox" name="me" id="tp-me" ${p.me ? 'checked' : ''}><span>Das sind wir</span></label>
     <p class="hint" id="tp-hint" style="margin:0"></p>
-    ${pc && C.rates.length ? `<div class="kx-sum">${C.rates.map(r => `<div><span>${esc(r.name)} <small style="color:var(--muted)">${r.due ? (r.due <= today() ? 'fällig seit ' : 'bis ') + fmtShort(r.due) : 'sofort'}</small></span><b>${euro(C.shareP(r.amt, pc.id))}</b></div>`).join('')}<div style="border-top:1px solid var(--line);padding-top:6px"><span>Anteil gesamt</span><b>${euro(pc.soll)}</b></div><div><span>Bezahlt</span><b class="pos-t">${euro(pc.paid)}</b></div><div><span><b>${pc.rest < 0 ? 'Zu viel bezahlt' : 'Offen'}</b></span><b class="${pc.rest > 0 ? (pc.late > 0 ? 'neg-t' : '') : 'pos-t'}">${pc.rest === 0 ? '✓' : euro(Math.abs(pc.rest))}</b></div></div>` : ''}
+    ${pc && C.rates.length ? `<div class="kx-sum">${C.rates.map(r => { const x = pc.byRate[r.id]; return `<div><span>${esc(r.name)} <small style="color:var(--muted)">${r.due ? (r.due <= today() ? 'fällig seit ' : 'bis ') + fmtShort(r.due) : 'sofort'}</small></span><b>${euro(x.soll)} <small class="${x.open > 0 ? ((!r.due || r.due <= today()) ? 'neg-t' : '') : 'pos-t'}" style="font-weight:600">${x.open > 0 ? (x.paid > 0 ? 'noch ' + euro(x.open) : 'offen') : '✓'}</small></b></div>`; }).join('')}<div style="border-top:1px solid var(--line);padding-top:6px"><span>Anteil gesamt</span><b>${euro(pc.soll)}</b></div><div><span>Bezahlt</span><b class="pos-t">${euro(pc.paid)}</b></div><div><span><b>${pc.rest < 0 ? 'Zu viel bezahlt' : 'Offen'}</b></span><b class="${pc.rest > 0 ? (pc.late > 0 ? 'neg-t' : '') : 'pos-t'}">${pc.rest === 0 ? '✓' : euro(Math.abs(pc.rest))}</b></div></div>` : ''}
     ${pc ? `<div class="box2"><span class="label">Zahlungen</span>
       ${pc.pays.length ? `<div class="fx-tl" style="background:var(--surface)">${pc.pays.slice().sort((a, b) => a.date.localeCompare(b.date)).map(x => `<div><span>${fmtShort(x.date)}</span><span>${esc(x.note || 'Zahlung')}</span><b>${euro(x.amount)} <button type="button" class="linkbtn" data-delpay="${esc(x.id)}" aria-label="Zahlung löschen">✕</button></b></div>`).join('')}</div>` : '<p class="hint" style="margin:0">Noch nichts bezahlt.</p>'}
       <div class="row2"><label class="field"><span>Neue Zahlung (€)</span><input class="amount-in" name="pay" inputmode="decimal" placeholder="${pc.rest > 0 ? amtInput(pc.late > 0 ? pc.late : pc.rest) : '0,00'}" id="tp-pay"></label><label class="field"><span>am</span><input type="date" name="paydate" value="${today()}" id="tp-paydate"></label></div>
@@ -4698,7 +4712,7 @@ $('#main').addEventListener('click', e => {
   else if (a==='recon') reconDialog();
   else if (a==='bilanz') bilanzDialog();
   else if (a==='trip-new') tripDialog();
-  else if (a==='trip-open'){ ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
+  else if (a==='trip-open'){ ui.tripView = 'all'; ui.trip = b.dataset.id; render(); window.scrollTo(0,0); }
   else if (a==='trip-back'){ ui.trip = null; render(); window.scrollTo(0,0); }
   else if (a.startsWith('trip-')){
     const T = tripById(ui.trip); if (!T) return;
@@ -4712,6 +4726,7 @@ $('#main').addEventListener('click', e => {
     else if (a==='trip-party-new') tripPartyDialog(T);
     else if (a==='trip-party') tripPartyDialog(T, (T.parties||[]).find(x => x.id===id));
     else if (a==='trip-refund') tripRefundDialog(T);
+    else if (a==='trip-view'){ ui.tripView = b.dataset.v; render(); }
     else if (a==='trip-refund-done'){ T.refund.done = T.refund.done || []; const k = T.refund.done.indexOf(id); if (k >= 0) T.refund.done.splice(k, 1); else T.refund.done.push(id); save('finance'); render(); }
   }
   else if (a==='goto-tg'){ ui.tab = 'sparen'; lsSet('tab','sparen'); render(); window.scrollTo(0,0); }
