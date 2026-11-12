@@ -733,9 +733,12 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.10.1';
+const APP_VERSION = '1.10.2';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.10.2','13.11.2026, 00:21 Uhr',[
+    'Urlaub: Bei der Kaution steht nicht mehr „kommt zurück“, weil sie mit den Nebenkosten verrechnet wird – auch nicht im geteilten Link und im Text',
+    'Die Rückzahlung heißt bei einer Kaution jetzt „Abrechnung Kaution“']],
   ['1.10.1','12.11.2026, 04:01 Uhr',[
     'Geteilte Ansicht: unten steht kein „Finanzen-App öffnen“ mehr',
     'In deiner eigenen Vorschau gibt es oben „Vorschau beenden“',
@@ -2439,7 +2442,7 @@ function renderUrlaub(){
 }
 function renderTrip(T){
   const C = tripCalc(T), t0 = today(), pct = C.total ? Math.min(100, C.paid / C.total * 100) : 0;
-  const costs = (T.costs || []).map(c => `<button type="button" class="fx-row" data-act="trip-cost" data-id="${esc(c.id)}"><div><b>${esc(c.name)}</b><small>${c.deposit ? '<span class="fx-b alt">kommt zurück</span> · ' : ''}${perP(c.amount, C)} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></button>`).join('');
+  const costs = (T.costs || []).map(c => `<button type="button" class="fx-row" data-act="trip-cost" data-id="${esc(c.id)}"><div><b>${esc(c.name)}</b><small>${perP(c.amount, C)} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></button>`).join('');
   const rates = C.rates.map(r => { const over = r.due && r.due < t0 && !r.paidAt;
     return `<button type="button" class="fx-row" data-act="trip-rate" data-id="${esc(r.id)}"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + fmtShort(r.due) + ' ' + r.due.slice(0,4) : 'sofort fällig'}${r.rest ? ' · Restbetrag' : ''} · ${perP(r.amt, C)} pro Person${r.paidAt ? ` · <span class="pos-t">an Vermieter bezahlt ${fmtShort(r.paidAt)}</span>` : over ? ' · <span class="neg-t">noch nicht an Vermieter bezahlt</span>' : ''}</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></button>`; }).join('');
   const nf = v => euro(v).replace(/\s*€/, '');
@@ -2474,7 +2477,7 @@ function renderTrip(T){
   <div class="fx-h"><span>Rückzahlung</span><span><button type="button" class="linkbtn" data-act="trip-refund">${R.amount ? 'Ändern' : 'Eintragen'}</button></span></div>
   <div class="fx-list">${R.amount ? `<div class="fx-row" style="cursor:default"><div><b>${esc(R.text || 'Rückzahlung')}</b><small>${R.date ? fmtShort(R.date) + ' ' + R.date.slice(0,4) + ' · ' : ''}${perP(R.amount, C)} pro Person</small></div><div class="fx-amt"><b class="pos-t">${euro(R.amount)}</b></div></div>
       ${C.parties.map(p => `<button type="button" class="fx-row${p.refunded ? ' off' : ''}" data-act="trip-refund-done" data-id="${esc(p.id)}"><div><b>${esc(p.name)}</b><small>${p.refunded ? 'ausgezahlt ✓ – antippen zum Zurücksetzen' : 'antippen, wenn ausgezahlt'}</small></div><div class="fx-amt"><b>${euro(p.refund)}</b></div></button>`).join('')}`
-    : `<div class="fx-row" style="cursor:default"><div><small>${C.deposit ? `Nach dem Urlaub: Kaution von ${euro(C.deposit)} zurück? Die App verteilt den Betrag auf alle Personen.` : 'Z. B. Kaution oder Erstattung nach dem Urlaub – wird nach Personen aufgeteilt.'}</small></div><div></div></div>`}</div>
+    : `<div class="fx-row" style="cursor:default"><div><small>${C.deposit ? `Nach dem Urlaub: Was von der Kaution (${euro(C.deposit)}) nach Abzug der Nebenkosten übrig bleibt, hier eintragen. Die App verteilt es auf alle Personen.` : 'Z. B. Kaution oder Erstattung nach dem Urlaub – wird nach Personen aufgeteilt.'}</small></div><div></div></div>`}</div>
   </div>`;
 }
 /* ---------- Dialoge ---------- */
@@ -2515,7 +2518,7 @@ function tripCostDialog(T, c0){
     <h3>${isNew ? 'Kosten hinzufügen' : 'Kosten ändern'}</h3>
     <label class="field"><span>Bezeichnung</span><input name="name" list="tc-list" value="${esc(c.name)}" placeholder="z. B. Preis Haus" autofocus id="tc-name"><datalist id="tc-list">${['Preis Haus','Ferienwohnung','Kaution','Endreinigung','Bettwäsche & Handtücher','Kurtaxe','Strom & Nebenkosten','Fähre','Maut'].map(x => `<option value="${x}">`).join('')}</datalist></label>
     <label class="field"><span>Betrag gesamt (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="0,00" value="${amtInput(c.amount)}" id="tc-amount"></label>
-    <label class="bel-keep"><input type="checkbox" name="deposit" id="tc-dep" ${c.deposit ? 'checked' : ''}><span>Kaution – kommt nach dem Urlaub zurück</span></label>
+    <label class="bel-keep"><input type="checkbox" name="deposit" id="tc-dep" ${c.deposit ? 'checked' : ''}><span>Kaution (wird nach dem Urlaub abgerechnet)</span></label>
     <p class="hint" id="tc-hint" style="margin:0"></p>
     <div class="err" id="f-err"></div>
     <div class="dlg-actions">${isNew ? '' : '<button type="button" class="btn danger" id="tc-del">Löschen</button>'}<span class="spacer"></span><button type="button" class="btn ghost" data-close>Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div>`, f => {
@@ -2623,8 +2626,8 @@ function tripRefundDialog(T){
   const C = tripCalc(T), R = T.refund || {};
   const form = openDlg(`
     <h3>Rückzahlung</h3>
-    <p class="hint" style="margin:0">Z. B. die Kaution nach dem Urlaub – ggf. abzüglich Schäden oder Nebenkosten. Die App verteilt den Betrag nach Personen.</p>
-    <label class="field"><span>Bezeichnung</span><input name="text" value="${esc(R.text || (C.deposit ? 'Kaution zurück' : 'Rückzahlung'))}" id="rf-text"></label>
+    <p class="hint" style="margin:0">Z. B. was von der Kaution nach Abzug von Nebenkosten oder Schäden übrig bleibt. Die App verteilt den Betrag nach Personen.</p>
+    <label class="field"><span>Bezeichnung</span><input name="text" value="${esc(R.text || (C.deposit ? 'Abrechnung Kaution' : 'Rückzahlung'))}" id="rf-text"></label>
     <div class="row2"><label class="field"><span>Betrag gesamt (€)</span><input class="amount-in" name="amount" inputmode="decimal" placeholder="${amtInput(C.deposit) || '0,00'}" value="${R.amount ? amtInput(R.amount) : ''}" autofocus id="rf-amount"></label>
       <label class="field"><span>Erhalten am</span><input type="date" name="date" value="${esc(R.date || today())}" id="rf-date"></label></div>
     <div id="rf-list" class="kx-sum"></div>
@@ -2653,7 +2656,7 @@ function tripShareTextAnon(T, anon){
 function tripShareText(T){
   const C = tripCalc(T), L = [];
   L.push('🏖 ' + T.name + (tripRange(T) ? ' (' + tripRange(T) + ')' : ''));
-  (T.costs || []).forEach(c => L.push(c.name + ': ' + euro(c.amount) + (c.deposit ? ' (kommt zurück)' : '')));
+  (T.costs || []).forEach(c => L.push(c.name + ': ' + euro(c.amount)));
   L.push('Gesamt: ' + euro(C.total) + (C.persons ? ' · ' + C.persons + ' Personen · ' + euro(Math.round(C.perPerson)) + ' pro Person' : ''));
   if (C.rates.length){ L.push(''); C.rates.forEach(r => L.push(r.name + (r.due ? ' bis ' + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : ' sofort') + ': ' + euro(r.amt) + (C.persons ? ' (' + euro(Math.round(r.amt / C.persons)) + ' pro Person)' : ''))); }
   if (C.parties.length){ L.push(''); C.parties.forEach(p => L.push(`${p.name} (${p.n} P.): Anteil ${euro(p.soll)}, bezahlt ${euro(p.paid)}, ${p.rest > 0 ? 'offen ' + euro(p.rest) + (p.late > 0 ? ' – davon ' + euro(p.late) + ' schon fällig' : '') : p.rest < 0 ? euro(-p.rest) + ' zu viel' : 'alles bezahlt ✓'}`)); }
@@ -2868,7 +2871,7 @@ function renderSharedAnon(){
   </div>
   ${C.rates.length ? `<div class="vw-leg" style="display:grid;gap:2px">${C.rates.map(r => `<span><b>${esc(r.name)}</b>&nbsp;${dueTxt(r)}</span>`).join('')}</div>` : ''}
   <div class="fx-h"><span>Kosten</span><span></span></div>
-  <div class="fx-list">${(T.costs || []).map(c => `<div class="fx-row" style="cursor:default"><div><b>${esc(c.name)}</b><small>${c.deposit ? '<span class="fx-b alt">kommt zurück</span> · ' : ''}${euro(per(c.amount, 1))} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></div>`).join('')}</div>
+  <div class="fx-list">${(T.costs || []).map(c => `<div class="fx-row" style="cursor:default"><div><b>${esc(c.name)}</b><small>${euro(per(c.amount, 1))} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></div>`).join('')}</div>
   ${T.refund ? `<div class="fx-h"><span>${esc(T.refund.text)}</span><span></span></div><div class="fx-list">${anon.map(n => `<div class="fx-row" style="cursor:default"><div><b>${lab(n)}</b></div><div class="fx-amt"><b class="pos-t">${euro(per(T.refund.amount, n))}</b></div></div>`).join('')}</div>` : ''}
   ${T.payInfo ? `<div class="fx-h"><span>So bezahlt ihr</span><span></span></div>${payBox(T, true, anon.map(n => [lab(n), perT(n)]))}` : ''}
   <p class="hint" style="margin:0">Stand: ${shared.ts ? new Date(shared.ts).toLocaleString('de-DE', {dateStyle:'medium', timeStyle:'short'}) + ' Uhr' : new Date(stand + 'T12:00:00').toLocaleDateString('de-DE')} · Nur zum Ansehen</p>
@@ -2897,7 +2900,7 @@ function renderShared(){
     <div class="fx-grid"><div><small>Pro Person</small><b>${C.persons ? euro(Math.round(C.perPerson)) : '–'}</b></div><div><small>Personen</small><b>${C.persons}</b></div>
     ${withPaid ? `<div><small>Eingesammelt</small><b class="pos-t">${euro(C.paid)}</b></div><div><small>Noch offen</small><b class="${C.rest > 0 ? 'neg-t' : ''}">${euro(Math.max(0, C.rest))}</b></div>` : ''}</div></section>
   <div class="fx-h"><span>Kosten</span><span></span></div>
-  <div class="fx-list">${(T.costs || []).map(c => `<div class="fx-row" style="cursor:default"><div><b>${esc(c.name)}</b><small>${c.deposit ? '<span class="fx-b alt">kommt zurück</span> · ' : ''}${perP(c.amount, C)} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></div>`).join('')}</div>
+  <div class="fx-list">${(T.costs || []).map(c => `<div class="fx-row" style="cursor:default"><div><b>${esc(c.name)}</b><small>${perP(c.amount, C)} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></div>`).join('')}</div>
   ${C.rates.length ? `<div class="fx-h"><span>Raten</span><span></span></div><div class="fx-list">${C.rates.map(r => `<div class="fx-row" style="cursor:default"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'} · ${perP(r.amt, C)} pro Person</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></div>`).join('')}</div>` : ''}
   <div class="fx-h"><span>${withPaid ? 'Wer zahlt was?' : 'Anteile'}</span><span></span></div>
   ${views}${vInfo}
