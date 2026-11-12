@@ -1,5 +1,5 @@
 // Finanzen – macht die App offline verfügbar (nur wenn über http/https geöffnet)
-const CACHE = 'finanzen-1.9.0'; // bei jeder neuen Version anpassen
+const CACHE = 'finanzen-1.10.1'; // bei jeder neuen Version anpassen
 const FILES = ['./', './index.html', './apple-touch-icon.png?v=f1'];
 const EXT = 'organizer-extern'; // Schriften und Texterkennung – bleibt bei Updates erhalten
 
@@ -33,4 +33,3 @@ self.addEventListener('fetch', e => {
     return res;
   }).catch(() => caches.match(req).then(hit => hit || caches.match('./index.html'))));
 });
-

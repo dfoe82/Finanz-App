@@ -408,6 +408,11 @@ button.vw-a,button.vw-b,button.vw-d{cursor:pointer}
 .st.ok{background:color-mix(in srgb,var(--pos) 18%,transparent);color:var(--pos)}.st.late{background:color-mix(in srgb,var(--neg) 16%,transparent);color:var(--neg)}
 .st.part{background:conic-gradient(var(--pos) 0 var(--p),var(--sunk) var(--p) 100%)}.st.part>i{width:18px;height:18px;border-radius:50%;background:var(--surface)}
 .st.open{border:2px dashed var(--line)}
+.vw-m{text-align:right;font-family:var(--f-num);font-size:.84rem;white-space:nowrap}.vw-sum{background:var(--sunk);font-weight:700}.vw-sum .vw-m{font-weight:700}
+.tp-main.tp-3{grid-template-columns:repeat(3,1fr)}
+.sh-own{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;margin-bottom:10px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,var(--surface));font-size:.85rem}
+.an-box{display:grid;gap:7px;padding:10px 12px;border-radius:12px;background:var(--sunk)}.an-box small{color:var(--muted);font-size:.76rem}
+.an-r .vw-n b{font-size:.92rem;white-space:normal;overflow:visible}.an-r .vw-m,.an-r .vw-o{font-size:.9rem}
 .vw-foot{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--sunk);font-weight:700;font-size:.85rem}.vw-foot span:last-child{font-family:var(--f-num)}
 .vw-leg{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:.72rem;color:var(--muted);margin:-4px 2px 0}.vw-leg span{display:flex;align-items:center;gap:5px}.vw-leg .st{width:16px;height:16px;font-size:.6rem}.vw-leg .st.part>i{width:10px;height:10px}
 .vw-rates{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.vw-rates div{padding:9px 11px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}.vw-rates b{display:block;font-family:var(--f-num)}.vw-rates small{display:block;color:var(--muted);font-size:.74rem}
@@ -728,9 +733,20 @@ const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 /* ---------- Zustand ---------- */
 /* ---------- Version ---------- */
-const APP_VERSION = '1.9.0';
+const APP_VERSION = '1.10.1';
 const SECTIONS = [['finanzen','Finanzen'],['fixkosten','Fixkosten'],['sparen','Tagesgeld'],['urlaub','Urlaub']];
 const CHANGELOG = [
+  ['1.10.1','12.11.2026, 04:01 Uhr',[
+    'Geteilte Ansicht: unten steht kein „Finanzen-App öffnen“ mehr',
+    'In deiner eigenen Vorschau gibt es oben „Vorschau beenden“',
+    'Kürzere Links: ohne „index.html“, der feste Link ist jetzt deutlich kürzer (neue feste Links; schon verschickte funktionieren weiter)']],
+  ['1.10.0','12.11.2026, 03:44 Uhr',[
+    'Urlaub teilen „Ohne Namen“: keine Familien, keine Zahlungen – nur was pro Person, pro 2 Personen usw. für jede Rate und insgesamt fällig ist',
+    'Für welche Personenzahlen die Beträge erscheinen, wählst du selbst; vorausgewählt sind 1 Person und die Gruppengrößen, die im Urlaub vorkommen',
+    'Gilt für den Link mit Tagesstand, den festen Link und „Als Text teilen“; PayPal-Knöpfe gibt es dann pro Personenzahl']],
+  ['1.9.1','12.11.2026, 03:35 Uhr',[
+    'Geteilter Urlaub ohne bezahlte Beträge: Die Matrix gibt es jetzt auch hier und ist Standard. Sie zeigt für jede Familie den Betrag jeder Rate und den Anteil, unten die Summen',
+    'Tabelle und Karten bleiben zum Umschalten']],
   ['1.9.0','11.11.2026, 21:30 Uhr',[
     'Einstellungen: „Nach neuer Version suchen“ – zeigt, ob es ein Update gibt und was neu ist, mit „Jetzt aktualisieren“',
     'Auch unter „Was ist neu?“ gibt es den Knopf zum Suchen']],
@@ -2625,6 +2641,15 @@ function tripRefundDialog(T){
   const del = form.querySelector('#rf-del');
   if (del) del.addEventListener('click', () => { if (!armed(del, 'Wirklich entfernen?')) return; T.refund = null; save('finance'); closeDlg(); toast('Entfernt'); });
 }
+function tripShareTextAnon(T, anon){
+  const C = tripCalc(T), L = [], per = (a, n) => C.persons ? Math.round(a * n / C.persons) : 0, perT = n => C.rates.length ? C.rates.reduce((s, r) => s + per(r.amt, n), 0) : per(C.total, n), lab = n => n === 1 ? 'pro Person' : 'pro ' + n + ' Personen';
+  L.push('🏖 ' + T.name + (tripRange(T) ? ' (' + tripRange(T) + ')' : ''));
+  L.push('Gesamt: ' + euro(C.total) + ' · ' + C.persons + ' Personen');
+  anon.forEach(n => { L.push(''); L.push(lab(n) + ': ' + euro(perT(n))); C.rates.forEach(r => L.push('  ' + r.name + (r.due ? ' bis ' + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : ' sofort') + ': ' + euro(per(r.amt, n)))); });
+  const P = T.payInfo, pp = P && ppParse(P.paypal);
+  if (P && (P.iban || pp)){ L.push(''); L.push('Bezahlen an:'); if (P.iban) L.push((P.holder ? P.holder + ', ' : '') + 'IBAN ' + ibanFmt(P.iban) + ', Verwendungszweck: ' + (P.ref || T.name) + ' + euer Name'); if (pp) L.push('PayPal: ' + (pp.me ? 'https://paypal.me/' + pp.me : pp.mail)); }
+  return L.join('\n').replace(/\u00a0/g, ' ');
+}
 function tripShareText(T){
   const C = tripCalc(T), L = [];
   L.push('🏖 ' + T.name + (tripRange(T) ? ' (' + tripRange(T) + ')' : ''));
@@ -2641,7 +2666,7 @@ function tripShareText(T){
 const TRIP_VIEWS = [['a','Matrix'],['b','Status'],['c','Je Rate'],['d','Balken'],['ov','Karten'],['all','Tabelle']];
 function viewSwitch(C, view, sub, act, withPaid){
   if (!C.parties.length) return '';
-  const list = withPaid ? TRIP_VIEWS : [['all','Tabelle'],['ov','Karten']];
+  const list = withPaid ? TRIP_VIEWS : [['a','Matrix'],['all','Tabelle'],['ov','Karten']];
   const main = `<div class="tp-views tp-main" role="tablist">${list.map(([k, l]) => `<button type="button" role="tab" aria-selected="${k === view}" data-act="${act}-view" data-v="${k}">${l}</button>`).join('')}</div>`;
   const subs = view === 'all' && C.rates.length ? `<div class="tp-subs">${[['all','Gesamt'], ...C.rates.map(r => [r.id, r.name])].map(([k, l]) => `<button type="button" aria-pressed="${k === sub}" data-act="${act}-sub" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>` : '';
   return main + subs;
@@ -2661,6 +2686,16 @@ function statusView(C, view, o){
   const foot = (l) => `<div class="vw-foot"><span>${l}</span><span>${nf(openAll)} €</span></div>`;
   const restTxt = p => p.rest > 0 ? nf(p.rest) : p.rest < 0 ? '+' + nf(-p.rest) : '✓';
   const restCls = p => p.rest > 0 ? (p.late > 0 ? 'neg-t' : '') : 'pos-t';
+  if (view === 'a' && o.noPaid){
+    // Matrix ohne bezahlte Beträge: je Familie der Betrag jeder Rate und der Anteil
+    const w = R.length > 3 ? 54 : 64, cols = `grid-template-columns:minmax(0,1fr) repeat(${R.length},${w}px) 72px`;
+    const tot = r => C.parties.reduce((s, p) => s + cellOf(p, r).soll, 0);
+    return `<div class="fx-list">
+      <div class="vw-a vw-ah" style="${cols}"><span>Familie</span>${R.map(r => `<span>${esc(r.name)}<b>${C.persons ? nf(Math.round(r.amt / C.persons)) : '–'}/P</b></span>`).join('')}<span>Anteil</span></div>
+      ${C.parties.map(p => `<div class="vw-a" style="${cols}"><span class="vw-n"><b>${esc(p.name)}</b><small>${p.n} ${p.n === 1 ? 'Person' : 'Pers.'}</small></span>${R.map(r => `<span class="vw-m">${nf(cellOf(p, r).soll)}</span>`).join('')}<span class="vw-o">${nf(p.soll)}</span></div>`).join('')}
+      <div class="vw-a vw-sum" style="${cols}"><span class="vw-n"><b>Gesamt</b><small>${C.persons} Pers.</small></span>${R.map(r => `<span class="vw-m">${nf(tot(r))}</span>`).join('')}<span class="vw-o">${nf(C.parties.reduce((s, p) => s + p.soll, 0))}</span></div></div>
+      ${C.rates.length ? `<div class="vw-leg">${C.rates.map(r => `<span>${esc(r.name)}: ${rDue(r) === 'sofort' ? 'sofort fällig' : 'fällig ' + rDue(r)}</span>`).join('')}</div>` : ''}`;
+  }
   if (view === 'a'){
     const cols = `grid-template-columns:minmax(0,1fr) repeat(${R.length},${R.length > 3 ? 42 : 54}px) 82px`;
     const icon = c => c.st === 'ok' ? '<i class="st ok">✓</i>' : c.st === 'part' ? `<i class="st part" style="--p:${c.pct}%"><i></i></i>` : c.st === 'late' ? '<i class="st late">!</i>' : '<i class="st open"></i>';
@@ -2784,8 +2819,9 @@ async function zip(bytes, dir){
   const st = new Blob([bytes]).stream().pipeThrough(dir ? new CompressionStream('deflate-raw') : new DecompressionStream('deflate-raw'));
   return new Uint8Array(await new Response(st).arrayBuffer());
 }
-function tripPayload(T, withPaid, withPay){
+function tripPayload(T, withPaid, withPay, anon){
   const C = tripCalc(T);
+  if (anon && anon.length){ const d = tripPayload(T, false, withPay); delete d.p; d.w = 0; d.an = anon.slice().sort((a, b) => a - b); d.np = C.persons; return d; }
   const d = {v:1, n:T.name, f:T.from || '', t:T.to || '', s:today(), w: withPaid ? 1 : 0,
     c:(T.costs || []).map(c => [c.name, c.amount, c.deposit ? 1 : 0]),
     r:C.rates.map(r => [r.name, r.amt, r.due || '']),
@@ -2794,11 +2830,11 @@ function tripPayload(T, withPaid, withPay){
   if (withPay && T.payInfo){ const P = T.payInfo; d.b = [P.holder || '', P.iban || '', P.bank || '', P.ref || '', P.paypal || '']; }
   return d;
 }
-async function tripLink(T, withPaid, withPay){
-  const raw = new TextEncoder().encode(JSON.stringify(tripPayload(T, withPaid, withPay)));
+async function tripLink(T, withPaid, withPay, anon){
+  const raw = new TextEncoder().encode(JSON.stringify(tripPayload(T, withPaid, withPay, anon)));
   let code = 'j' + b64u(raw);
   if (typeof CompressionStream === 'function'){ try { code = 'z' + b64u(await zip(raw, true)); } catch(e){} }
-  return location.origin + location.pathname + '#urlaub=' + code;
+  return appBase() + '#urlaub=' + code;
 }
 async function readTripLink(code){
   const bytes = unb64u(code.slice(1));
@@ -2808,16 +2844,42 @@ function tripFromPayload(d){
   const T = {id:'shared', name:String(d.n || 'Urlaub'), from:d.f || '', to:d.t || '', costs:[], rates:[], parties:[], pays:[], refund:null};
   (d.c || []).forEach((c, i) => T.costs.push({id:'c'+i, name:String(c[0]), amount:+c[1] || 0, deposit:!!c[2]}));
   (d.r || []).forEach((r, i) => T.rates.push({id:'r'+i, name:String(r[0]), amount:+r[1] || 0, due:r[2] || ''}));
+  if (Array.isArray(d.an)) T.parties.push({id:'alle', name:'', persons: Math.max(1, +d.np || 1)});
   (d.p || []).forEach((p, i) => { T.parties.push({id:'p'+i, name:String(p[0]), persons:+p[1] || 1}); if (d.w && +p[2] > 0) T.pays.push({id:'y'+i, party:'p'+i, amount:+p[2], date:d.s}); });
   if (d.x) T.refund = {text:String(d.x[0]), amount:+d.x[1] || 0, done:[]};
   if (Array.isArray(d.b)) T.payInfo = {holder:String(d.b[0] || ''), iban:String(d.b[1] || ''), bank:String(d.b[2] || ''), ref:String(d.b[3] || ''), paypal:String(d.b[4] || '')};
-  return {T, withPaid: !!d.w, stand: d.s, ts: d.ts || 0};
+  return {T, withPaid: !!d.w, stand: d.s, ts: d.ts || 0, anon: Array.isArray(d.an) ? d.an.map(Number).filter(n => n > 0 && n < 100) : null};
 }
 var shared = null;
+// Ansicht ohne Familiennamen: Beträge pro Person, pro 2 Personen …
+function renderSharedAnon(){
+  const {T, anon, stand} = shared, C = tripCalc(T), t0 = today(), nf = v => euro(v).replace(/\s*€/, '');
+  const per = (amt, n) => C.persons ? Math.round(amt * n / C.persons) : 0, perT = n => C.rates.length ? C.rates.reduce((s, r) => s + per(r.amt, n), 0) : per(C.total, n), lab = n => n === 1 ? 'pro Person' : 'pro ' + n + ' Personen';
+  const R = C.rates.length ? C.rates : [{id:'__all', name:'Betrag', amt:C.total, due:''}], showTot = C.rates.length > 1;
+  const cols = `grid-template-columns:minmax(0,1fr) repeat(${R.length + (showTot ? 1 : 0)},${R.length > 2 ? 62 : 74}px)`;
+  const dueTxt = r => r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig';
+  return `<div class="fx-page">
+  <section class="fx-hero"><span class="label">${esc(T.name)}${tripRange(T) ? ' · ' + tripRange(T) : ''}</span><span class="big">${euro(C.total)}</span>
+    <div class="fx-grid"><div><small>Pro Person</small><b>${euro(perT(1))}</b></div><div><small>Personen</small><b>${C.persons}</b></div></div></section>
+  <div class="fx-h"><span>Was zahlt ihr?</span><span></span></div>
+  <div class="fx-list">
+    <div class="vw-a vw-ah" style="${cols}"><span>in €</span>${R.map(r => `<span>${esc(r.name)}</span>`).join('')}${showTot ? '<span>Gesamt</span>' : ''}</div>
+    ${anon.map(n => `<div class="vw-a an-r" style="${cols}"><span class="vw-n"><b>${lab(n)}</b></span>${R.map(r => `<span class="vw-m">${nf(per(r.amt, n))}</span>`).join('')}${showTot ? `<span class="vw-o">${nf(perT(n))}</span>` : ''}</div>`).join('')}
+  </div>
+  ${C.rates.length ? `<div class="vw-leg" style="display:grid;gap:2px">${C.rates.map(r => `<span><b>${esc(r.name)}</b>&nbsp;${dueTxt(r)}</span>`).join('')}</div>` : ''}
+  <div class="fx-h"><span>Kosten</span><span></span></div>
+  <div class="fx-list">${(T.costs || []).map(c => `<div class="fx-row" style="cursor:default"><div><b>${esc(c.name)}</b><small>${c.deposit ? '<span class="fx-b alt">kommt zurück</span> · ' : ''}${euro(per(c.amount, 1))} pro Person</small></div><div class="fx-amt"><b>${euro(c.amount)}</b></div></div>`).join('')}</div>
+  ${T.refund ? `<div class="fx-h"><span>${esc(T.refund.text)}</span><span></span></div><div class="fx-list">${anon.map(n => `<div class="fx-row" style="cursor:default"><div><b>${lab(n)}</b></div><div class="fx-amt"><b class="pos-t">${euro(per(T.refund.amount, n))}</b></div></div>`).join('')}</div>` : ''}
+  ${T.payInfo ? `<div class="fx-h"><span>So bezahlt ihr</span><span></span></div>${payBox(T, true, anon.map(n => [lab(n), perT(n)]))}` : ''}
+  <p class="hint" style="margin:0">Stand: ${shared.ts ? new Date(shared.ts).toLocaleString('de-DE', {dateStyle:'medium', timeStyle:'short'}) + ' Uhr' : new Date(stand + 'T12:00:00').toLocaleDateString('de-DE')} · Nur zum Ansehen</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">${shared.live ? '<button type="button" class="btn" data-act="sh-reload">↻ Neu laden</button>' : ''}</div>
+  </div>`;
+}
 function renderShared(){
+  if (shared.anon) return renderSharedAnon();
   const {T, withPaid, stand} = shared, C = tripCalc(T), t0 = today();
   const nf = v => euro(v).replace(/\s*€/, '');
-  const view = (withPaid ? TRIP_VIEWS : [['all'],['ov']]).some(v => v[0] === ui.shareView) ? ui.shareView : (withPaid ? 'a' : 'all'), sub = C.rates.some(r => r.id === ui.shareSub) ? ui.shareSub : 'all', vr = view === 'all' ? C.rates.find(r => r.id === sub) : null;
+  const view = (withPaid ? TRIP_VIEWS : [['a'],['all'],['ov']]).some(v => v[0] === ui.shareView) ? ui.shareView : 'a', sub = C.rates.some(r => r.id === ui.shareSub) ? ui.shareSub : 'all', vr = view === 'all' ? C.rates.find(r => r.id === sub) : null;
   const views = viewSwitch(C, view, sub, 'sh', withPaid);
   const vInfo = vr ? `<p class="hint" style="margin:0 2px">${esc(vr.name)}: ${euro(vr.amt)} · ${perP(vr.amt, C)} pro Person · ${vr.due ? (vr.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(vr.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'}</p>` : '';
   const cell = p => vr ? p.byRate[vr.id] : {soll:p.soll, paid:p.paid, open:p.rest};
@@ -2839,42 +2901,43 @@ function renderShared(){
   ${C.rates.length ? `<div class="fx-h"><span>Raten</span><span></span></div><div class="fx-list">${C.rates.map(r => `<div class="fx-row" style="cursor:default"><div><b>${esc(r.name)}</b><small>${r.due ? (r.due <= t0 ? 'fällig seit ' : 'fällig bis ') + new Date(r.due + 'T12:00:00').toLocaleDateString('de-DE') : 'sofort fällig'} · ${perP(r.amt, C)} pro Person</small></div><div class="fx-amt"><b>${euro(r.amt)}</b></div></div>`).join('')}</div>` : ''}
   <div class="fx-h"><span>${withPaid ? 'Wer zahlt was?' : 'Anteile'}</span><span></span></div>
   ${views}${vInfo}
-  ${view === 'ov' ? ovCards(C, {withPaid, shared:true, pay:T.payInfo}) : view !== 'all' ? statusView(C, view, {}) : `<div class="tp-list">${head}${rows}${sum}</div>`}
+  ${view === 'ov' ? ovCards(C, {withPaid, shared:true, pay:T.payInfo}) : view !== 'all' ? statusView(C, view, {noPaid: !withPaid}) : `<div class="tp-list">${head}${rows}${sum}</div>`}
   ${T.payInfo ? `<div class="fx-h"><span>So bezahlt ihr</span><span></span></div>${payBox(T, true, C.parties.map(p => [p.name, withPaid ? p.rest : p.soll]))}` : ''}
   ${T.refund ? `<div class="fx-h"><span>${esc(T.refund.text)}</span><span></span></div><div class="tp-list">${C.parties.map(p => `<div class="tp-r tp-r3"><span class="tp-n"><b>${esc(p.name)}</b></span><span>${p.n}</span><span class="tp-o pos-t">${nf(p.refund)}</span></div>`).join('')}</div>` : ''}
   <p class="hint" style="margin:0">Stand: ${shared.ts ? new Date(shared.ts).toLocaleString('de-DE', {dateStyle:'medium', timeStyle:'short'}) + ' Uhr' : new Date(stand + 'T12:00:00').toLocaleDateString('de-DE')} · Nur zum Ansehen${shared.live ? ' – der Link bleibt gleich, beim nächsten Öffnen siehst du den neuesten Stand.' : ' – Änderungen gibt es mit einem neuen Link.'}</p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">${shared.live ? '<button type="button" class="btn" data-act="sh-reload">↻ Neu laden</button>' : ''}<button type="button" class="btn ghost" data-act="sh-close">Finanzen-App öffnen</button></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">${shared.live ? '<button type="button" class="btn" data-act="sh-reload">↻ Neu laden</button>' : ''}</div>
   </div>`;
 }
-function showShared(){ document.body.classList.add('ro'); $('#appTitle').textContent = 'Urlaub'; document.title = shared.T.name; $('#main').innerHTML = renderShared(); }
+function showShared(){ document.body.classList.add('ro'); const own = (S.finance.trips || []).length > 0; $('#appTitle').textContent = 'Urlaub'; document.title = shared.T.name; $('#main').innerHTML = (own ? '<div class="sh-own"><span>Vorschau – so sehen es die anderen</span><button type="button" class="btn sm" data-act="sh-close">Vorschau beenden</button></div>' : '') + renderShared(); }
 async function sharedBoot(){
-  const lv = location.hash.match(/^#live=([a-z0-9]{6,20})\.([\w-]{16,64})$/);
+  const lv = location.hash.match(/^#(?:live|l)=([a-z0-9]{6,20})\.([\w-]{14,64})$/);
   if (lv){
     document.body.classList.add('ro'); $('#main').innerHTML = '<div class="panel empty">Lädt …</div>';
     try { shared = await readLive(lv[1], lv[2]); shared.live = true; showShared(); }
-    catch(e){ $('#main').innerHTML = `<div class="panel empty"><strong>${e && e.message === 'missing' ? 'Noch keine Daten' : 'Link nicht lesbar'}</strong>${e && e.message === 'missing' ? 'Die Urlaubsdatei ist noch nicht auf der Seite. Bitte später noch einmal öffnen.' : 'Der Link ist unvollständig, die Datei passt nicht dazu oder dieser Browser ist zu alt.'}<div class="row"><button class="btn" data-act="sh-close">Zur App</button></div></div>`; }
+    catch(e){ $('#main').innerHTML = `<div class="panel empty"><strong>${e && e.message === 'missing' ? 'Noch keine Daten' : 'Link nicht lesbar'}</strong>${e && e.message === 'missing' ? 'Die Urlaubsdatei ist noch nicht auf der Seite. Bitte später noch einmal öffnen.' : 'Der Link ist unvollständig, die Datei passt nicht dazu oder dieser Browser ist zu alt.'}</div>`; }
     return true;
   }
   const m = location.hash.match(/^#urlaub=([zj][\w-]+)$/); if (!m) return false;
   document.body.classList.add('ro'); $('#main').innerHTML = '<div class="panel empty">Lädt …</div>';
   try { shared = await readTripLink(m[1]); showShared(); }
-  catch(e){ $('#main').innerHTML = '<div class="panel empty"><strong>Link nicht lesbar</strong>Der Link ist unvollständig oder dieser Browser ist zu alt. Bitte den ganzen Link noch einmal öffnen.<div class="row"><button class="btn" data-act="sh-close">Zur App</button></div></div>'; }
+  catch(e){ $('#main').innerHTML = '<div class="panel empty"><strong>Link nicht lesbar</strong>Der Link ist unvollständig oder dieser Browser ist zu alt. Bitte den ganzen Link noch einmal öffnen.</div>'; }
   return true;
 }
 function leaveShared(){ shared = null; history.replaceState(null, '', location.pathname + location.search); document.body.classList.remove('ro'); render(); }
-window.addEventListener('hashchange', () => { if (/^#(urlaub|live)=/.test(location.hash)) sharedBoot(); });
+window.addEventListener('hashchange', () => { if (/^#(urlaub|live|l)=/.test(location.hash)) sharedBoot(); });
 /* ---------- Fester Link: verschlüsselte Datei, die du selbst auf GitHub hochlädst ---------- */
 const LIVE_DIR = 'urlaub/';
 async function liveKey(raw, use){ return crypto.subtle.importKey('raw', raw, {name:'AES-GCM'}, false, [use]); }
 function livePrep(T){
-  if (!T.pub){ const k = crypto.getRandomValues(new Uint8Array(16)); T.pub = {id: (newId() + newId()).replace(/[^a-z0-9]/g, '').slice(0, 12), key: b64u(k), paid: true, pay: true, last: 0, hash: ''}; save('finance'); }
+  if (!T.pub){ const k = crypto.getRandomValues(new Uint8Array(16)); T.pub = {id: (newId() + newId()).replace(/[^a-z0-9]/g, '').slice(0, 8), key: b64u(k), paid: true, pay: true, last: 0, hash: ''}; save('finance'); }
   return T.pub;
 }
-const liveUrl = P => location.origin + location.pathname + '#live=' + P.id + '.' + P.key;
-function liveSig(T){ const P = T.pub || {}, d = tripPayload(T, P.paid !== false, P.pay !== false); delete d.s; return JSON.stringify(d); }
+const appBase = () => location.origin + (/^https?:$/.test(location.protocol) ? location.pathname.replace(/index\.html?$/, '') : location.pathname);
+const liveUrl = P => appBase() + '#l=' + P.id + '.' + P.key;
+function liveSig(T){ const P = T.pub || {}, d = tripPayload(T, P.paid !== false, P.pay !== false, P.anon); delete d.s; return JSON.stringify(d); }
 const liveDirty = T => !!(T.pub && T.pub.last && T.pub.hash !== liveSig(T));
 async function liveFile(T){
-  const P = livePrep(T), d = tripPayload(T, P.paid !== false, P.pay !== false); d.ts = Date.now();
+  const P = livePrep(T), d = tripPayload(T, P.paid !== false, P.pay !== false, P.anon); d.ts = Date.now();
   let raw = new TextEncoder().encode(JSON.stringify(d)), z = 0;
   if (typeof CompressionStream === 'function'){ try { raw = await zip(raw, true); z = 1; } catch(e){} }
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -2918,7 +2981,8 @@ function tripLiveDialog(T){
   const form = openDlg(`
     <h3>Fester Link für die Gruppe</h3>
     <p class="hint" style="margin:0">Die Gruppe bekommt <b>einmal</b> einen Link. Er zeigt immer den Stand der Datei auf GitHub – nur ansehen, ändern kannst nur du.</p>
-    <label class="bel-keep"><input type="checkbox" id="lv-paid" ${P.paid !== false ? 'checked' : ''}><span>Bezahlte und offene Beträge anzeigen</span></label>
+    ${audHtml('lv', P.anon || null, T)}
+    <label class="bel-keep" id="lv-paidf" ${P.anon ? 'hidden' : ''}><input type="checkbox" id="lv-paid" ${P.paid !== false ? 'checked' : ''}><span>Bezahlte und offene Beträge anzeigen</span></label>
     ${T.payInfo ? `<label class="bel-keep"><input type="checkbox" id="lv-pay" ${P.pay !== false ? 'checked' : ''}><span>Bezahldaten anzeigen</span></label>` : ''}
     <div class="lv-stat ${P.last ? (dirty ? 'warn' : 'ok') : ''}">${P.last ? (dirty ? '⚠️ Seit ' + fmt(P.last) + ' hat sich etwas geändert – bitte auf GitHub aktualisieren.' : '✓ Stand vom ' + fmt(P.last) + ' ist übertragen.') : 'Noch nicht auf GitHub.'}</div>
     <div class="lv-box">
@@ -2945,7 +3009,8 @@ function tripLiveDialog(T){
   };
   prep();
   const opts = () => { const a = form.querySelector('#lv-paid'), b = form.querySelector('#lv-pay'); T.pub.paid = a.checked; if (b) T.pub.pay = b.checked; save('finance'); prep(); };
-  form.querySelector('#lv-paid').addEventListener('change', opts); const pb = form.querySelector('#lv-pay'); if (pb) pb.addEventListener('change', opts);
+  form.querySelector('#lv-paid').addEventListener('change', opts);
+  audWire(form, 'lv', a => { T.pub.anon = a; form.querySelector('#lv-paidf').hidden = !!a; save('finance'); prep(); }); const pb = form.querySelector('#lv-pay'); if (pb) pb.addEventListener('change', opts);
   const cc = form.querySelector('#lv-copyc');
   cc.addEventListener('click', () => {
     const done = () => { liveMark(T); cc.textContent = 'Kopiert ✓'; toast(P.made ? 'Kopiert – jetzt Datei öffnen, ✏️, alles markieren und einfügen' : 'Kopiert'); };
@@ -2974,6 +3039,25 @@ function tripLiveDialog(T){
   nk.addEventListener('click', () => { if (!armed(nk, 'Alte Links ungültig machen?')) return; T.pub = null; livePrep(T); toast('Neuer Link – auf GitHub anlegen und neuen Link schicken'); tripLiveDialog(T); });
 }
 
+// Auswahl: mit Familien oder ohne Namen (Beträge für 1, 2, 3 … Personen)
+function anonSizes(T){ return [...new Set([1, ...(T.parties || []).map(p => Math.max(1, +p.persons || 1))])].sort((a, b) => a - b); }
+function audHtml(px, anon, T){
+  const max = Math.max(6, ...anonSizes(T)), sel = anon && anon.length ? anon : anonSizes(T);
+  return `<div class="seg" role="radiogroup"><label><input type="radio" name="${px}-aud" value="fam" ${anon ? '' : 'checked'}><span>Mit Familien</span></label><label><input type="radio" name="${px}-aud" value="anon" ${anon ? 'checked' : ''}><span>Ohne Namen</span></label></div>
+    <div class="an-box" id="${px}-anbox" ${anon ? '' : 'hidden'}><small>Beträge zeigen für:</small><div class="tp-subs">${Array.from({length: max}, (_, i) => i + 1).map(n => `<button type="button" aria-pressed="${sel.includes(n)}" data-n="${n}">${n === 1 ? '1 Person' : n + ' Pers.'}</button>`).join('')}</div>
+    <small>Keine Namen und keine Zahlungen – nur was pro Person, pro 2 Personen usw. fällig ist.</small></div>`;
+}
+function audWire(form, px, onChange){
+  const box = form.querySelector('#' + px + '-anbox'), fam = () => form.querySelector(`input[name=${px}-aud]:checked`).value === 'fam';
+  const get = () => fam() ? null : [...box.querySelectorAll('[data-n][aria-pressed=true]')].map(b => +b.dataset.n);
+  form.querySelectorAll(`input[name=${px}-aud]`).forEach(r => r.addEventListener('change', () => { box.hidden = fam(); onChange(get()); }));
+  box.querySelectorAll('[data-n]').forEach(b => b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') === 'true';
+    if (on && box.querySelectorAll('[data-n][aria-pressed=true]').length === 1) return;
+    b.setAttribute('aria-pressed', String(!on)); onChange(get());
+  }));
+  return get;
+}
 function tripShareDialog(T){
   const C = tripCalc(T);
   const form = openDlg(`
@@ -2981,24 +3065,26 @@ function tripShareDialog(T){
     <button type="button" class="lv-pick" id="sh-live"><b>🔗 Fester Link</b><small>Ein Link für die Gruppe, der immer den aktuellen Stand zeigt – du lädst nach Änderungen eine Datei auf GitHub hoch.</small></button>
     <span class="label">Oder: Link mit dem Stand von heute</span>
     <p class="hint" style="margin:0">Alle bekommen einen Link zur App. Damit sehen sie Kosten, Raten und ihre Anteile – ohne die App einzurichten und ohne etwas ändern zu können. Die Daten stecken im Link selbst und werden nirgends gespeichert.</p>
-    <label class="bel-keep"><input type="checkbox" id="sh-paid" checked><span>Bezahlte und offene Beträge je Familie anzeigen</span></label>
+    ${audHtml('sh', null, T)}
+    <label class="bel-keep" id="sh-paidf"><input type="checkbox" id="sh-paid" checked><span>Bezahlte und offene Beträge je Familie anzeigen</span></label>
     ${T.payInfo ? `<label class="bel-keep"><input type="checkbox" id="sh-pay" checked><span>Bezahldaten mitschicken (${[T.payInfo.iban ? 'IBAN' : '', T.payInfo.paypal ? 'PayPal' : ''].filter(Boolean).join(' und ')})</span></label>` : `<p class="hint" style="margin:0">Tipp: Unter „Bezahlen an“ kannst du Bankdaten oder PayPal hinterlegen, dann stehen sie mit im Link.</p>`}
     <div class="err" id="f-err"></div>
     <div class="dlg-actions" style="flex-wrap:wrap"><button type="button" class="btn ghost" id="sh-text">Als Text teilen</button><span class="spacer"></span><button type="button" class="btn" id="sh-prev">Vorschau</button><button class="btn primary" type="submit">Link teilen</button></div>`, f => {
       (async () => {
-        const url = await tripLink(T, f.querySelector('#sh-paid').checked, !!(f.querySelector('#sh-pay') && f.querySelector('#sh-pay').checked));
+        const url = await tripLink(T, f.querySelector('#sh-paid').checked, !!(f.querySelector('#sh-pay') && f.querySelector('#sh-pay').checked), getAud());
         const text = '🏖 ' + T.name + ' – Kosten und Anteile:';
         try { if (navigator.share){ await navigator.share({title: T.name, text, url}); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
         try { await navigator.clipboard.writeText(text + '\n' + url); toast('Link kopiert – jetzt z. B. in WhatsApp einfügen'); }
         catch(e){ openDlg(`<h3>Link</h3><textarea readonly rows="6" style="width:100%;font:inherit;font-size:.8rem">${esc(url)}</textarea><div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn primary" data-close>Fertig</button></div>`, () => {}); }
       })();
     });
-  form.querySelector('#sh-text').addEventListener('click', () => { closeDlg(); tripShare(T); });
+  const getAud = audWire(form, 'sh', a => { form.querySelector('#sh-paidf').hidden = !!a; });
+  form.querySelector('#sh-text').addEventListener('click', () => { const a = getAud(); closeDlg(); tripShare(T, a); });
   form.querySelector('#sh-live').addEventListener('click', () => tripLiveDialog(T));
-  form.querySelector('#sh-prev').addEventListener('click', async () => { const url = await tripLink(T, form.querySelector('#sh-paid').checked, !!(form.querySelector('#sh-pay') && form.querySelector('#sh-pay').checked)); dlg.close(); location.hash = url.split('#')[1]; });
+  form.querySelector('#sh-prev').addEventListener('click', async () => { const url = await tripLink(T, form.querySelector('#sh-paid').checked, !!(form.querySelector('#sh-pay') && form.querySelector('#sh-pay').checked), getAud()); dlg.close(); location.hash = url.split('#')[1]; });
 }
-async function tripShare(T){
-  const text = tripShareText(T);
+async function tripShare(T, anon){
+  const text = anon ? tripShareTextAnon(T, anon) : tripShareText(T);
   try { if (navigator.share){ await navigator.share({title: T.name, text}); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
   try { await navigator.clipboard.writeText(text); toast('Übersicht kopiert – jetzt z. B. in WhatsApp einfügen'); }
   catch(e){ openDlg(`<h3>Übersicht</h3><textarea readonly rows="14" style="width:100%;font:inherit;font-size:.85rem">${esc(text)}</textarea><div class="dlg-actions"><span class="spacer"></span><button type="button" class="btn primary" data-close>Fertig</button></div>`, () => {}); }
